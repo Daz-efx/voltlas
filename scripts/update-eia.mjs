@@ -1,12 +1,14 @@
 // scripts/update-eia.mjs
-// Pulls the latest MONTHLY US retail electricity prices (residential & commercial)
-// by state from the EIA API v2 and writes them into public/data/latest.json.
+// Pulls the latest MONTHLY US retail prices from the EIA API v2 into
+// public/data/latest.json:
+//   • electricity — residential & commercial, by state (retail-sales)
+//   • natural gas — residential, by state (pri/sum, process PRS)
 //
 // Run from your project root:
 //   EIA_API_KEY=your_key_here  node scripts/update-eia.mjs
 //
-// The key is read from the environment — it is never stored in this file,
-// so this script is safe to commit to your public repo.
+// The key is read from the environment — never stored here — so this
+// script is safe to commit to your public repo.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -19,8 +21,9 @@ if (!API_KEY) {
 
 const DATA_FILE = path.join(process.cwd(), "public", "data", "latest.json");
 
-// Dashboard state names -> EIA two-letter stateid
-const STATE_ID = {
+// Dashboard state names -> EIA two-letter postal code (= electricity stateid,
+// and the suffix of the natural-gas duoarea, e.g. "S" + "CA" = "SCA").
+const POSTAL = {
   Hawaii: "HI", California: "CA", Massachusetts: "MA", Connecticut: "CT",
   "New York": "NY", Michigan: "MI", "New Jersey": "NJ", Illinois: "IL",
   Ohio: "OH", Colorado: "CO", Texas: "TX", Florida: "FL",
@@ -30,66 +33,93 @@ const STATE_ID = {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const fmtPeriod = (p) => { const [y, m] = p.split("-"); return `${MONTHS[Number(m) - 1]} ${y}`; };
 const round3 = (v) => Math.round(v * 1000) / 1000;
+const MCF_TO_KWH = 303.9; // 1 thousand cu ft natural gas ≈ 303.9 kWh
 
-async function fetchEIA() {
-  const url = new URL("https://api.eia.gov/v2/electricity/retail-sales/data/");
+async function eiaGet(route, extra) {
+  const url = new URL(`https://api.eia.gov/v2/${route}/data/`);
   url.searchParams.set("api_key", API_KEY);
   url.searchParams.set("frequency", "monthly");
-  url.searchParams.append("data[]", "price");
-  url.searchParams.append("facets[sectorid][]", "RES"); // residential -> elecRes
-  url.searchParams.append("facets[sectorid][]", "COM"); // commercial  -> elecBiz
   url.searchParams.append("sort[0][column]", "period");
   url.searchParams.append("sort[0][direction]", "desc");
   url.searchParams.set("length", "5000");
+  for (const [k, v] of extra) url.searchParams.append(k, v);
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`EIA API ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`EIA ${route} ${res.status}: ${await res.text()}`);
   const json = await res.json();
-  if (!json.response || !json.response.data) throw new Error("Unexpected EIA response shape.");
+  if (!json.response || !json.response.data) throw new Error(`Unexpected EIA ${route} response shape.`);
   return json.response.data;
 }
 
-function buildLatest(rows) {
-  const latestPeriod = rows.reduce((m, r) => (r.period > m ? r.period : m), "");
-  const byState = {}; // { stateid: { RES: $/kWh, COM: $/kWh } }
+// ── Electricity: residential (RES) & commercial (COM) price, cents/kWh ──
+async function fetchElectricity() {
+  const rows = await eiaGet("electricity/retail-sales", [
+    ["data[]", "price"], ["facets[sectorid][]", "RES"], ["facets[sectorid][]", "COM"],
+  ]);
+  const latest = rows.reduce((m, r) => (r.period > m ? r.period : m), "");
+  const byState = {};
   for (const r of rows) {
-    if (r.period !== latestPeriod || r.price == null) continue;
-    (byState[r.stateid] ??= {})[r.sectorid] = Number(r.price) / 100; // cents -> dollars
+    if (r.period !== latest || r.price == null) continue;
+    (byState[r.stateid] ??= {})[r.sectorid] = Number(r.price) / 100; // cents -> $/kWh
   }
-  return { latestPeriod, byState };
+  return { latest, byState };
+}
+
+// ── Natural gas: residential price (PRS), $/thousand cu ft -> $/kWh ──
+async function fetchGas() {
+  const rows = await eiaGet("natural-gas/pri/sum", [
+    ["data[]", "value"], ["facets[process][]", "PRS"],
+  ]);
+  const latest = rows.reduce((m, r) => (r.period > m ? r.period : m), "");
+  const byArea = {}, byName = {};
+  for (const r of rows) {
+    if (r.period !== latest || r.value == null) continue;
+    const kwh = Number(r.value) / MCF_TO_KWH;
+    if (!Number.isFinite(kwh)) continue;
+    if (r.duoarea) byArea[r.duoarea] = kwh;
+    if (r["area-name"]) byName[String(r["area-name"]).toLowerCase()] = kwh;
+  }
+  return { latest, byArea, byName };
 }
 
 async function main() {
   const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-  const rows = await fetchEIA();
-  const { latestPeriod, byState } = buildLatest(rows);
-  if (!latestPeriod) throw new Error("No data returned from EIA.");
-  const label = fmtPeriod(latestPeriod);
-  let updates = 0;
+  const elec = await fetchElectricity();
+  const gas = await fetchGas();
+  if (!elec.latest) throw new Error("No electricity data returned from EIA.");
+  let eUpd = 0, gUpd = 0;
 
-  // US national row
   const us = data.DATA.find((d) => d.geo === "United States");
-  if (us && byState.US) {
-    if (byState.US.RES != null) { us.elecRes = round3(byState.US.RES); updates++; }
-    if (byState.US.COM != null) { us.elecBiz = round3(byState.US.COM); updates++; }
-    us.period = label;
+  if (us && elec.byState.US) {
+    if (elec.byState.US.RES != null) { us.elecRes = round3(elec.byState.US.RES); eUpd++; }
+    if (elec.byState.US.COM != null) { us.elecBiz = round3(elec.byState.US.COM); eUpd++; }
+    us.period = fmtPeriod(elec.latest);
     us.source = "EIA";
-  } else {
-    console.warn("  (no US national total returned — left unchanged)");
+  }
+  if (us) {
+    const v = gas.byArea.NUS ?? gas.byName["u.s."] ?? gas.byName["united states"];
+    if (v != null) { us.gasRes = round3(v); gUpd++; }
   }
 
-  // US states (sub-national drill-down)
   for (const s of data.SUBNATIONAL["United States"] || []) {
-    const id = STATE_ID[s.name];
-    const p = id && byState[id];
-    if (!p) { console.warn(`  (no EIA data for ${s.name})`); continue; }
-    if (p.RES != null) s.elecRes = round3(p.RES);
-    if (p.COM != null) s.elecBiz = round3(p.COM);
-    updates++;
+    const code = POSTAL[s.name];
+    const e = code && elec.byState[code];
+    if (e) {
+      if (e.RES != null) s.elecRes = round3(e.RES);
+      if (e.COM != null) s.elecBiz = round3(e.COM);
+      eUpd++;
+    } else console.warn(`  (no EIA electricity for ${s.name})`);
+    const g = (code && gas.byArea["S" + code]) ?? gas.byName[s.name.toLowerCase()];
+    if (g != null) { s.gasRes = round3(g); gUpd++; }
+  }
+
+  if (gUpd === 0) {
+    console.warn("  ⚠ No gas figures matched. Sample areas EIA returned:",
+      Object.keys(gas.byArea).slice(0, 12));
   }
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n");
-  console.log(`✓ Updated ${updates} US electricity figures from EIA (${label}).`);
-  if (us) console.log(`  US household: $${us.elecRes}/kWh · business: $${us.elecBiz}/kWh`);
+  console.log(`✓ EIA update — electricity (${fmtPeriod(elec.latest)}): ${eUpd} figures · natural gas (${gas.latest ? fmtPeriod(gas.latest) : "n/a"}): ${gUpd} figures.`);
+  if (us) console.log(`  US household — electricity $${us.elecRes}/kWh · gas $${us.gasRes}/kWh`);
 }
 
 main().catch((e) => { console.error("✗ " + e.message); process.exit(1); });
