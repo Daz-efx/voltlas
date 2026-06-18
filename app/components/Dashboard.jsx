@@ -409,9 +409,10 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
 
         {/* MAP */}
         {view === "map" && (() => {
-          const vals = DATA.map((d) => d.elecRes);
+          const mapData = DATA.filter((d) => d.elecRes != null);
+          const vals = mapData.map((d) => d.elecRes);
           const lo = Math.min(...vals), hi = Math.max(...vals);
-          const sorted = [...DATA].sort((a, b) => b.elecRes - a.elecRes);
+          const sorted = [...mapData].sort((a, b) => b.elecRes - a.elecRes);
           return (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
