@@ -1,0 +1,44 @@
+# .github/workflows/refresh.yml
+# Runs the Voltlas data connectors on a schedule, commits any changes, and
+# pushes — which triggers a Vercel redeploy. Hands-off after setup.
+#
+# Requires one repository secret: EIA_API_KEY  (Settings -> Secrets and
+# variables -> Actions -> New repository secret).
+
+name: refresh-data
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # every Monday at 06:00 UTC
+  workflow_dispatch: {}    # also lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write           # allows the workflow to push the refreshed data
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run connectors
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        run: |
+          node scripts/update-eia.mjs
+          node scripts/update-eurostat.mjs
+          node scripts/update-commodities.mjs
+
+      - name: Commit and push if data changed
+        run: |
+          git config user.name "voltlas-bot"
+          git config user.email "voltlas-bot@users.noreply.github.com"
+          git add public/data/latest.json
+          git commit -m "Scheduled data refresh $(date -u +%Y-%m-%d)" || echo "no changes to commit"
+          git push
