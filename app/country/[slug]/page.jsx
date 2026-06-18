@@ -1,0 +1,121 @@
+// app/country/[slug]/page.jsx
+// One statically-generated, SEO-optimized page per country, built from
+// public/data/latest.json. URLs look like /country/germany.
+
+import fs from "node:fs";
+import path from "node:path";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+export const dynamicParams = false; // only the countries we build; everything else 404s
+
+function loadData() {
+  const file = path.join(process.cwd(), "public", "data", "latest.json");
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const usd = (v) => `$${Number(v).toFixed(3)}`;
+const usd2 = (v) => `$${Number(v).toFixed(2)}`;
+
+function find(slug) {
+  const data = loadData();
+  const country = data.DATA.find((c) => slugify(c.geo) === slug) || null;
+  return { data, country };
+}
+
+export function generateStaticParams() {
+  return loadData().DATA.filter((c) => c.elecRes != null).map((c) => ({ slug: slugify(c.geo) }));
+}
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const { country } = find(slug);
+  if (!country) return { title: "Country not found · Voltlas" };
+  const bits = [];
+  if (country.elecRes != null) bits.push(`electricity ${usd(country.elecRes)}/kWh`);
+  if (country.gasRes != null) bits.push(`gas ${usd(country.gasRes)}/kWh`);
+  return {
+    title: `${country.geo} energy prices — electricity & natural gas · Voltlas`,
+    description: `Current household & business electricity and natural gas prices in ${country.geo}${bits.length ? ": " + bits.join(", ") : ""}. From free official sources (${country.source}), updated ${country.period}.`,
+    alternates: { canonical: `/country/${slug}` },
+    robots: { index: false, follow: false }, // TODO: remove this line at public launch
+  };
+}
+
+const C = { bg: "#171E2E", panel: "#1C2438", text: "#E8E4DA", dim: "rgba(232,228,218,0.6)", accent: "#F2A93B", line: "rgba(232,228,218,0.14)" };
+
+function Metric({ label, value, sub }) {
+  return (
+    <div style={{ border: `1px solid ${C.line}`, padding: "16px 18px", background: C.panel }}>
+      <div style={{ font: "600 10px/1 'Archivo',sans-serif", letterSpacing: ".12em", textTransform: "uppercase", color: C.dim }}>{label}</div>
+      <div style={{ font: "600 26px 'IBM Plex Mono',monospace", color: C.accent, marginTop: 6 }}>{value}</div>
+      {sub && <div style={{ font: "400 11px 'IBM Plex Mono',monospace", color: C.dim, marginTop: 3 }}>{sub}</div>}
+    </div>
+  );
+}
+
+export default async function CountryPage({ params }) {
+  const { slug } = await params;
+  const { data, country } = find(slug);
+  if (!country) notFound();
+
+  const ccy = data.COUNTRY_CCY[country.geo] || "USD";
+  const fx = data.FX[ccy];
+  const local = (v) => (fx && ccy !== "USD" ? `${(v / fx.usd).toFixed(3)} ${fx.sym}` : null);
+  const pli = data.PLI[country.geo];
+  const ppp = pli && country.elecRes != null ? country.elecRes / (pli / 100) : null;
+  const fuel = (data.FUEL_DATA || []).find((f) => f.geo === country.geo);
+  const subs = (data.SUBNATIONAL && data.SUBNATIONAL[country.geo]) || null;
+  const subMeta = (data.SUB_META && data.SUB_META[country.geo]) || null;
+
+  return (
+    <main style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Archivo',system-ui,sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=IBM+Plex+Mono:wght@400;600&family=Archivo:wght@400;500;600&display=swap');`}</style>
+      <div style={{ maxWidth: 880, margin: "0 auto", padding: "40px 20px 64px" }}>
+        <Link href="/" style={{ font: "600 11px 'IBM Plex Mono',monospace", color: C.accent, textDecoration: "none", letterSpacing: ".08em" }}>← VOLTLAS</Link>
+
+        <div style={{ font: "600 11px 'IBM Plex Mono',monospace", letterSpacing: ".18em", color: C.accent, textTransform: "uppercase", margin: "26px 0 6px" }}>{country.region} · energy prices</div>
+        <h1 style={{ font: "800 48px/1 'Saira Condensed',sans-serif", margin: 0, textTransform: "uppercase" }}>{country.geo}</h1>
+        <p style={{ color: C.dim, fontSize: 15, maxWidth: 620, marginTop: 12 }}>
+          What households and businesses in {country.geo} pay for electricity and natural gas, in US dollars, from free official sources. Figures from {country.source}, latest period {country.period}.
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}`, marginTop: 26 }}>
+          {country.elecRes != null && <Metric label="Electricity · household" value={`${usd(country.elecRes)}/kWh`} sub={local(country.elecRes) ? `${local(country.elecRes)}/kWh local` : null} />}
+          {country.elecBiz != null && <Metric label="Electricity · business" value={`${usd(country.elecBiz)}/kWh`} sub={local(country.elecBiz) ? `${local(country.elecBiz)}/kWh local` : null} />}
+          {country.gasRes != null && <Metric label="Natural gas · household" value={`${usd(country.gasRes)}/kWh`} sub={local(country.gasRes) ? `${local(country.gasRes)}/kWh local` : null} />}
+          {fuel && fuel.petrol != null && <Metric label="Petrol" value={`${usd2(fuel.petrol)}/L`} sub={`${usd2(fuel.petrol * 3.78541)}/gal`} />}
+          {fuel && fuel.diesel != null && <Metric label="Diesel" value={`${usd2(fuel.diesel)}/L`} sub={`${usd2(fuel.diesel * 3.78541)}/gal`} />}
+        </div>
+
+        {ppp != null && (
+          <div style={{ marginTop: 18, padding: "14px 16px", background: "rgba(242,169,59,0.07)", border: "1px solid rgba(242,169,59,0.22)" }}>
+            <div style={{ font: "600 10px 'Archivo',sans-serif", letterSpacing: ".1em", textTransform: "uppercase", color: C.accent }}>Adjusted for purchasing power</div>
+            <p style={{ fontSize: 13, color: C.text, margin: "5px 0 0" }}>
+              Household electricity costs about <strong>{usd(ppp)} per kWh in international dollars</strong> (nominal {usd(country.elecRes)}), reflecting local purchasing power rather than the market exchange rate. Illustrative.
+            </p>
+          </div>
+        )}
+
+        {subs && (
+          <section style={{ marginTop: 30 }}>
+            <h2 style={{ font: "800 22px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em" }}>By {subMeta ? subMeta.unit : "region"}</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: "2px 24px", marginTop: 8 }}>
+              {subs.filter((s) => s.elecRes != null).map((s) => (
+                <div key={s.name} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${C.line}`, fontSize: 13 }}>
+                  <span>{s.name}</span><span style={{ fontFamily: "'IBM Plex Mono',monospace", color: C.accent }}>{usd(s.elecRes)}/kWh</span>
+                </div>
+              ))}
+            </div>
+            {subMeta && subMeta.note && <p style={{ fontSize: 11, color: C.dim, marginTop: 8 }}>※ {subMeta.note}</p>}
+          </section>
+        )}
+
+        <section style={{ marginTop: 34, paddingTop: 18, borderTop: `1px solid ${C.line}`, fontSize: 12, color: C.dim, lineHeight: 1.7 }}>
+          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included, sourced from {country.source} and converted to USD at recent reference rates. Electricity and gas are end-user retail prices per kWh. {country.note ? `Note: ${country.note}.` : ""} Voltlas aggregates only freely republishable official data; coverage and update frequency vary by country.
+          <div style={{ marginTop: 12 }}><Link href="/" style={{ color: C.accent, textDecoration: "none" }}>← Back to the full Voltlas dashboard</Link></div>
+        </section>
+      </div>
+    </main>
+  );
+}
