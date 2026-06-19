@@ -6,7 +6,6 @@ import Dashboard from "./components/Dashboard";
 export const metadata = {
   title: "Voltlas — global energy, fuel & commodity prices",
   description: "What the world pays for electricity, gas, transport fuels and commodities, from free official sources.",
-   robots: { index: false, follow: false },
 };
 
 export default function Home() {

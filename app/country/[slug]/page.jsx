@@ -38,7 +38,6 @@ export async function generateMetadata({ params }) {
     title: `${country.geo} energy prices — electricity & natural gas · Voltlas`,
     description: `Current household & business electricity and natural gas prices in ${country.geo}${bits.length ? ": " + bits.join(", ") : ""}. From free official sources (${country.source}), updated ${country.period}.`,
     alternates: { canonical: `/country/${slug}` },
-    robots: { index: false, follow: false }, // TODO: remove this line at public launch
   };
 }
 
