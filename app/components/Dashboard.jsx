@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 // ════════════════════════════════════════════════════════════════
 // VOLTLAS — the price of energy, the fuels and materials that power it.
@@ -40,12 +40,25 @@ function hexFromRamp(t) {
 
 const GRID = "minmax(108px, 1fr) 1.4fr 62px 124px"; // name | rail | spark | price
 
+// Best-effort: is the visitor in the US? (timezone first, locale as backup.)
+function viewerIsUS() {
+  if (typeof window === "undefined") return false;
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    const US_TZ = new Set(["America/New_York","America/Detroit","America/Chicago","America/Denver","America/Boise","America/Phoenix","America/Los_Angeles","America/Anchorage","America/Juneau","America/Sitka","America/Nome","America/Adak","Pacific/Honolulu","America/Menominee","America/Indiana/Indianapolis","America/Kentucky/Louisville"]);
+    if (US_TZ.has(tz)) return true;
+    const lang = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+    return /[-_]US$/i.test(lang);
+  } catch (e) { return false; }
+}
+
 export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META, SUBNATIONAL, FX, FX_DATE, COUNTRY_CCY, FUEL_DATA, FUEL_CADENCE, FUEL_SUB_META, FUEL_SUBNATIONAL, COMMODITY_CATS, COMMODITIES }) {
   const [view, setView] = useState("energy"); // energy | fuels | commodities | map
   const [fuel, setFuel] = useState("electricity");
   const [sector, setSector] = useState("res");
   const [tfuel, setTfuel] = useState("petrol");
   const [fUnit, setFUnit] = useState("L");
+  useEffect(() => { if (viewerIsUS()) setFUnit("gal"); }, []);
   const [region, setRegion] = useState("All");
   const [sortDesc, setSortDesc] = useState(true);
   const [expanded, setExpanded] = useState(() => new Set());
@@ -156,11 +169,11 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
       e && e.elecRes != null && { label: "Electricity · household", v: e.elecRes, unit: "/kWh", key: `${detail}-er`, big: true },
       e && e.elecBiz != null && { label: "Electricity · business", v: e.elecBiz, unit: "/kWh", key: `${detail}-eb` },
       e && e.gasRes != null && { label: "Natural gas · household", v: e.gasRes, unit: "/kWh", key: `${detail}-gr` },
-      f && f.petrol != null && { label: "Petrol", v: f.petrol, unit: "/L", key: `${detail}-pe` },
-      f && f.diesel != null && { label: "Diesel", v: f.diesel, unit: "/L", key: `${detail}-di` },
+      f && f.petrol != null && { label: "Petrol", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe` },
+      f && f.diesel != null && { label: "Diesel", v: toU(f.diesel), unit: "/" + fuLabel, key: `${detail}-di` },
     ].filter(Boolean);
     return { e, f, metrics };
-  }, [detail]);
+  }, [detail, fUnit]);
 
   return (
     <div style={{ minHeight: "100vh", background: "#171E2E", color: "#E8E4DA", fontFamily: "'Archivo', system-ui, sans-serif" }}>
@@ -459,7 +472,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               <div key={m.key} style={{ display: "grid", gridTemplateColumns: "1fr 70px 110px", gap: 12, alignItems: "center", padding: "9px 0", borderBottom: "1px solid rgba(232,228,218,0.07)" }}>
                 <div style={{ fontSize: 13, color: "rgba(232,228,218,0.88)" }}>{m.label}</div>
                 <Spark seed={detail + m.key} value={m.v} w={64} h={20} color={m.big ? "#F2A93B" : "rgba(232,228,218,0.6)"} />
-                <div style={{ textAlign: "right", font: "600 15px 'IBM Plex Mono'" }}>{m.unit === "/L" ? fmtFuel(m.v) : fmt(m.v)}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>{m.unit}</span></div>
+                <div style={{ textAlign: "right", font: "600 15px 'IBM Plex Mono'" }}>{(m.unit === "/L" || m.unit === "/gal") ? fmtFuel(m.v) : fmt(m.v)}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>{m.unit}</span></div>
               </div>
             ))}
 
