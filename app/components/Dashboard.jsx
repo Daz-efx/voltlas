@@ -184,7 +184,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "30px 20px 64px" }}>
         {/* Tabs + methodology link */}
         <div style={{ display: "flex", gap: 24, alignItems: "center", borderBottom: "1px solid rgba(232,228,218,0.16)", marginBottom: 24 }}>
-          {[["energy", "Retail energy"], ["fuels", "Transport fuels"], ["commodities", "Commodities"], ["map", "Map"]].map(([k, label]) => (
+          {[["energy", "Retail energy"], ["map", "Map"]].map(([k, label]) => (
             <button key={k} className="tab" onClick={() => setView(k)} style={{ color: view === k ? "#E8E4DA" : "rgba(232,228,218,0.5)", borderBottomColor: view === k ? accent : "transparent" }}>{label}</button>
           ))}
           <button className="tab" onClick={() => setShowMethod(true)} style={{ marginLeft: "auto", fontSize: 12, color: "rgba(232,228,218,0.5)" }}>Methodology</button>
@@ -204,7 +204,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
-          <div style={{ marginTop: 10, display: "inline-block", font: "600 10px 'IBM Plex Mono'", letterSpacing: ".12em", color: "#171E2E", background: "#E8E4DA", padding: "3px 8px", textTransform: "uppercase" }}>Prototype · representative sample data</div>
+          <div style={{ marginTop: 10, display: "inline-block", font: "600 10px 'IBM Plex Mono'", letterSpacing: ".12em", color: "#171E2E", background: "#E8E4DA", padding: "3px 8px", textTransform: "uppercase" }}>Live · free official sources</div>
         </div>
 
         {/* ENERGY */}
