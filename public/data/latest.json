@@ -714,7 +714,16 @@
     "Slovakia": "EUR",
     "Iceland": "ISK"
   },
-  "FUEL_DATA": [],
+  "FUEL_DATA": [
+    {
+      "geo": "United States",
+      "region": "N. America",
+      "petrol": 1.07,
+      "diesel": 1.336,
+      "source": "EIA",
+      "period": "15 Jun 2026"
+    }
+  ],
   "FUEL_CADENCE": {
     "EC Oil Bulletin": "weekly",
     "DESNZ": "weekly",
@@ -735,7 +744,55 @@
       "source": "NRCan · weekly"
     }
   },
-  "FUEL_SUBNATIONAL": {},
+  "FUEL_SUBNATIONAL": {
+    "United States": [
+      {
+        "name": "California",
+        "petrol": 1.467,
+        "diesel": null
+      },
+      {
+        "name": "Washington",
+        "petrol": 1.411,
+        "diesel": null
+      },
+      {
+        "name": "New York",
+        "petrol": 1.107,
+        "diesel": null
+      },
+      {
+        "name": "Ohio",
+        "petrol": 1.078,
+        "diesel": null
+      },
+      {
+        "name": "Massachusetts",
+        "petrol": 1.074,
+        "diesel": null
+      },
+      {
+        "name": "Colorado",
+        "petrol": 1.043,
+        "diesel": null
+      },
+      {
+        "name": "Minnesota",
+        "petrol": 1.013,
+        "diesel": null
+      },
+      {
+        "name": "Florida",
+        "petrol": 0.988,
+        "diesel": null
+      },
+      {
+        "name": "Texas",
+        "petrol": 0.907,
+        "diesel": null
+      }
+    ]
+  },
   "COMMODITY_CATS": [
     {
       "key": "energy",

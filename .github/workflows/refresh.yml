@@ -34,6 +34,7 @@ jobs:
           node scripts/update-eia.mjs
           node scripts/update-eurostat.mjs
           node scripts/update-commodities.mjs
+          node scripts/update-fuels.mjs
 
       - name: Commit and push if data changed
         run: |

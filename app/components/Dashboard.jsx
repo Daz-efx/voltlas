@@ -184,7 +184,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "30px 20px 64px" }}>
         {/* Tabs + methodology link */}
         <div style={{ display: "flex", gap: 24, alignItems: "center", borderBottom: "1px solid rgba(232,228,218,0.16)", marginBottom: 24 }}>
-          {[["energy", "Retail energy"], ["commodities", "Commodities"], ["map", "Map"]].map(([k, label]) => (
+          {[["energy", "Retail energy"], ["fuels", "Transport fuels"], ["commodities", "Commodities"], ["map", "Map"]].map(([k, label]) => (
             <button key={k} className="tab" onClick={() => setView(k)} style={{ color: view === k ? "#E8E4DA" : "rgba(232,228,218,0.5)", borderBottomColor: view === k ? accent : "transparent" }}>{label}</button>
           ))}
           <button className="tab" onClick={() => setShowMethod(true)} style={{ marginLeft: "auto", fontSize: 12, color: "rgba(232,228,218,0.5)" }}>Methodology</button>
@@ -196,11 +196,11 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             ⚡ Voltlas · the price of energy — and the fuels &amp; materials that power it
           </div>
           <h1 style={{ font: "800 46px/1 'Saira Condensed'", margin: 0, textTransform: "uppercase", letterSpacing: ".01em" }}>
-            {view === "commodities" ? "What the world pays for raw materials" : view === "fuels" ? "What the world pays at the pump" : view === "map" ? "The price of power, mapped" : `What the world pays for ${fuel === "gas" ? "natural gas" : "electricity"}`}
+            {view === "commodities" ? "What the world pays for raw materials" : view === "fuels" ? "What America pays at the pump" : view === "map" ? "The price of power, mapped" : `What the world pays for ${fuel === "gas" ? "natural gas" : "electricity"}`}
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
             {view === "commodities" ? "Global energy benchmark spot prices in USD — crude oil (WTI, Brent) and natural gas (Henry Hub) — updated daily from the EIA (public domain). Metals and agricultural commodities are coming next. Live intraday exchange quotes are licensed and excluded."
-              : view === "fuels" ? "Retail pump prices in USD, all taxes included. Toggle $/litre and $/US gallon; US rows show both. Hover any price for the exact FX rate and date. Click a country for its full profile."
+              : view === "fuels" ? "Live US retail gasoline and diesel, taxes included, from the EIA (weekly). Toggle $/litre and $/US gallon, and click the US for its state-by-state breakdown. More countries are being wired in."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
