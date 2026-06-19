@@ -1,10 +1,16 @@
 // scripts/update-commodities.mjs
 // Energy commodity spot prices from the EIA API v2 -> public/data/latest.json.
-//   • Crude oil — WTI    (series RWTC)   petroleum/pri/spt   $/bbl
-//   • Crude oil — Brent  (series RBRTE)  petroleum/pri/spt   $/bbl
-//   • Natural gas — Henry Hub (RNGWHHD)  natural-gas/pri/fut $/MMBtu
-// Each price carries a ~1-month % change. Metals / precious / agriculture come
-// from the World Bank Pink Sheet (separate, Excel-based) — not this script.
+//
+// This script OWNS the COMMODITIES list and rebuilds it from the three EIA
+// energy benchmarks on every run, so no stale or sample rows can ever linger:
+//   • Crude oil — WTI         (RWTC)     petroleum/pri/spt     $/bbl
+//   • Crude oil — Brent       (RBRTE)    petroleum/pri/spt     $/bbl
+//   • Natural gas — Henry Hub (RNGWHHD)  natural-gas/pri/fut   $/MMBtu
+// Each price carries a ~1-month % change. If a single fetch fails, the last
+// good value for that benchmark is kept rather than dropped.
+//
+// (Metals / precious / agriculture from the World Bank Pink Sheet are a future
+//  connector; when added, merge its rows in here so neither overwrites the other.)
 //
 // Run from your project root:
 //   EIA_API_KEY=your_key  node scripts/update-commodities.mjs
@@ -14,7 +20,7 @@ import path from "node:path";
 
 const API_KEY = process.env.EIA_API_KEY;
 if (!API_KEY) {
-  console.error("✗ Missing EIA_API_KEY.\n  Run:  EIA_API_KEY=your_key node scripts/update-commodities.mjs");
+  console.error("\u2717 Missing EIA_API_KEY.\n  Run:  EIA_API_KEY=your_key node scripts/update-commodities.mjs");
   process.exit(1);
 }
 const DATA_FILE = path.join(process.cwd(), "public", "data", "latest.json");
@@ -50,35 +56,39 @@ async function tryS(label, route, series) {
     console.log(`  ${label}: $${r.value} (${fmtDate(r.period)}, ${r.chg >= 0 ? "+" : ""}${round1(r.chg)}%)`);
     return r;
   } catch (e) {
-    console.warn(`  ⚠ ${label} failed (${e.message}) — left unchanged`);
+    console.warn(`  \u26a0 ${label} failed (${e.message})`);
     return null;
   }
 }
 
+const SPECS = [
+  { name: "Crude oil \u2014 WTI",         route: "petroleum/pri/spt",   series: "RWTC",    unit: "$/bbl",    dec: 1 },
+  { name: "Crude oil \u2014 Brent",       route: "petroleum/pri/spt",   series: "RBRTE",   unit: "$/bbl",    dec: 1 },
+  { name: "Natural gas \u2014 Henry Hub", route: "natural-gas/pri/fut", series: "RNGWHHD", unit: "$/MMBtu", dec: 2 },
+];
+
 async function main() {
   const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-  const wti = await tryS("WTI", "petroleum/pri/spt", "RWTC");
-  const brent = await tryS("Brent", "petroleum/pri/spt", "RBRTE");
-  const hh = await tryS("Henry Hub", "natural-gas/pri/fut", "RNGWHHD");
+  const prior = Object.fromEntries((data.COMMODITIES || []).map((c) => [c.name, c]));
 
-  const apply = (name, r, dec) => {
-    if (!r) return 0;
-    const c = data.COMMODITIES.find((x) => x.name === name);
-    if (!c) { console.warn(`  (no commodity row "${name}")`); return 0; }
-    c.price = dec === 2 ? round2(r.value) : round1(r.value);
-    c.chg = round1(r.chg);
-    c.source = "EIA";
-    c.period = fmtDate(r.period);
-    return 1;
-  };
+  const rows = [];
+  for (const s of SPECS) {
+    const r = await tryS(s.name, s.route, s.series);
+    if (r) {
+      rows.push({
+        name: s.name, cat: "energy",
+        price: s.dec === 2 ? round2(r.value) : round1(r.value),
+        unit: s.unit, chg: round1(r.chg), source: "EIA", period: fmtDate(r.period),
+      });
+    } else if (prior[s.name]) {
+      console.warn(`  \u2192 keeping last good value for ${s.name}`);
+      rows.push(prior[s.name]);
+    }
+  }
 
-  let n = 0;
-  n += apply("Crude oil — WTI", wti, 1);
-  n += apply("Crude oil — Brent", brent, 1);
-  n += apply("Natural gas — Henry Hub", hh, 2);
-
+  data.COMMODITIES = rows; // owns the list — energy benchmarks only, all real
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n");
-  console.log(`✓ Commodities (EIA energy) — ${n} of 3 updated.`);
+  console.log(`\u2713 Commodities (EIA energy) \u2014 ${rows.length} of ${SPECS.length} written.`);
 }
 
-main().catch((e) => { console.error("✗ " + e.message); process.exit(1); });
+main().catch((e) => { console.error("\u2717 " + e.message); process.exit(1); });

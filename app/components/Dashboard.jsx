@@ -184,7 +184,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "30px 20px 64px" }}>
         {/* Tabs + methodology link */}
         <div style={{ display: "flex", gap: 24, alignItems: "center", borderBottom: "1px solid rgba(232,228,218,0.16)", marginBottom: 24 }}>
-          {[["energy", "Retail energy"], ["map", "Map"]].map(([k, label]) => (
+          {[["energy", "Retail energy"], ["commodities", "Commodities"], ["map", "Map"]].map(([k, label]) => (
             <button key={k} className="tab" onClick={() => setView(k)} style={{ color: view === k ? "#E8E4DA" : "rgba(232,228,218,0.5)", borderBottomColor: view === k ? accent : "transparent" }}>{label}</button>
           ))}
           <button className="tab" onClick={() => setShowMethod(true)} style={{ marginLeft: "auto", fontSize: 12, color: "rgba(232,228,218,0.5)" }}>Methodology</button>
@@ -199,7 +199,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             {view === "commodities" ? "What the world pays for raw materials" : view === "fuels" ? "What the world pays at the pump" : view === "map" ? "The price of power, mapped" : `What the world pays for ${fuel === "gas" ? "natural gas" : "electricity"}`}
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
-            {view === "commodities" ? "Global benchmark prices in USD. Energy spot prices update daily (EIA, public domain); metals, precious metals and agriculture are monthly averages (World Bank). Live intraday exchange quotes are licensed and excluded."
+            {view === "commodities" ? "Global energy benchmark spot prices in USD — crude oil (WTI, Brent) and natural gas (Henry Hub) — updated daily from the EIA (public domain). Metals and agricultural commodities are coming next. Live intraday exchange quotes are licensed and excluded."
               : view === "fuels" ? "Retail pump prices in USD, all taxes included. Toggle $/litre and $/US gallon; US rows show both. Hover any price for the exact FX rate and date. Click a country for its full profile."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
@@ -500,10 +500,10 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               <button onClick={() => setShowMethod(false)} aria-label="Close" style={{ background: "transparent", border: "1px solid rgba(232,228,218,0.3)", color: "#E8E4DA", cursor: "pointer", padding: "4px 10px", font: "600 14px 'Archivo'" }}>✕</button>
             </div>
             <div style={{ fontSize: 13, color: "rgba(232,228,218,0.78)", lineHeight: 1.7 }}>
-              <p style={{ marginTop: 0 }}><strong>Free sources only.</strong> Every figure comes from a source that permits public republication: EIA (US, public domain), Eurostat, UK DESNZ, the EC Weekly Oil Bulletin, national regulators (AER, ANEEL, CFE, NRCan, MBIE, ANP, CRE), and the World Bank Pink Sheet for commodities. No licensed feeds are displayed.</p>
-              <p><strong>What each number is.</strong> Retail energy is taxes-included, stored in local currency and converted to USD at display time. Some figures aren't consumption-weighted averages — the US value is EIA's revenue-per-kWh proxy, Australia's is the AER Default Market Offer (a regulated cap), and several are regulated tariffs; these are flagged with ※.</p>
-              <p><strong>Cadence &amp; freshness.</strong> Transport fuels update weekly, US electricity monthly, Eurostat semi-annually, commodities monthly (energy spot daily). Every figure carries its source and period; a production build also runs connector health checks to catch a stale source within a day.</p>
-              <p><strong>Coverage gaps are shown, not filled.</strong> Coverage is strongest across Europe and North America. Where no free source exists, the country is absent rather than estimated. Sub-national drill-down appears only where a free source publishes it (US all 50 states; Canada, Australia, Brazil, Mexico partially).</p>
+              <p style={{ marginTop: 0 }}><strong>Free sources only.</strong> Every figure comes from a source that permits public republication: the EIA (US electricity, natural gas and energy-commodity spot prices — public domain) and Eurostat (EU household and business electricity and gas). More official sources are being wired in as coverage expands. No licensed feeds are displayed.</p>
+              <p><strong>What each number is.</strong> Retail energy is taxes-included, stored in local currency and converted to USD at display time. Some figures aren't consumption-weighted averages — the US value is EIA's revenue-per-kWh proxy, and several European figures are regulated tariffs; these are flagged with ※.</p>
+              <p><strong>Cadence &amp; freshness.</strong> US electricity refreshes monthly and energy-commodity spot prices daily (both EIA); Eurostat publishes semi-annually. The site re-runs every connector weekly and self-updates. Every figure carries its source and period.</p>
+              <p><strong>Coverage gaps are shown, not filled.</strong> Coverage is strongest across Europe and North America. Where no free source exists, the country is absent rather than estimated. Sub-national drill-down appears only where a free source publishes it (US, all 50 states).</p>
               <p style={{ marginBottom: 0 }}><strong>Currency &amp; PPP.</strong> Hover any price for the exact FX rate and date. Country profiles also show a purchasing-power-adjusted figure (illustrative), which reflects local affordability rather than the market exchange rate.</p>
             </div>
           </div>
