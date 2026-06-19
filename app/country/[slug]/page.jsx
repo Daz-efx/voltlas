@@ -6,8 +6,12 @@ import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RANKINGS } from "../../rankings/config";
 
 export const dynamicParams = false; // only the countries we build; everything else 404s
+
+const SITE = "https://voltlas.com";
+const YEAR = new Date().getFullYear();
 
 function loadData() {
   const file = path.join(process.cwd(), "public", "data", "latest.json");
@@ -30,15 +34,19 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const { country } = find(slug);
-  if (!country) return { title: "Country not found · Voltlas" };
+  if (!country) return { title: "Country not found" };
   const bits = [];
   if (country.elecRes != null) bits.push(`electricity ${usd(country.elecRes)}/kWh`);
   if (country.gasRes != null) bits.push(`gas ${usd(country.gasRes)}/kWh`);
+  const title = `${country.geo} electricity & gas prices (${YEAR})`;
+  const description = `Current household and business electricity and natural gas prices in ${country.geo}${bits.length ? ": " + bits.join(", ") : ""}. Taxes included, in USD, from ${country.source} — updated ${country.period}.`;
+  const url = `/country/${slug}`;
   return {
-    title: `${country.geo} energy prices — electricity & natural gas · Voltlas`,
-    description: `Current household & business electricity and natural gas prices in ${country.geo}${bits.length ? ": " + bits.join(", ") : ""}. From free official sources (${country.source}), updated ${country.period}.`,
-    alternates: { canonical: `/country/${slug}` },
-    robots: { index: false, follow: false }, // TODO: remove this line at public launch
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: "article", title: `${title} · Voltlas`, description, url },
+    twitter: { card: "summary_large_image", title: `${title} · Voltlas`, description },
   };
 }
 
@@ -67,9 +75,48 @@ export default async function CountryPage({ params }) {
   const fuel = (data.FUEL_DATA || []).find((f) => f.geo === country.geo);
   const subs = (data.SUBNATIONAL && data.SUBNATIONAL[country.geo]) || null;
   const subMeta = (data.SUB_META && data.SUB_META[country.geo]) || null;
+  const related =
+    country.geo === "United States"
+      ? ["us-electricity-prices-by-state", "us-gas-prices-by-state", "electricity-prices-by-country", "natural-gas-prices-by-country"]
+      : country.region === "Europe"
+      ? ["cheapest-electricity-in-europe", "most-expensive-electricity-in-europe", "natural-gas-prices-by-country", "electricity-prices-by-country"]
+      : ["electricity-prices-by-country", "natural-gas-prices-by-country"];
+
+  const url = `${SITE}/country/${slug}`;
+  const measured = [
+    country.elecRes != null && { "@type": "PropertyValue", name: "Residential electricity price", value: country.elecRes, unitText: "USD per kWh" },
+    country.elecBiz != null && { "@type": "PropertyValue", name: "Business electricity price", value: country.elecBiz, unitText: "USD per kWh" },
+    country.gasRes != null && { "@type": "PropertyValue", name: "Residential natural gas price", value: country.gasRes, unitText: "USD per kWh" },
+    fuel && fuel.petrol != null && { "@type": "PropertyValue", name: "Petrol price", value: fuel.petrol, unitText: "USD per litre" },
+    fuel && fuel.diesel != null && { "@type": "PropertyValue", name: "Diesel price", value: fuel.diesel, unitText: "USD per litre" },
+  ].filter(Boolean);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Voltlas", item: SITE },
+          { "@type": "ListItem", position: 2, name: country.geo, item: url },
+        ],
+      },
+      {
+        "@type": "Dataset",
+        name: `${country.geo} electricity, gas and fuel prices`,
+        description: `Retail electricity, natural gas and transport-fuel prices for ${country.geo}, in USD, from ${country.source}.`,
+        url,
+        isAccessibleForFree: true,
+        creator: { "@type": "Organization", name: "Voltlas", url: SITE },
+        sourceOrganization: { "@type": "Organization", name: country.source },
+        temporalCoverage: String(country.period),
+        variableMeasured: measured,
+      },
+    ],
+  };
 
   return (
     <main style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Archivo',system-ui,sans-serif" }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=IBM+Plex+Mono:wght@400;600&family=Archivo:wght@400;500;600&display=swap');`}</style>
       <div style={{ maxWidth: 880, margin: "0 auto", padding: "40px 20px 64px" }}>
         <Link href="/" style={{ font: "600 11px 'IBM Plex Mono',monospace", color: C.accent, textDecoration: "none", letterSpacing: ".08em" }}>← VOLTLAS</Link>
@@ -108,6 +155,17 @@ export default async function CountryPage({ params }) {
               ))}
             </div>
             {subMeta && subMeta.note && <p style={{ fontSize: 11, color: C.dim, marginTop: 8 }}>※ {subMeta.note}</p>}
+          </section>
+        )}
+
+        {related.length > 0 && (
+          <section style={{ marginTop: 30 }}>
+            <h2 style={{ font: "800 18px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em" }}>Related rankings</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", marginTop: 10 }}>
+              {related.map((s) => { const r = RANKINGS.find((x) => x.slug === s); return r ? (
+                <Link key={s} href={`/rankings/${s}`} style={{ font: "500 13px 'Archivo',sans-serif", color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}`, paddingBottom: 2 }}>{r.h1}</Link>
+              ) : null; })}
+            </div>
           </section>
         )}
 
