@@ -7,6 +7,7 @@ import path from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RANKINGS } from "../../rankings/config";
+import { COMPARISONS } from "../../compare/config";
 
 export const dynamicParams = false; // only the countries we build; everything else 404s
 
@@ -81,6 +82,7 @@ export default async function CountryPage({ params }) {
       : country.region === "Europe"
       ? ["cheapest-electricity-in-europe", "most-expensive-electricity-in-europe", "natural-gas-prices-by-country", "electricity-prices-by-country"]
       : ["electricity-prices-by-country", "natural-gas-prices-by-country"];
+  const compares = COMPARISONS.filter(([a, b]) => a === country.geo || b === country.geo).slice(0, 6);
 
   const url = `${SITE}/country/${slug}`;
   const measured = [
@@ -165,6 +167,17 @@ export default async function CountryPage({ params }) {
               {related.map((s) => { const r = RANKINGS.find((x) => x.slug === s); return r ? (
                 <Link key={s} href={`/rankings/${s}`} style={{ font: "500 13px 'Archivo',sans-serif", color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}`, paddingBottom: 2 }}>{r.h1}</Link>
               ) : null; })}
+            </div>
+          </section>
+        )}
+
+        {compares.length > 0 && (
+          <section style={{ marginTop: 26 }}>
+            <h2 style={{ font: "800 18px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em" }}>Compare {country.geo}</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", marginTop: 10 }}>
+              {compares.map(([a, b]) => (
+                <Link key={`${a}-${b}`} href={`/compare/${slugify(a)}-vs-${slugify(b)}`} style={{ font: "500 13px 'Archivo',sans-serif", color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}`, paddingBottom: 2 }}>{a} vs {b}</Link>
+              ))}
             </div>
           </section>
         )}
