@@ -4,29 +4,26 @@
 #
 # Requires one repository secret: EIA_API_KEY  (Settings -> Secrets and
 # variables -> Actions -> New repository secret).
-
 name: refresh-data
-
 on:
   schedule:
     - cron: "0 6 * * 1"   # every Monday at 06:00 UTC
   workflow_dispatch: {}    # also lets you run it by hand from the Actions tab
-
 permissions:
   contents: write           # allows the workflow to push the refreshed data
-
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-
+          cache: "npm"        # cache deps so npm ci is fast after the first run
+      - name: Install dependencies
+        run: npm ci           # needed for exceljs (used by update-eu-fuels.mjs)
       - name: Run connectors
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
@@ -35,7 +32,7 @@ jobs:
           node scripts/update-eurostat.mjs
           node scripts/update-commodities.mjs
           node scripts/update-fuels.mjs
-
+          node scripts/update-eu-fuels.mjs || echo "eu-fuels step failed; keeping prior EU data"
       - name: Commit and push if data changed
         run: |
           git config user.name "voltlas-bot"
