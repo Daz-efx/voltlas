@@ -30,6 +30,12 @@ function rowsFor(cfg, data) {
     arr = arr.slice().sort((a, b) => (cfg.order === "asc" ? a[cfg.metric] - b[cfg.metric] : b[cfg.metric] - a[cfg.metric]));
     return arr.map((c) => ({ name: c.geo, value: c[cfg.metric], slug: slugify(c.geo), source: c.source, period: c.period }));
   }
+  if (cfg.source === "fuel-country") {
+    let arr = (data.FUEL_DATA || []).filter((c) => c[cfg.metric] != null);
+    if (cfg.scope === "europe") arr = arr.filter((c) => c.region === "Europe");
+    arr = arr.slice().sort((a, b) => (cfg.order === "asc" ? a[cfg.metric] - b[cfg.metric] : b[cfg.metric] - a[cfg.metric]));
+    return arr.map((c) => ({ name: c.geo, value: c[cfg.metric], slug: slugify(c.geo), source: c.source, period: c.period }));
+  }
   if (cfg.source === "us-elec-state") {
     const us = (data.SUBNATIONAL || {})["United States"] || [];
     return us.filter((s) => s.elecRes != null).slice().sort((a, b) => (cfg.order === "asc" ? a.elecRes - b.elecRes : b.elecRes - a.elecRes)).map((s) => ({ name: s.name, value: s.elecRes }));
@@ -41,8 +47,8 @@ function rowsFor(cfg, data) {
   return [];
 }
 
-const fmtValue = (cfg, v) => (cfg.kind === "fuel" ? `${usd2(v * GAL)}/gal` : `${usd(v)}/kWh`);
-const fmtSub = (cfg, v) => (cfg.kind === "fuel" ? `${usd2(v)}/L` : null);
+const fmtValue = (cfg, v) => (cfg.kind !== "fuel" ? `${usd(v)}/kWh` : cfg.unit === "L" ? `${usd2(v)}/L` : `${usd2(v * GAL)}/gal`);
+const fmtSub = (cfg, v) => (cfg.kind !== "fuel" ? null : cfg.unit === "L" ? `${usd2(v * GAL)}/gal` : `${usd2(v)}/L`);
 
 export function generateStaticParams() {
   return RANKINGS.map((r) => ({ slug: r.slug }));
@@ -77,6 +83,10 @@ export default async function RankingPage({ params }) {
   const rows = rowsFor(cfg, data);
   const others = RANKINGS.filter((r) => r.slug !== slug);
   const period = rows.find((r) => r.period)?.period || `${YEAR}`;
+
+  const methodology = cfg.kind === "fuel"
+    ? "Prices are all-taxes-included retail pump prices, drawn from free official sources — the EIA weekly survey for the US and the EC Weekly Oil Bulletin for the EU — and converted to USD at recent reference rates. Pump prices are shown per litre and per gallon. Figures update on Voltlas weekly; this ranking reflects the latest published period for each entry."
+    : "Prices are all-taxes-included end-user retail prices, drawn from free official sources (EIA for the US; Eurostat for the EU) and converted to USD at recent reference rates. Electricity and gas are retail prices per kWh. Figures update on Voltlas weekly; this ranking reflects the latest published period for each entry.";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -126,7 +136,7 @@ export default async function RankingPage({ params }) {
         </section>
 
         <section style={{ marginTop: 30, paddingTop: 18, borderTop: `1px solid ${C.line}`, fontSize: 12, color: C.dim, lineHeight: 1.7 }}>
-          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included, drawn from free official sources (EIA for the US; Eurostat for the EU) and converted to USD at recent reference rates. Electricity and gas are end-user retail prices per kWh; gasoline is retail per gallon and per litre. Figures update on Voltlas weekly; this ranking reflects the latest published period for each entry.
+          <strong style={{ color: C.text }}>Methodology.</strong> {methodology}
           <div style={{ marginTop: 12 }}><Link href="/" style={{ color: C.accent, textDecoration: "none" }}>← Back to the full Voltlas dashboard</Link></div>
         </section>
       </div>

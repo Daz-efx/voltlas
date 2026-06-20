@@ -18,4 +18,6 @@ export const COMPARISONS = [
   ["Sweden", "Norway"],
   ["Spain", "Portugal"],
   ["United States", "Germany"],
+  ["Netherlands", "Poland"],
+  ["United States", "France"],
 ];

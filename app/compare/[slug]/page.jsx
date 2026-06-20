@@ -19,6 +19,7 @@ function loadData() {
 }
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const usd = (v) => `$${Number(v).toFixed(3)}`;
+const usd2 = (v) => `$${Number(v).toFixed(2)}`;
 const pairSlug = (a, b) => `${slugify(a)}-vs-${slugify(b)}`;
 
 function findPair(slug, data) {
@@ -29,10 +30,18 @@ function findPair(slug, data) {
   return A && B ? { A, B } : null;
 }
 
+// Merge petrol/diesel (USD/L) from FUEL_DATA onto a country record.
+function withFuel(country, data) {
+  const f = (data.FUEL_DATA || []).find((x) => x.geo === country.geo);
+  return { ...country, petrol: f?.petrol ?? null, diesel: f?.diesel ?? null };
+}
+
 const METRICS = [
-  { label: "Electricity · household", key: "elecRes" },
-  { label: "Electricity · business", key: "elecBiz" },
-  { label: "Natural gas · household", key: "gasRes" },
+  { label: "Electricity · household", key: "elecRes", unit: "kWh" },
+  { label: "Electricity · business", key: "elecBiz", unit: "kWh" },
+  { label: "Natural gas · household", key: "gasRes", unit: "kWh" },
+  { label: "Petrol · Euro-95", key: "petrol", unit: "L", fuel: true },
+  { label: "Diesel", key: "diesel", unit: "L", fuel: true },
 ];
 
 function compareMetric(A, B, key) {
@@ -59,8 +68,8 @@ export async function generateMetadata({ params }) {
       ? ` Household electricity costs about the same in both (${usd(e.a)}/kWh).`
       : ` Household electricity is ~${e.diff}% cheaper in ${e.cheaper.geo} (${usd(e.cheaper.elecRes)}/kWh).`
     : "";
-  const title = `${A.geo} vs ${B.geo}: electricity & gas prices (${YEAR})`;
-  const description = `Compare household and business electricity and natural gas prices in ${A.geo} and ${B.geo}, in USD, taxes included, from official sources.${verdict}`;
+  const title = `${A.geo} vs ${B.geo}: electricity, gas & fuel prices (${YEAR})`;
+  const description = `Compare electricity, natural gas, and pump prices (petrol and diesel) in ${A.geo} and ${B.geo}, in USD, taxes included, from official sources.${verdict}`;
   const url = `/compare/${slug}`;
   return {
     title,
@@ -78,9 +87,11 @@ export default async function ComparePage({ params }) {
   const data = loadData();
   const pair = findPair(slug, data);
   if (!pair) notFound();
-  const { A, B } = pair;
+  const A = withFuel(pair.A, data);
+  const B = withFuel(pair.B, data);
 
   const rows = METRICS.map((m) => ({ ...m, cmp: compareMetric(A, B, m.key) })).filter((r) => r.cmp);
+  const hasFuel = rows.some((r) => r.fuel);
   const elec = compareMetric(A, B, "elecRes");
   const others = COMPARISONS.filter(([a, b]) => pairSlug(a, b) !== slug && (a === A.geo || b === A.geo || a === B.geo || b === B.geo)).slice(0, 6);
 
@@ -106,9 +117,11 @@ export default async function ComparePage({ params }) {
     const v = side === "A" ? row.cmp.a : row.cmp.b;
     const country = side === "A" ? A : B;
     const isCheaper = !row.cmp.same && row.cmp.cheaper === country;
+    const unit = row.unit || "kWh";
+    const txt = row.fuel ? usd2(v) : usd(v);
     return (
       <span style={{ font: "600 15px 'IBM Plex Mono',monospace", color: isCheaper ? C.green : C.text }}>
-        {usd(v)}<span style={{ fontSize: 10, color: C.dim }}>/kWh</span>{isCheaper && <span style={{ color: C.green, fontSize: 11 }}> ✓</span>}
+        {txt}<span style={{ fontSize: 10, color: C.dim }}>/{unit}</span>{isCheaper && <span style={{ color: C.green, fontSize: 11 }}> ✓</span>}
       </span>
     );
   };
@@ -123,7 +136,7 @@ export default async function ComparePage({ params }) {
         <div style={{ font: "600 11px 'IBM Plex Mono',monospace", letterSpacing: ".18em", color: C.accent, textTransform: "uppercase", margin: "26px 0 6px" }}>Comparison · {YEAR}</div>
         <h1 style={{ font: "800 42px/1.04 'Saira Condensed',sans-serif", margin: 0, textTransform: "uppercase" }}>{A.geo} vs {B.geo}</h1>
         <p style={{ color: C.dim, fontSize: 15, maxWidth: 620, marginTop: 12 }}>
-          Household and business electricity and natural gas prices in {A.geo} and {B.geo}, in US dollars, taxes included, from free official sources.
+          Electricity, natural gas, and pump prices (petrol and diesel) in {A.geo} and {B.geo}, in US dollars, taxes included, from free official sources.
           {elec && !elec.same && <> Household electricity is about <strong style={{ color: C.green }}>{elec.diff}% cheaper in {elec.cheaper.geo}</strong>.</>}
         </p>
 
@@ -139,7 +152,7 @@ export default async function ComparePage({ params }) {
             </div>
           ))}
         </div>
-        <p style={{ font: "400 11px 'IBM Plex Mono',monospace", color: C.dim, marginTop: 8 }}>✓ marks the cheaper of the two. Sources: {A.source} ({A.geo}), {B.source} ({B.geo}).</p>
+        <p style={{ font: "400 11px 'IBM Plex Mono',monospace", color: C.dim, marginTop: 8 }}>✓ marks the cheaper of the two. Energy sources: {A.source} ({A.geo}), {B.source} ({B.geo}){hasFuel ? "; pump prices via EC Oil Bulletin (EU) and EIA (US)" : ""}.</p>
 
         {faq && (
           <section style={{ marginTop: 30 }}>
@@ -168,7 +181,7 @@ export default async function ComparePage({ params }) {
         )}
 
         <section style={{ marginTop: 30, paddingTop: 18, borderTop: `1px solid ${C.line}`, fontSize: 12, color: C.dim, lineHeight: 1.7 }}>
-          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included end-user retail prices, drawn from free official sources and converted to USD at recent reference rates. Electricity and gas are per kWh. Figures update weekly; each reflects its source's latest published period. A lower price is marked ✓.
+          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included end-user retail prices, drawn from free official sources and converted to USD at recent reference rates. Electricity and gas are per kWh; petrol and diesel are pump prices per litre (EC Weekly Oil Bulletin for the EU, EIA for the US). Figures update weekly; each reflects its source's latest published period. A lower price is marked ✓.
           <div style={{ marginTop: 12 }}><Link href="/" style={{ color: C.accent, textDecoration: "none" }}>← Back to the full Voltlas dashboard</Link></div>
         </section>
       </div>
