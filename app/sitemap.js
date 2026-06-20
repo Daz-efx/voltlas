@@ -22,6 +22,7 @@ export default function sitemap() {
   }));
   return [
     { url: SITE, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: `${SITE}/electricity-bill-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     ...rankings, ...comparisons, ...countries,
   ];
 }

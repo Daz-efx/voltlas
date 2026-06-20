@@ -137,6 +137,8 @@ export default async function CountryPage({ params }) {
           {fuel && fuel.diesel != null && <Metric label="Diesel" value={`${usd2(fuel.diesel)}/L`} sub={`${usd2(fuel.diesel * 3.78541)}/gal`} />}
         </div>
 
+        <Link href={`/electricity-bill-calculator?country=${slug}`} style={{ display: "inline-block", marginTop: 16, padding: "9px 16px", background: C.accent, color: C.bg, font: "700 12px 'Archivo',sans-serif", textTransform: "uppercase", letterSpacing: ".06em", textDecoration: "none" }}>Estimate your {country.geo} bill →</Link>
+
         {ppp != null && (
           <div style={{ marginTop: 18, padding: "14px 16px", background: "rgba(242,169,59,0.07)", border: "1px solid rgba(242,169,59,0.22)" }}>
             <div style={{ font: "600 10px 'Archivo',sans-serif", letterSpacing: ".1em", textTransform: "uppercase", color: C.accent }}>Adjusted for purchasing power</div>
