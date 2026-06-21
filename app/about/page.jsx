@@ -39,6 +39,7 @@ export default function AboutPage() {
         name: "Voltlas",
         url: SITE,
         description: "An independent, ad-free tracker of global energy, fuel and commodity prices built entirely on free official sources.",
+        founder: { "@type": "Person", name: "Fela Odeyemi", jobTitle: "Engineer, power & energy sectors" },
         contactPoint: { "@type": "ContactPoint", email: CONTACT_EMAIL, contactType: "feedback" },
       },
       {
@@ -76,7 +77,7 @@ export default function AboutPage() {
 
         <H2>Independent &amp; ad-free</H2>
         <p style={{ color: C.dim, fontSize: 15, lineHeight: 1.7 }}>
-          Voltlas is an independent project, built and maintained by one person. There are no ads, no paid placements, and no licensed or proprietary data feeds — just public official data, presented plainly. That independence is the point: the value here is trustworthy numbers from sources you can verify yourself.
+          Voltlas is an independent project, built and maintained by Fela Odeyemi, Ph.D — an engineer in the power and energy sectors. There are no ads, no paid placements, and no licensed or proprietary data feeds — just public official data, presented plainly. That independence is the point: the value here is trustworthy numbers from sources you can verify yourself.
         </p>
 
         <H2>Where the data comes from</H2>
