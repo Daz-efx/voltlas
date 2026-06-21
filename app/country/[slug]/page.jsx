@@ -13,6 +13,7 @@ export const dynamicParams = false; // only the countries we build; everything e
 
 const SITE = "https://voltlas.com";
 const YEAR = new Date().getFullYear();
+const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 
 function loadData() {
   const file = path.join(process.cwd(), "public", "data", "latest.json");
@@ -107,6 +108,7 @@ export default async function CountryPage({ params }) {
         name: `${country.geo} electricity, gas and fuel prices`,
         description: `Retail electricity, natural gas and transport-fuel prices for ${country.geo}, in USD, from ${country.source}.`,
         url,
+        license: LICENSE,
         isAccessibleForFree: true,
         creator: { "@type": "Organization", name: "Voltlas", url: SITE },
         sourceOrganization: { "@type": "Organization", name: country.source },
