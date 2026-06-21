@@ -40,7 +40,7 @@ jobs:
         run: |
           git config user.name "voltlas-bot"
           git config user.email "voltlas-bot@users.noreply.github.com"
-          git add public/data/latest.json
+          git add public/data/latest.json public/data/commodity-history.json
           if git diff --cached --quiet; then
             echo "No data changes — nothing to commit or push."
           else

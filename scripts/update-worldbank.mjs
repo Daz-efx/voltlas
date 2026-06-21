@@ -101,11 +101,13 @@ export function locate(grid) {
     if (c0 != null && DATE_RE.test(String(c0).trim())) dataIdx.push(i);
   }
   if (dataIdx.length < 1) throw new Error("no data rows found");
+  const dataRows = dataIdx.map((i) => grid[i]);
   return {
     names: grid[namesIdx],
     units: grid[namesIdx + 1] || [],
-    latest: grid[dataIdx[dataIdx.length - 1]],
-    prior: dataIdx.length >= 2 ? grid[dataIdx[dataIdx.length - 2]] : null,
+    dataRows,
+    latest: dataRows[dataRows.length - 1],
+    prior: dataRows.length >= 2 ? dataRows[dataRows.length - 2] : null,
   };
 }
 
@@ -137,6 +139,29 @@ export function upsert(data, rows) {
   const others = (data.COMMODITIES || []).filter((c) => c.source !== SOURCE);
   data.COMMODITIES = others.concat(rows);
   return data;
+}
+
+// Build a per-commodity monthly history (capped at the most recent `cap` points,
+// ~25 years by default) for the price-history pages. Keyed by display name so it
+// lines up with the COMMODITIES rows.
+export function extractHistory(grid, cap = 300) {
+  const { names, units, dataRows } = locate(grid);
+  const col = buildColMap(names);
+  const updated = parsePeriod(dataRows[dataRows.length - 1][0]);
+  const series = {};
+  for (const t of TARGETS) {
+    const i = col.get(t.match);
+    if (i == null) continue;
+    let pts = [];
+    for (const r of dataRows) {
+      const code = r[0] == null ? null : String(r[0]).trim();
+      const v = r[i];
+      if (code && DATE_RE.test(code) && isNum(v)) pts.push([code, round(v, 2)]);
+    }
+    if (cap && pts.length > cap) pts = pts.slice(pts.length - cap);
+    if (pts.length) series[t.name] = { name: t.name, cat: t.cat, unit: cleanUnit(units[i]) || "$/mt", points: pts };
+  }
+  return { source: "World Bank Pink Sheet", updated, series };
 }
 
 async function getText(url) {
@@ -202,6 +227,13 @@ async function main() {
   const pretty = /\n\s/.test(raw.slice(0, 300));
   fs.writeFileSync(latestPath, JSON.stringify(data, null, pretty ? 2 : 0));
   console.log("wrote latest.json");
+
+  // Also emit the monthly back-history for the per-commodity price pages.
+  const hist = extractHistory(grid);
+  const histPath = path.join(process.cwd(), "public", "data", "commodity-history.json");
+  fs.writeFileSync(histPath, JSON.stringify(hist));
+  const counts = Object.values(hist.series).map((s) => s.points.length);
+  console.log("wrote commodity-history.json —", Object.keys(hist.series).length, "series, up to", Math.max(0, ...counts), "months each");
 }
 
 const invoked = process.argv[1] ? path.resolve(process.argv[1]) : "";
