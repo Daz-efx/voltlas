@@ -23,7 +23,7 @@ jobs:
           node-version: "22"
           cache: "npm"        # cache deps so npm ci is fast after the first run
       - name: Install dependencies
-        run: npm ci           # needed for exceljs (used by update-eu-fuels.mjs)
+        run: npm ci           # needed for exceljs (used by update-eu-fuels.mjs / update-worldbank.mjs)
       - name: Run connectors
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
@@ -33,6 +33,7 @@ jobs:
           node scripts/update-commodities.mjs
           node scripts/update-fuels.mjs
           node scripts/update-eu-fuels.mjs || echo "eu-fuels step failed; keeping prior EU data"
+          node scripts/update-worldbank.mjs || echo "worldbank step failed; keeping prior commodities"
       - name: Commit and push if data changed
         run: |
           git config user.name "voltlas-bot"
