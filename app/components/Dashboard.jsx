@@ -52,6 +52,38 @@ function viewerIsUS() {
   } catch (e) { return false; }
 }
 
+// ── Homepage navigation into the programmatic pages (discovery + internal linking). ──
+const NAV_QUICK = [
+  ["/rankings/electricity-prices-by-country", "Electricity by country"],
+  ["/rankings/cheapest-electricity-in-europe", "Cheapest in Europe"],
+  ["/rankings/cheapest-petrol-in-europe", "Cheapest petrol"],
+  ["/compare/germany-vs-france", "Compare countries"],
+  ["/electricity-bill-calculator", "Bill calculator"],
+];
+const NAV_GROUPS = [
+  ["Rankings", [
+    ["/rankings/electricity-prices-by-country", "Electricity prices by country"],
+    ["/rankings/cheapest-electricity-in-europe", "Cheapest electricity in Europe"],
+    ["/rankings/most-expensive-electricity-in-europe", "Most expensive electricity in Europe"],
+    ["/rankings/natural-gas-prices-by-country", "Natural gas prices by country"],
+    ["/rankings/us-electricity-prices-by-state", "US electricity by state"],
+  ]],
+  ["Fuel rankings", [
+    ["/rankings/cheapest-petrol-in-europe", "Cheapest petrol in Europe"],
+    ["/rankings/most-expensive-petrol-in-europe", "Most expensive petrol in Europe"],
+    ["/rankings/cheapest-diesel-in-europe", "Cheapest diesel in Europe"],
+    ["/rankings/petrol-prices-by-country", "Petrol prices by country"],
+    ["/rankings/diesel-prices-by-country", "Diesel prices by country"],
+  ]],
+  ["Compare & tools", [
+    ["/compare/germany-vs-france", "Germany vs France"],
+    ["/compare/united-states-vs-germany", "United States vs Germany"],
+    ["/compare/netherlands-vs-poland", "Netherlands vs Poland"],
+    ["/compare/spain-vs-portugal", "Spain vs Portugal"],
+    ["/electricity-bill-calculator", "Electricity bill calculator"],
+  ]],
+];
+
 export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META, SUBNATIONAL, FX, FX_DATE, COUNTRY_CCY, FUEL_DATA, FUEL_CADENCE, FUEL_SUB_META, FUEL_SUBNATIONAL, COMMODITY_CATS, COMMODITIES }) {
   const [view, setView] = useState("energy"); // energy | fuels | commodities | map
   const [fuel, setFuel] = useState("electricity");
@@ -189,6 +221,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
         .exp { border: none; background: transparent; color: inherit; cursor: pointer; padding: 0; font: 600 10px 'IBM Plex Mono'; letter-spacing: .06em; text-align: left; }
         .cname { border: none; background: transparent; color: #E8E4DA; cursor: pointer; padding: 0; font: 600 14px 'Archivo'; text-align: left; }
         .cname:hover { color: #F2A93B; }
+        .navlink:hover { color: #FFFFFF !important; }
         .tile { border: 1px solid rgba(0,0,0,0.25); cursor: pointer; color: #14110A; text-align: left; padding: 8px 9px; }
         .tile:hover { outline: 2px solid #E8E4DA; }
         @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -209,16 +242,24 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             ⚡ Voltlas · the price of energy — and the fuels &amp; materials that power it
           </div>
           <h1 style={{ font: "800 46px/1 'Saira Condensed'", margin: 0, textTransform: "uppercase", letterSpacing: ".01em" }}>
-            {view === "commodities" ? "What the world pays for raw materials" : view === "fuels" ? "What America pays at the pump" : view === "map" ? "The price of power, mapped" : `What the world pays for ${fuel === "gas" ? "natural gas" : "electricity"}`}
+            {view === "commodities" ? "What the world pays for raw materials" : view === "fuels" ? "What the world pays at the pump" : view === "map" ? "The price of power, mapped" : `What the world pays for ${fuel === "gas" ? "natural gas" : "electricity"}`}
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
             {view === "commodities" ? "Global energy benchmark spot prices in USD — crude oil (WTI, Brent) and natural gas (Henry Hub) — updated daily from the EIA (public domain). Metals and agricultural commodities are coming next. Live intraday exchange quotes are licensed and excluded."
-              : view === "fuels" ? "Live US retail gasoline and diesel, taxes included, from the EIA (weekly). Toggle $/litre and $/US gallon, and click the US for its state-by-state breakdown. More countries are being wired in."
+              : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
           <div style={{ marginTop: 10, display: "inline-block", font: "600 10px 'IBM Plex Mono'", letterSpacing: ".12em", color: "#171E2E", background: "#E8E4DA", padding: "3px 8px", textTransform: "uppercase" }}>Live · free official sources</div>
         </div>
+
+        {/* Quick navigation into the rankings / compare / calculator pages */}
+        <nav aria-label="Explore Voltlas pages" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 14px", marginBottom: 26 }}>
+          <span style={{ font: "600 10px 'IBM Plex Mono'", letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(232,228,218,0.4)" }}>Explore →</span>
+          {NAV_QUICK.map(([href, label]) => (
+            <a key={href} href={href} className="navlink" style={{ color: "#F2A93B", textDecoration: "none", font: "500 13px 'Archivo'", borderBottom: "1px solid rgba(232,228,218,0.16)", paddingBottom: 2 }}>{label}</a>
+          ))}
+        </nav>
 
         {/* ENERGY */}
         {view === "energy" && (
@@ -454,6 +495,23 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             </>
           );
         })()}
+
+        {/* ── Explore: links to rankings, comparisons, tools (discovery + SEO) ── */}
+        <section style={{ marginTop: 44, paddingTop: 24, borderTop: "1px solid rgba(232,228,218,0.16)" }}>
+          <div style={{ font: "800 18px 'Saira Condensed'", letterSpacing: ".05em", textTransform: "uppercase", marginBottom: 14 }}>Explore Voltlas</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "20px 28px" }}>
+            {NAV_GROUPS.map(([group, links]) => (
+              <div key={group}>
+                <div style={{ font: "600 10px 'IBM Plex Mono'", letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(232,228,218,0.5)", marginBottom: 8 }}>{group}</div>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 7 }}>
+                  {links.map(([href, label]) => (
+                    <li key={href}><a href={href} className="navlink" style={{ color: "#F2A93B", textDecoration: "none", font: "500 13px 'Archivo'" }}>{label}</a></li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
 
       {/* ── Country detail overlay (the per-country landing page) ── */}
@@ -513,7 +571,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               <button onClick={() => setShowMethod(false)} aria-label="Close" style={{ background: "transparent", border: "1px solid rgba(232,228,218,0.3)", color: "#E8E4DA", cursor: "pointer", padding: "4px 10px", font: "600 14px 'Archivo'" }}>✕</button>
             </div>
             <div style={{ fontSize: 13, color: "rgba(232,228,218,0.78)", lineHeight: 1.7 }}>
-              <p style={{ marginTop: 0 }}><strong>Free sources only.</strong> Every figure comes from a source that permits public republication: the EIA (US electricity, natural gas and energy-commodity spot prices — public domain) and Eurostat (EU household and business electricity and gas). More official sources are being wired in as coverage expands. No licensed feeds are displayed.</p>
+              <p style={{ marginTop: 0 }}><strong>Free sources only.</strong> Every figure comes from a source that permits public republication: the EIA (US electricity, natural gas and energy-commodity spot prices — public domain) and Eurostat (EU household and business electricity and gas), with EU road-fuel prices from the EC Weekly Oil Bulletin. More official sources are being wired in as coverage expands. No licensed feeds are displayed.</p>
               <p><strong>What each number is.</strong> Retail energy is taxes-included, stored in local currency and converted to USD at display time. Some figures aren't consumption-weighted averages — the US value is EIA's revenue-per-kWh proxy, and several European figures are regulated tariffs; these are flagged with ※.</p>
               <p><strong>Cadence &amp; freshness.</strong> US electricity refreshes monthly and energy-commodity spot prices daily (both EIA); Eurostat publishes semi-annually. The site re-runs every connector weekly and self-updates. Every figure carries its source and period.</p>
               <p><strong>Coverage gaps are shown, not filled.</strong> Coverage is strongest across Europe and North America. Where no free source exists, the country is absent rather than estimated. Sub-national drill-down appears only where a free source publishes it (US, all 50 states).</p>
