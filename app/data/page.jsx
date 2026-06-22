@@ -109,12 +109,12 @@ export default function DataPage() {
         <div style={{ font: `600 11px ${mono}`, letterSpacing: ".18em", color: C.accent, textTransform: "uppercase", margin: "26px 0 6px" }}>Open data</div>
         <h1 style={{ font: "800 46px/1 'Saira Condensed',sans-serif", margin: 0, textTransform: "uppercase" }}>Voltlas data</h1>
         <p style={{ color: C.dim, fontSize: 15.5, lineHeight: 1.65, marginTop: 14 }}>
-          Every price on Voltlas is free and openly reusable. The same data the site runs on is published as plain JSON — refreshed weekly from official sources, with no API key, no sign-up, and no rate limits. Use it under a Creative Commons Attribution licence; just credit Voltlas and link back.
+          Every price on Voltlas is free and openly reusable. The same data the site runs on is published as plain JSON — refreshed weekly from official sources, with no API key, no sign-up, and no rate limits. Use it under a Creative Commons Attribution license; just credit Voltlas and link back.
         </p>
 
         <H2>The datasets</H2>
         <Card title="Current prices" url={LATEST}>
-          A full snapshot in one file. Key arrays: <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>COMMODITIES</code> (energy, metals, precious, agriculture), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>DATA</code> (electricity &amp; gas by country, USD/kWh), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FUEL_DATA</code> (petrol &amp; diesel by country, USD/litre), and <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX</code> (the reference rates used for USD conversion, with <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX_DATE</code>).
+          A full snapshot in one file. Key arrays: <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>COMMODITIES</code> (energy, metals, precious, agriculture), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>DATA</code> (electricity &amp; gas by country, USD/kWh), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FUEL_DATA</code> (petrol &amp; diesel by country, USD/liter), and <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX</code> (the reference rates used for USD conversion, with <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX_DATE</code>).
         </Card>
         <Card title="Commodity price history" url={HISTORY}>
           Up to 25 years of monthly history per commodity — metals, precious metals, agriculture and energy — ready to chart.
@@ -129,14 +129,14 @@ export default function DataPage() {
         <H2>Quick start</H2>
         <pre style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 10, padding: "14px 16px", overflowX: "auto", font: `400 12.5px/1.6 ${mono}`, color: C.text }}>{EXAMPLE}</pre>
 
-        <H2>Licence &amp; attribution</H2>
+        <H2>License &amp; attribution</H2>
         <p style={{ color: C.dim, fontSize: 15, lineHeight: 1.7 }}>
           The compiled data is offered under{" "}
           <a href={LICENSE} target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>Creative Commons Attribution 4.0</a>. You're free to use it commercially or non-commercially, as long as you credit Voltlas. A simple attribution works:
         </p>
         <pre style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 10, padding: "12px 16px", overflowX: "auto", font: `400 12.5px ${mono}`, color: C.text }}>{`Data: Voltlas (https://voltlas.com), CC BY 4.0`}</pre>
         <p style={{ color: C.dim, fontSize: 14.5, lineHeight: 1.7, marginTop: 12 }}>
-          Each price also carries its own originating source (EIA, Eurostat, EC Oil Bulletin, World Bank); please honour those upstream sources' terms where relevant. Full sourcing is on the{" "}
+          Each price also carries its own originating source (EIA, Eurostat, EC Oil Bulletin, World Bank); please honor those upstream sources' terms where relevant. Full sourcing is on the{" "}
           <Link href="/about" style={{ color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>methodology page</Link>.
         </p>
 

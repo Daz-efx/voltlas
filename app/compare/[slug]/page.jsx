@@ -181,7 +181,7 @@ export default async function ComparePage({ params }) {
         )}
 
         <section style={{ marginTop: 30, paddingTop: 18, borderTop: `1px solid ${C.line}`, fontSize: 12, color: C.dim, lineHeight: 1.7 }}>
-          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included end-user retail prices, drawn from free official sources and converted to USD at recent reference rates. Electricity and gas are per kWh; petrol and diesel are pump prices per litre (EC Weekly Oil Bulletin for the EU, EIA for the US). Figures update weekly; each reflects its source's latest published period. A lower price is marked ✓.
+          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included end-user retail prices, drawn from free official sources and converted to USD at recent reference rates. Electricity and gas are per kWh; petrol and diesel are pump prices per liter (EC Weekly Oil Bulletin for the EU, EIA for the US). Figures update weekly; each reflects its source's latest published period. A lower price is marked ✓.
           <div style={{ marginTop: 12 }}><Link href="/" style={{ color: C.accent, textDecoration: "none" }}>← Back to the full Voltlas dashboard</Link></div>
         </section>
       </div>

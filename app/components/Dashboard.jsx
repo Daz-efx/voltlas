@@ -263,7 +263,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
             {view === "commodities" ? "Global benchmark prices in USD: energy spot prices — crude oil (WTI, Brent) and natural gas (Henry Hub) — from the EIA, plus metals, precious metals and agricultural commodities from the World Bank. Click any commodity for its full price history. Live intraday exchange quotes are licensed and excluded."
-              : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
+              : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/liter and $/US gallon; click the US for its state-by-state breakdown."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Tap or hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
@@ -419,7 +419,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                         <div style={{ font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.42)" }}>{d.region}</div>
                       )}
                     </div>
-                    <Rail pct={tPos(d[tField])} aria={`${d.geo}: ${fmtFuel(d[tField])} per litre`} dim={false} />
+                    <Rail pct={tPos(d[tField])} aria={`${d.geo}: ${fmtFuel(d[tField])} per liter`} dim={false} />
                     <Spark seed={d.geo + tField} value={d[tField]} />
                     <div style={{ textAlign: "right" }}>
                       <div {...tipProps(fxTipFuel(d[tField], d.geo))} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmtFuel(toU(d[tField]))}<span style={{ fontSize: 10, color: "rgba(232,228,218,0.5)" }}>/{fuLabel}</span></div>
@@ -430,7 +430,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                   {isOpen && subs.map((s) => (
                     <div key={s.name} className="subrow" style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, alignItems: "center", padding: "7px 4px", borderBottom: "1px solid rgba(232,228,218,0.05)", background: "rgba(232,228,218,0.018)" }}>
                       <div style={{ paddingLeft: 14, borderLeft: `2px solid ${accentDim}`, marginLeft: 2, fontWeight: 500, fontSize: 13, color: "rgba(232,228,218,0.85)" }}>{s.name}</div>
-                      <Rail pct={tPos(s[tField])} aria={`${d.geo} — ${s.name}: ${fmtFuel(s[tField])} per litre`} dim={true} />
+                      <Rail pct={tPos(s[tField])} aria={`${d.geo} — ${s.name}: ${fmtFuel(s[tField])} per liter`} dim={true} />
                       <Spark seed={d.geo + s.name + tField} value={s[tField]} w={50} h={16} />
                       <div style={{ textAlign: "right" }}>
                         <div {...tipProps(fxTipFuel(s[tField], d.geo))} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmtFuel(toU(s[tField]))}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>/{fuLabel}</span></div>
@@ -507,7 +507,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                 })}
               </div>
               <p style={{ marginTop: 18, font: "400 11px 'Archivo'", color: "rgba(232,228,218,0.45)", maxWidth: 660, lineHeight: 1.6 }}>
-                This prototype uses a colour-coded tile cartogram so it stays self-contained. In production this becomes a true geographic choropleth (d3-geo + world-atlas boundaries, plus a US-states layer) — a build-time asset, not a data change. Tiles are shaded by residential electricity; click any for the country's full profile.
+                This prototype uses a color-coded tile cartogram so it stays self-contained. In production this becomes a true geographic choropleth (d3-geo + world-atlas boundaries, plus a US-states layer) — a build-time asset, not a data change. Tiles are shaded by residential electricity; click any for the country's full profile.
               </p>
             </>
           );

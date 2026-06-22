@@ -94,7 +94,7 @@ export default function AboutPage() {
         <p style={{ color: C.dim, fontSize: 15, lineHeight: 1.7 }}>
           The underlying figures come from public official sources; Voltlas compiles and presents them. You're welcome to reuse the compiled data under a{" "}
           <a href={LICENSE} style={link} target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0</a>{" "}
-          licence — reuse it freely, just credit Voltlas and link back. Please also check each original source's own terms where relevant.
+          license — reuse it freely, just credit Voltlas and link back. Please also check each original source's own terms where relevant.
         </p>
 
         <H2>Contact &amp; corrections</H2>
