@@ -85,7 +85,7 @@ export default async function RankingPage({ params }) {
   const period = rows.find((r) => r.period)?.period || `${YEAR}`;
 
   const methodology = cfg.kind === "fuel"
-    ? "Prices are all-taxes-included retail pump prices, drawn from free official sources — the EIA weekly survey for the US and the EC Weekly Oil Bulletin for the EU — and converted to USD at recent reference rates. Pump prices are shown per liter and per gallon. Figures update on Voltlas weekly; this ranking reflects the latest published period for each entry."
+    ? "Prices are all-taxes-included retail pump prices, drawn from free official sources — the EIA weekly survey for the US and the EC Weekly Oil Bulletin for the EU — and converted to USD at recent reference rates. Pump prices are shown per litre and per gallon. Figures update on Voltlas weekly; this ranking reflects the latest published period for each entry."
     : "Prices are all-taxes-included end-user retail prices, drawn from free official sources (EIA for the US; Eurostat for the EU) and converted to USD at recent reference rates. Electricity and gas are retail prices per kWh. Figures update on Voltlas weekly; this ranking reflects the latest published period for each entry.";
 
   const jsonLd = {

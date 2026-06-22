@@ -114,7 +114,7 @@ export default function DataPage() {
 
         <H2>The datasets</H2>
         <Card title="Current prices" url={LATEST}>
-          A full snapshot in one file. Key arrays: <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>COMMODITIES</code> (energy, metals, precious, agriculture), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>DATA</code> (electricity &amp; gas by country, USD/kWh), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FUEL_DATA</code> (petrol &amp; diesel by country, USD/liter), and <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX</code> (the reference rates used for USD conversion, with <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX_DATE</code>).
+          A full snapshot in one file. Key arrays: <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>COMMODITIES</code> (energy, metals, precious, agriculture), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>DATA</code> (electricity &amp; gas by country, USD/kWh), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FUEL_DATA</code> (petrol &amp; diesel by country, USD/litre), and <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX</code> (the reference rates used for USD conversion, with <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX_DATE</code>).
         </Card>
         <Card title="Commodity price history" url={HISTORY}>
           Up to 25 years of monthly history per commodity — metals, precious metals, agriculture and energy — ready to chart.
