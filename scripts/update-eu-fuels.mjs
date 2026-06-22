@@ -4,6 +4,12 @@
 // already in latest.json, and upserts the 27 EU country rows into FUEL_DATA.
 //
 // Owns ONLY rows with source "EC Oil Bulletin" (leaves the US/EIA row alone).
+//
+// The bulletin file is a weekly SNAPSHOT (no back-history), so we also append
+// each week's values into public/data/fuel-history.json, building a weekly
+// time series forward over time. We MERGE so the US (EIA-backfilled) entry is
+// left untouched.
+//
 // Run from repo root:
 //   node scripts/update-eu-fuels.mjs           (writes latest.json)
 //   node scripts/update-eu-fuels.mjs --dry      (prints, writes nothing)
@@ -16,6 +22,8 @@ import ExcelJS from "exceljs";
 const PAGE = "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en";
 const HOST = "https://energy.ec.europa.eu";
 const SOURCE = "EC Oil Bulletin";
+const FUEL_HIST = path.join(process.cwd(), "public", "data", "fuel-history.json");
+const HIST_WEEKS = 520;
 const BASE_HEADERS = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
@@ -36,6 +44,7 @@ const decEnt = (s) =>
 const stripTags = (s) => decEnt(s.replace(/<[^>]+>/g," ").replace(/\s+/g," ")).trim();
 const absUrl = (h) => (h.startsWith("http") ? h : HOST + (h.startsWith("/") ? h : "/" + h));
 const round3 = (x) => Math.round(x * 1000) / 1000;
+const isoOf = (d) => { const dt = d instanceof Date ? d : new Date(d); return isNaN(dt) ? null : dt.toISOString().slice(0, 10); };
 
 // --- pure helpers (unit-tested) -----------------------------------------
 
@@ -138,6 +147,26 @@ export function upsert(data, fuelRows) {
   return data;
 }
 
+// Append this week's snapshot into the shared fuel-history (forward-building,
+// merge-safe: only touches the EU geos in fuelRows; dedups by ISO date).
+export function appendFuelHistory(existing, fuelRows, iso, cap = HIST_WEEKS) {
+  const series = { ...(existing.series || {}) };
+  for (const r of fuelRows) {
+    const cur = { geo: r.geo, region: r.region, petrol: [], diesel: [], ...(series[r.geo] || {}) };
+    const add = (arr, val) => {
+      arr = (arr || []).slice();
+      if (val == null || !iso) return arr;
+      if (!arr.some((p) => p[0] === iso)) arr.push([iso, val]);
+      arr.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+      return arr.length > cap ? arr.slice(arr.length - cap) : arr;
+    };
+    cur.petrol = add(cur.petrol, r.petrol);
+    cur.diesel = add(cur.diesel, r.diesel);
+    series[r.geo] = cur;
+  }
+  return { updated: iso || existing.updated || null, series };
+}
+
 // --- live fetch + main ---------------------------------------------------
 
 async function getText(url) {
@@ -194,6 +223,20 @@ async function main() {
   fs.writeFileSync(latestPath, JSON.stringify(data, null, pretty ? 2 : 0));
   console.log("\nwrote latest.json (" + data.FUEL_DATA.length + " FUEL_DATA rows, " +
     "incl. " + fuelRows.length + " EU + " + (data.FUEL_DATA.length - fuelRows.length) + " other)");
+
+  // Accumulate this week's snapshot into the shared fuel-history file (forward-building).
+  try {
+    const iso = isoOf(grid[2] ? grid[2][0] : null);
+    let ex = { series: {} };
+    try { ex = JSON.parse(fs.readFileSync(FUEL_HIST, "utf8")); } catch {}
+    const merged = appendFuelHistory(ex, fuelRows, iso);
+    fs.writeFileSync(FUEL_HIST, JSON.stringify(merged));
+    const sample = fuelRows[0] && fuelRows[0].geo;
+    const pts = (merged.series[sample] && merged.series[sample].petrol || []).length;
+    console.log(`fuel-history: recorded ${iso || "(no date)"} for ${fuelRows.length} EU countries (${pts} weekly point(s) so far, e.g. ${sample})`);
+  } catch (e) {
+    console.warn("fuel-history step skipped:", e.message);
+  }
 }
 
 const invoked = process.argv[1] ? path.resolve(process.argv[1]) : "";
