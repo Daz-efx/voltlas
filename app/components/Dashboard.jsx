@@ -149,6 +149,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
   const fmt = (v) => `$${v.toFixed(3)}`;
   const fmtFuel = (v) => `$${v.toFixed(2)}`;
   const fmtCommodity = (v) => (v >= 100 ? v.toLocaleString("en-US", { maximumFractionDigits: 0 }) : v.toFixed(2));
+  const commoditySlug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const GAL = 3.78541;
   const fuLabel = fUnit === "gal" ? "gal" : "L";
@@ -246,7 +247,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             {view === "commodities" ? "What the world pays for raw materials" : view === "fuels" ? "What the world pays at the pump" : view === "map" ? "The price of power, mapped" : `What the world pays for ${fuel === "gas" ? "natural gas" : "electricity"}`}
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
-            {view === "commodities" ? "Global energy benchmark spot prices in USD — crude oil (WTI, Brent) and natural gas (Henry Hub) — updated daily from the EIA (public domain). Metals and agricultural commodities are coming next. Live intraday exchange quotes are licensed and excluded."
+            {view === "commodities" ? "Global benchmark prices in USD: energy spot prices — crude oil (WTI, Brent) and natural gas (Henry Hub) — from the EIA, plus metals, precious metals and agricultural commodities from the World Bank. Click any commodity for its full price history. Live intraday exchange quotes are licensed and excluded."
               : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
@@ -447,7 +448,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                   </div>
                   {items.map((c) => (
                     <div key={c.name} className="row" style={{ display: "grid", gridTemplateColumns: "1fr 58px 92px 150px", gap: 14, alignItems: "center", padding: "10px 4px 10px 11px", borderBottom: "1px solid rgba(232,228,218,0.08)" }}>
-                      <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
+                      <a href={`/commodity/${commoditySlug(c.name)}`} style={{ fontWeight: 600, fontSize: 14, color: "inherit", textDecoration: "none", borderBottom: "1px solid rgba(232,228,218,0.18)" }}>{c.name}</a>
                       <Spark seed={c.name} value={c.price} color={c.chg >= 0 ? UP : DOWN} />
                       <div style={{ textAlign: "right", font: "600 13px 'IBM Plex Mono'", color: c.chg >= 0 ? UP : DOWN }}>{c.chg >= 0 ? "▲" : "▼"} {c.chg >= 0 ? "+" : ""}{c.chg.toFixed(1)}%</div>
                       <div style={{ textAlign: "right" }}>
