@@ -56,7 +56,7 @@ function viewerIsUS() {
 const NAV_QUICK = [
   ["/rankings/electricity-prices-by-country", "Electricity by country"],
   ["/rankings/cheapest-electricity-in-europe", "Cheapest in Europe"],
-  ["/rankings/cheapest-petrol-in-europe", "Cheapest petrol"],
+  ["/rankings/cheapest-petrol-in-europe", "Cheapest gasoline"],
   ["/compare/germany-vs-france", "Compare countries"],
   ["/electricity-bill-calculator", "Bill calculator"],
 ];
@@ -69,10 +69,10 @@ const NAV_GROUPS = [
     ["/rankings/us-electricity-prices-by-state", "US electricity by state"],
   ]],
   ["Fuel rankings", [
-    ["/rankings/cheapest-petrol-in-europe", "Cheapest petrol in Europe"],
-    ["/rankings/most-expensive-petrol-in-europe", "Most expensive petrol in Europe"],
+    ["/rankings/cheapest-petrol-in-europe", "Cheapest gasoline in Europe"],
+    ["/rankings/most-expensive-petrol-in-europe", "Most expensive gasoline in Europe"],
     ["/rankings/cheapest-diesel-in-europe", "Cheapest diesel in Europe"],
-    ["/rankings/petrol-prices-by-country", "Petrol prices by country"],
+    ["/rankings/petrol-prices-by-country", "Gasoline prices by country"],
     ["/rankings/diesel-prices-by-country", "Diesel prices by country"],
   ]],
   ["Compare & tools", [
@@ -218,7 +218,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
       e && e.elecRes != null && { label: "Electricity · household", v: e.elecRes, unit: "/kWh", key: `${detail}-er`, big: true },
       e && e.elecBiz != null && { label: "Electricity · business", v: e.elecBiz, unit: "/kWh", key: `${detail}-eb` },
       e && e.gasRes != null && { label: "Natural gas · household", v: e.gasRes, unit: "/kWh", key: `${detail}-gr` },
-      f && f.petrol != null && { label: "Petrol", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe` },
+      f && f.petrol != null && { label: "Gasoline", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe` },
       f && f.diesel != null && { label: "Diesel", v: toU(f.diesel), unit: "/" + fuLabel, key: `${detail}-di` },
     ].filter(Boolean);
     return { e, f, metrics };
@@ -263,7 +263,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
             {view === "commodities" ? "Global benchmark prices in USD: energy spot prices — crude oil (WTI, Brent) and natural gas (Henry Hub) — from the EIA, plus metals, precious metals and agricultural commodities from the World Bank. Click any commodity for its full price history. Live intraday exchange quotes are licensed and excluded."
-              : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
+              : view === "fuels" ? "Retail gasoline and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Tap or hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
@@ -370,7 +370,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
           <>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 20, alignItems: "center" }}>
               <div style={{ display: "flex" }}>
-                {[["petrol", "Petrol"], ["diesel", "Diesel"]].map(([k, label]) => (
+                {[["petrol", "Gasoline"], ["diesel", "Diesel"]].map(([k, label]) => (
                   <button key={k} className="seg" onClick={() => setTfuel(k)} style={{ background: tfuel === k ? accent : "transparent", color: tfuel === k ? "#171E2E" : "#E8E4DA", borderColor: tfuel === k ? accent : "rgba(232,228,218,0.22)" }}>{label}</button>
                 ))}
               </div>

@@ -40,7 +40,7 @@ const METRICS = [
   { label: "Electricity · household", key: "elecRes", unit: "kWh" },
   { label: "Electricity · business", key: "elecBiz", unit: "kWh" },
   { label: "Natural gas · household", key: "gasRes", unit: "kWh" },
-  { label: "Petrol · Euro-95", key: "petrol", unit: "L", fuel: true },
+  { label: "Gasoline · Euro-95", key: "petrol", unit: "L", fuel: true },
   { label: "Diesel", key: "diesel", unit: "L", fuel: true },
 ];
 
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }) {
       : ` Household electricity is ~${e.diff}% cheaper in ${e.cheaper.geo} (${usd(e.cheaper.elecRes)}/kWh).`
     : "";
   const title = `${A.geo} vs ${B.geo}: electricity, gas & fuel prices (${YEAR})`;
-  const description = `Compare electricity, natural gas, and pump prices (petrol and diesel) in ${A.geo} and ${B.geo}, in USD, taxes included, from official sources.${verdict}`;
+  const description = `Compare electricity, natural gas, and pump prices (gasoline and diesel) in ${A.geo} and ${B.geo}, in USD, taxes included, from official sources.${verdict}`;
   const url = `/compare/${slug}`;
   return {
     title,
@@ -136,7 +136,7 @@ export default async function ComparePage({ params }) {
         <div style={{ font: "600 11px 'IBM Plex Mono',monospace", letterSpacing: ".18em", color: C.accent, textTransform: "uppercase", margin: "26px 0 6px" }}>Comparison · {YEAR}</div>
         <h1 style={{ font: "800 42px/1.04 'Saira Condensed',sans-serif", margin: 0, textTransform: "uppercase" }}>{A.geo} vs {B.geo}</h1>
         <p style={{ color: C.dim, fontSize: 15, maxWidth: 620, marginTop: 12 }}>
-          Electricity, natural gas, and pump prices (petrol and diesel) in {A.geo} and {B.geo}, in US dollars, taxes included, from free official sources.
+          Electricity, natural gas, and pump prices (gasoline and diesel) in {A.geo} and {B.geo}, in US dollars, taxes included, from free official sources.
           {elec && !elec.same && <> Household electricity is about <strong style={{ color: C.green }}>{elec.diff}% cheaper in {elec.cheaper.geo}</strong>.</>}
         </p>
 
@@ -181,7 +181,7 @@ export default async function ComparePage({ params }) {
         )}
 
         <section style={{ marginTop: 30, paddingTop: 18, borderTop: `1px solid ${C.line}`, fontSize: 12, color: C.dim, lineHeight: 1.7 }}>
-          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included end-user retail prices, drawn from free official sources and converted to USD at recent reference rates. Electricity and gas are per kWh; petrol and diesel are pump prices per litre (EC Weekly Oil Bulletin for the EU, EIA for the US). Figures update weekly; each reflects its source's latest published period. A lower price is marked ✓.
+          <strong style={{ color: C.text }}>Methodology.</strong> Prices are all-taxes-included end-user retail prices, drawn from free official sources and converted to USD at recent reference rates. Electricity and gas are per kWh; gasoline and diesel are pump prices per litre (EC Weekly Oil Bulletin for the EU, EIA for the US). Figures update weekly; each reflects its source's latest published period. A lower price is marked ✓.
           <div style={{ marginTop: 12 }}><Link href="/" style={{ color: C.accent, textDecoration: "none" }}>← Back to the full Voltlas dashboard</Link></div>
         </section>
       </div>

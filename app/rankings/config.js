@@ -56,16 +56,16 @@ export const RANKINGS = [
   // --- Fuel rankings (EC Weekly Oil Bulletin for the EU + EIA for the US) ---
   {
     slug: "cheapest-petrol-in-europe",
-    h1: "Cheapest petrol in Europe",
-    title: "Cheapest petrol in Europe",
-    lede: "European countries ranked from cheapest to most expensive petrol (Euro-95) at the pump — in US dollars per litre, all taxes included, from the EC Weekly Oil Bulletin.",
+    h1: "Cheapest gasoline in Europe",
+    title: "Cheapest gasoline in Europe",
+    lede: "European countries ranked from cheapest to most expensive gasoline (Euro-95) at the pump — in US dollars per litre, all taxes included, from the EC Weekly Oil Bulletin.",
     source: "fuel-country", scope: "europe", metric: "petrol", order: "asc", kind: "fuel", unit: "L",
   },
   {
     slug: "most-expensive-petrol-in-europe",
-    h1: "Most expensive petrol in Europe",
-    title: "Most expensive petrol in Europe",
-    lede: "European countries ranked from most to least expensive petrol (Euro-95) at the pump — in US dollars per litre, all taxes included, from the EC Weekly Oil Bulletin.",
+    h1: "Most expensive gasoline in Europe",
+    title: "Most expensive gasoline in Europe",
+    lede: "European countries ranked from most to least expensive gasoline (Euro-95) at the pump — in US dollars per litre, all taxes included, from the EC Weekly Oil Bulletin.",
     source: "fuel-country", scope: "europe", metric: "petrol", order: "desc", kind: "fuel", unit: "L",
   },
   {
@@ -84,9 +84,9 @@ export const RANKINGS = [
   },
   {
     slug: "petrol-prices-by-country",
-    h1: "Petrol prices by country",
-    title: "Petrol prices by country",
-    lede: "Pump prices for petrol (Euro-95 / regular gasoline) ranked across every country Voltlas tracks — in US dollars per litre, all taxes included, from free official sources.",
+    h1: "Gasoline prices by country",
+    title: "Gasoline prices by country",
+    lede: "Pump prices for gasoline (Euro-95) ranked across every country Voltlas tracks — in US dollars per litre, all taxes included, from free official sources.",
     source: "fuel-country", scope: "all", metric: "petrol", order: "desc", kind: "fuel", unit: "L",
   },
   {

@@ -90,7 +90,7 @@ export default async function CountryPage({ params }) {
     country.elecRes != null && { "@type": "PropertyValue", name: "Residential electricity price", value: country.elecRes, unitText: "USD per kWh" },
     country.elecBiz != null && { "@type": "PropertyValue", name: "Business electricity price", value: country.elecBiz, unitText: "USD per kWh" },
     country.gasRes != null && { "@type": "PropertyValue", name: "Residential natural gas price", value: country.gasRes, unitText: "USD per kWh" },
-    fuel && fuel.petrol != null && { "@type": "PropertyValue", name: "Petrol price", value: fuel.petrol, unitText: "USD per litre" },
+    fuel && fuel.petrol != null && { "@type": "PropertyValue", name: "Gasoline price", value: fuel.petrol, unitText: "USD per litre" },
     fuel && fuel.diesel != null && { "@type": "PropertyValue", name: "Diesel price", value: fuel.diesel, unitText: "USD per litre" },
   ].filter(Boolean);
   const jsonLd = {
@@ -135,7 +135,7 @@ export default async function CountryPage({ params }) {
           {country.elecRes != null && <Metric label="Electricity · household" value={`${usd(country.elecRes)}/kWh`} sub={local(country.elecRes) ? `${local(country.elecRes)}/kWh local` : null} />}
           {country.elecBiz != null && <Metric label="Electricity · business" value={`${usd(country.elecBiz)}/kWh`} sub={local(country.elecBiz) ? `${local(country.elecBiz)}/kWh local` : null} />}
           {country.gasRes != null && <Metric label="Natural gas · household" value={`${usd(country.gasRes)}/kWh`} sub={local(country.gasRes) ? `${local(country.gasRes)}/kWh local` : null} />}
-          {fuel && fuel.petrol != null && <Metric label="Petrol" value={`${usd2(fuel.petrol)}/L`} sub={`${usd2(fuel.petrol * 3.78541)}/gal`} />}
+          {fuel && fuel.petrol != null && <Metric label="Gasoline" value={`${usd2(fuel.petrol)}/L`} sub={`${usd2(fuel.petrol * 3.78541)}/gal`} />}
           {fuel && fuel.diesel != null && <Metric label="Diesel" value={`${usd2(fuel.diesel)}/L`} sub={`${usd2(fuel.diesel * 3.78541)}/gal`} />}
         </div>
 
