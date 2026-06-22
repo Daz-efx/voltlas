@@ -48,12 +48,40 @@ export const TARGETS = [
   { match: "Sugar, world", name: "Sugar (world)", cat: "ag" },
   { match: "Cotton, A Index", name: "Cotton", cat: "ag" },
   { match: "Rice, Thai 5%", name: "Rice (Thai 5%)", cat: "ag" },
+
+  // --- Expansion (curated from the World Bank Pink Sheet) ---
+  // Energy (coexists with the EIA oil/gas benchmarks)
+  { match: "Coal, Australian", name: "Coal", cat: "energy" },
+  { match: "Natural gas, Europe", name: "Natural gas (Europe)", cat: "energy" },
+  { match: "Liquefied natural gas, Japan", name: "LNG (Japan)", cat: "energy" },
+  // Beverages
+  { match: "Coffee, Robusta", name: "Coffee (Robusta)", cat: "ag" },
+  { match: "Tea, avg 3 auctions", name: "Tea", cat: "ag" },
+  // Edible oils & meals
+  { match: "Palm oil", name: "Palm oil", cat: "ag" },
+  { match: "Soybean oil", name: "Soybean oil", cat: "ag" },
+  { match: "Soybean meal", name: "Soybean meal", cat: "ag" },
+  { match: "Sunflower oil", name: "Sunflower oil", cat: "ag" },
+  { match: "Rapeseed oil", name: "Rapeseed oil", cat: "ag" },
+  { match: "Coconut oil", name: "Coconut oil", cat: "ag" },
+  // Other foods
+  { match: "Banana, US", name: "Banana", cat: "ag" },
+  { match: "Beef", name: "Beef", cat: "ag" },
+  { match: "Chicken", name: "Chicken", cat: "ag" },
+  { match: "Lamb", name: "Lamb", cat: "ag" },
+  // Raw materials
+  { match: "Rubber, TSR20", name: "Rubber", cat: "ag" },
+  // Fertilizers
+  { match: "Urea", name: "Urea", cat: "ag" },
+  { match: "DAP", name: "DAP (fertilizer)", cat: "ag" },
+  { match: "Potassium chloride", name: "Potash", cat: "ag" },
+  { match: "Phosphate rock", name: "Phosphate rock", cat: "ag" },
 ];
 
 const round = (x, n) => { const p = 10 ** n; return Math.round(x * p) / p; };
 const isNum = (v) => typeof v === "number" && isFinite(v);
 const cleanUnit = (u) => (u == null ? "" : String(u).replace(/[()]/g, "").trim());
-const norm = (s) => (s == null ? "" : String(s).trim());
+const norm = (s) => (s == null ? "" : String(s).replace(/\s*\*+\s*$/, "").replace(/\s+/g, " ").trim());
 
 export function findMonthlyUrlFromHtml(html) {
   const m = html.match(/https?:\/\/[^"'\s)]*CMO-Historical-Data-Monthly\.xlsx/i);
@@ -196,6 +224,7 @@ async function downloadWorkbook() {
 
 async function main() {
   const dry = process.argv.includes("--dry");
+  const list = process.argv.includes("--list");
   const latestPath = path.join(process.cwd(), "public", "data", "latest.json");
   const raw = fs.readFileSync(latestPath, "utf8");
   const data = JSON.parse(raw);
@@ -206,6 +235,17 @@ async function main() {
   const ws = wb.getWorksheet(SHEET) || wb.worksheets.find((s) => s.rowCount > 50);
   if (!ws) throw new Error("Monthly Prices sheet not found");
   const grid = sheetToGrid(ws);
+
+  if (list) {
+    const { names, units, latest } = locate(grid);
+    const col = buildColMap(names);
+    console.log("\nPink Sheet columns — name | unit | latest value:");
+    for (const [name, i] of col) {
+      console.log(`  ${name}  |  ${cleanUnit(units[i]) || "-"}  |  ${isNum(latest[i]) ? latest[i] : "-"}`);
+    }
+    console.log(`\n(${col.size} columns total)`);
+    return;
+  }
 
   const { period, rows, missing } = extract(grid);
   console.log("\nlatest period:", period, "| extracted", rows.length, "commodities");
