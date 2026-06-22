@@ -229,11 +229,20 @@ async function main() {
   console.log("wrote latest.json");
 
   // Also emit the monthly back-history for the per-commodity price pages.
+  // MERGE into the shared history file: set our (World Bank) series and leave
+  // every other source's series (e.g. EIA energy) untouched, regardless of run order.
   const hist = extractHistory(grid);
   const histPath = path.join(process.cwd(), "public", "data", "commodity-history.json");
-  fs.writeFileSync(histPath, JSON.stringify(hist));
+  let existingHist = { series: {} };
+  try { existingHist = JSON.parse(fs.readFileSync(histPath, "utf8")); } catch {}
+  const mergedHist = {
+    source: "Multiple official sources (EIA, World Bank)",
+    updated: hist.updated || existingHist.updated || null,
+    series: { ...(existingHist.series || {}), ...hist.series },
+  };
+  fs.writeFileSync(histPath, JSON.stringify(mergedHist));
   const counts = Object.values(hist.series).map((s) => s.points.length);
-  console.log("wrote commodity-history.json —", Object.keys(hist.series).length, "series, up to", Math.max(0, ...counts), "months each");
+  console.log("merged commodity-history.json —", Object.keys(hist.series).length, "World Bank series, up to", Math.max(0, ...counts), "months each;", Object.keys(mergedHist.series).length, "total in file");
 }
 
 const invoked = process.argv[1] ? path.resolve(process.argv[1]) : "";
