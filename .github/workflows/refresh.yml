@@ -30,6 +30,7 @@ jobs:
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
         run: |
+          node scripts/update-fx.mjs || echo "fx step failed; keeping prior FX rates"
           node scripts/update-eia.mjs
           node scripts/update-eurostat.mjs
           node scripts/update-commodities.mjs
