@@ -82,6 +82,7 @@ const NAV_GROUPS = [
     ["/compare/spain-vs-portugal", "Spain vs Portugal"],
     ["/electricity-bill-calculator", "Electricity bill calculator"],
     ["/about", "About, sources & contact"],
+    ["/data", "Open data (free JSON)"],
   ]],
 ];
 

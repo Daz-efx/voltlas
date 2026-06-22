@@ -24,6 +24,7 @@ export default function sitemap() {
   return [
     { url: SITE, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE}/data`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/electricity-bill-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     ...rankings, ...comparisons, ...commodities, ...countries,
   ];
