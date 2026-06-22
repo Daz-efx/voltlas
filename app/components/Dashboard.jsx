@@ -96,6 +96,14 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
   const [sortDesc, setSortDesc] = useState(true);
   const [expanded, setExpanded] = useState(() => new Set());
   const [query, setQuery] = useState("");
+  const [tip, setTip] = useState(null); // custom FX tooltip: { text, x, y }
+  useEffect(() => {
+    if (!tip) return;
+    const close = () => setTip(null);
+    document.addEventListener("click", close);
+    window.addEventListener("scroll", close, true);
+    return () => { document.removeEventListener("click", close); window.removeEventListener("scroll", close, true); };
+  }, [tip]);
   const [detail, setDetail] = useState(null); // geo string or null
   const [showMethod, setShowMethod] = useState(false);
 
@@ -174,6 +182,12 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
     return `${fmtLocal(toLocal(disp, ccy), ccy)}/${fuLabel} local  ·  1 ${ccy} = $${FX[ccy].usd}  ·  ${FX_DATE}`;
   };
   const pppOf = (usdVal, geo) => (PLI[geo] ? usdVal / (PLI[geo] / 100) : null);
+  const tipProps = (text) => ({
+    onMouseEnter: (e) => setTip({ text, x: e.clientX, y: e.clientY }),
+    onMouseMove: (e) => setTip({ text, x: e.clientX, y: e.clientY }),
+    onMouseLeave: () => setTip(null),
+    onClick: (e) => { e.stopPropagation(); setTip((t) => (t && t.text === text ? null : { text, x: e.clientX, y: e.clientY })); },
+  });
 
   const toggleExpand = (geo) => setExpanded((prev) => { const n = new Set(prev); n.has(geo) ? n.delete(geo) : n.add(geo); return n; });
   const countriesWithSub = rows.filter((d) => subRowsFor(d.geo).length > 0).map((d) => d.geo);
@@ -250,7 +264,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             {view === "commodities" ? "Global benchmark prices in USD: energy spot prices — crude oil (WTI, Brent) and natural gas (Henry Hub) — from the EIA, plus metals, precious metals and agricultural commodities from the World Bank. Click any commodity for its full price history. Live intraday exchange quotes are licensed and excluded."
               : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
               : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
-              : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
+              : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Tap or hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
           <div style={{ marginTop: 10, display: "inline-block", font: "600 10px 'IBM Plex Mono'", letterSpacing: ".12em", color: "#171E2E", background: "#E8E4DA", padding: "3px 8px", textTransform: "uppercase" }}>Live · free official sources</div>
         </div>
@@ -314,7 +328,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <button className="cname" onClick={() => setDetail(d.geo)}>{d.geo}</button>
-                        {d.note && <span title={d.note} style={{ cursor: "help", color: accent, font: "600 10px 'IBM Plex Mono'", borderBottom: `1px dotted ${accent}` }}>※</span>}
+                        {d.note && <span {...tipProps(d.note)} style={{ cursor: "help", color: accent, font: "600 10px 'IBM Plex Mono'", borderBottom: `1px dotted ${accent}` }}>※</span>}
                       </div>
                       {subs.length > 0 ? (
                         <button className="exp" onClick={() => toggleExpand(d.geo)} aria-expanded={isOpen} style={{ color: accent, marginTop: 2 }}>{isOpen ? "▾" : "▸"} {subs.length} {meta.unit}</button>
@@ -325,7 +339,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                     <Rail pct={pos(d[field])} aria={`${d.geo}: ${fmt(d[field])} per kWh`} dim={false} />
                     <Spark seed={d.geo + field} value={d[field]} />
                     <div style={{ textAlign: "right" }}>
-                      <div title={fxTip(d[field], d.geo)} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmt(d[field])}</div>
+                      <div {...tipProps(fxTip(d[field], d.geo))} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmt(d[field])}</div>
                       <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.42)" }}>{d.source} · {d.period}</div>
                     </div>
                   </div>
@@ -335,7 +349,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                       <Rail pct={pos(s[field])} aria={`${d.geo} — ${s.name}: ${fmt(s[field])} per kWh`} dim={true} />
                       <Spark seed={d.geo + s.name + field} value={s[field]} w={50} h={16} />
                       <div style={{ textAlign: "right" }}>
-                        <div title={fxTip(s[field], d.geo)} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmt(s[field])}</div>
+                        <div {...tipProps(fxTip(s[field], d.geo))} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmt(s[field])}</div>
                         <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.38)" }}>{meta.source}</div>
                       </div>
                     </div>
@@ -407,7 +421,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                     <Rail pct={tPos(d[tField])} aria={`${d.geo}: ${fmtFuel(d[tField])} per litre`} dim={false} />
                     <Spark seed={d.geo + tField} value={d[tField]} />
                     <div style={{ textAlign: "right" }}>
-                      <div title={fxTipFuel(d[tField], d.geo)} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmtFuel(toU(d[tField]))}<span style={{ fontSize: 10, color: "rgba(232,228,218,0.5)" }}>/{fuLabel}</span></div>
+                      <div {...tipProps(fxTipFuel(d[tField], d.geo))} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmtFuel(toU(d[tField]))}<span style={{ fontSize: 10, color: "rgba(232,228,218,0.5)" }}>/{fuLabel}</span></div>
                       {d.geo === "United States" && <div style={{ font: "400 10px 'IBM Plex Mono'", color: accent }}>{fmtFuel(altU(d[tField]))}/{altLabel}</div>}
                       <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.42)" }}>{d.source} · {d.period}</div>
                     </div>
@@ -418,7 +432,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                       <Rail pct={tPos(s[tField])} aria={`${d.geo} — ${s.name}: ${fmtFuel(s[tField])} per litre`} dim={true} />
                       <Spark seed={d.geo + s.name + tField} value={s[tField]} w={50} h={16} />
                       <div style={{ textAlign: "right" }}>
-                        <div title={fxTipFuel(s[tField], d.geo)} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmtFuel(toU(s[tField]))}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>/{fuLabel}</span></div>
+                        <div {...tipProps(fxTipFuel(s[tField], d.geo))} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmtFuel(toU(s[tField]))}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>/{fuLabel}</span></div>
                         {d.geo === "United States" && <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{fmtFuel(altU(s[tField]))}/{altLabel}</div>}
                         <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.38)" }}>{meta.source}</div>
                       </div>
@@ -577,10 +591,13 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               <p><strong>What each number is.</strong> Retail energy is taxes-included, stored in local currency and converted to USD at display time. Some figures aren't consumption-weighted averages — the US value is EIA's revenue-per-kWh proxy, and several European figures are regulated tariffs; these are flagged with ※.</p>
               <p><strong>Cadence &amp; freshness.</strong> US electricity refreshes monthly and energy-commodity spot prices daily (both EIA); Eurostat publishes semi-annually. The site re-runs every connector weekly and self-updates. Every figure carries its source and period.</p>
               <p><strong>Coverage gaps are shown, not filled.</strong> Coverage is strongest across Europe and North America. Where no free source exists, the country is absent rather than estimated. Sub-national drill-down appears only where a free source publishes it (US, all 50 states).</p>
-              <p style={{ marginBottom: 0 }}><strong>Currency &amp; PPP.</strong> Hover any price for the exact FX rate and date. Country profiles also show a purchasing-power-adjusted figure (illustrative), which reflects local affordability rather than the market exchange rate.</p>
+              <p style={{ marginBottom: 0 }}><strong>Currency &amp; PPP.</strong> Tap or hover any price for the exact FX rate and date. Country profiles also show a purchasing-power-adjusted figure (illustrative), which reflects local affordability rather than the market exchange rate.</p>
             </div>
           </div>
         </div>
+      )}
+      {tip && (
+        <div style={{ position: "fixed", left: Math.max(8, Math.min(tip.x + 14, (typeof window !== "undefined" ? window.innerWidth : 400) - 248)), top: Math.min(tip.y + 16, (typeof window !== "undefined" ? window.innerHeight : 800) - 70), maxWidth: 232, zIndex: 9999, pointerEvents: "none", background: "#0F1421", color: "#E8E4DA", border: "1px solid rgba(232,228,218,0.22)", borderRadius: 8, padding: "8px 11px", font: "500 12px/1.5 'IBM Plex Mono', monospace", boxShadow: "0 8px 28px rgba(0,0,0,0.45)" }}>{tip.text}</div>
       )}
     </div>
   );

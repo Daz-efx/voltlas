@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import HistoryChart from "./HistoryChart";
 
 const SITE = "https://voltlas.com";
 const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
@@ -57,47 +58,6 @@ export async function generateMetadata({ params }) {
     openGraph: { type: "website", title: `${row.name} price today & history`, description: desc, url: `/commodity/${slug}` },
     twitter: { card: "summary_large_image", title: `${row.name} price`, description: desc },
   };
-}
-
-function HistoryChart({ points, accent }) {
-  const W = 760, Hh = 250, padL = 6, padR = 6, padT = 18, padB = 24;
-  const n = points.length;
-  const vals = points.map((p) => p[1]);
-  const min = Math.min(...vals), max = Math.max(...vals);
-  const span = max - min || 1;
-  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
-  const Y = (v) => padT + (1 - (v - min) / span) * (Hh - padT - padB);
-  const line = points.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(" ");
-  const area = `${line} L${X(n - 1).toFixed(1)} ${(Hh - padB).toFixed(1)} L${X(0).toFixed(1)} ${(Hh - padB).toFixed(1)} Z`;
-  const maxI = vals.indexOf(max), minI = vals.indexOf(min), lastI = n - 1;
-
-  // year ticks (~7 across the range)
-  const years = points.map((p) => parseInt(String(p[0]).slice(0, 4), 10));
-  const firstByYear = {};
-  years.forEach((y, i) => { if (firstByYear[y] === undefined) firstByYear[y] = i; });
-  const uniq = Object.keys(firstByYear).map(Number).sort((a, b) => a - b);
-  const step = Math.max(1, Math.ceil(uniq.length / 7));
-  const ticks = [];
-  for (let k = 0; k < uniq.length; k += step) ticks.push({ i: firstByYear[uniq[k]], label: String(uniq[k]) });
-
-  return (
-    <svg viewBox={`0 0 ${W} ${Hh}`} width="100%" style={{ display: "block", marginTop: 6 }} role="img" aria-label="Price history chart">
-      <line x1={padL} y1={Hh - padB} x2={W - padR} y2={Hh - padB} stroke={C.line} strokeWidth="1" />
-      {ticks.map((t) => (
-        <g key={t.i}>
-          <line x1={X(t.i)} y1={padT} x2={X(t.i)} y2={Hh - padB} stroke={C.line} strokeWidth="1" strokeDasharray="2 4" opacity="0.5" />
-          <text x={X(t.i)} y={Hh - padB + 15} fill={C.faint} fontSize="11" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{t.label}</text>
-        </g>
-      ))}
-      <path d={area} fill={accent} opacity="0.10" />
-      <path d={line} fill="none" stroke={accent} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-      <circle cx={X(maxI)} cy={Y(max)} r="3" fill={C.text} />
-      <text x={Math.min(W - 40, Math.max(28, X(maxI)))} y={Y(max) - 7} fill={C.dim} fontSize="10.5" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{fmtNum(max)}</text>
-      <circle cx={X(minI)} cy={Y(min)} r="3" fill={C.text} />
-      <text x={Math.min(W - 40, Math.max(28, X(minI)))} y={Y(min) + 15} fill={C.dim} fontSize="10.5" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{fmtNum(min)}</text>
-      <circle cx={X(lastI)} cy={Y(points[lastI][1])} r="3.5" fill={accent} />
-    </svg>
-  );
 }
 
 export default async function CommodityPage({ params }) {
@@ -181,7 +141,7 @@ export default async function CommodityPage({ params }) {
 
             <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "30px 0 2px" }}>Price history</h2>
             <div style={{ fontSize: 12.5, color: C.faint, fontFamily: "'IBM Plex Mono',monospace" }}>Monthly, {fmtCode(pts[0][0])} – {fmtCode(pts[n - 1][0])} · {row.unit}</div>
-            <HistoryChart points={pts} accent={C.accent} />
+            <HistoryChart points={pts} />
             <div style={{ fontSize: 12.5, color: C.faint, marginTop: 4 }}>High {fmtCode(hiCode)} · low {fmtCode(loCode)}. All-time within the charted window.</div>
           </>
         ) : (
