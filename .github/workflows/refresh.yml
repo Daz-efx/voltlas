@@ -36,6 +36,8 @@ jobs:
           node scripts/update-commodities.mjs
           node scripts/update-fuels.mjs
           node scripts/update-eu-fuels.mjs || echo "eu-fuels step failed; keeping prior EU data"
+          node scripts/update-canada.mjs || echo "canada step failed; keeping prior data"
+          node scripts/update-mexico.mjs || echo "mexico step failed; keeping prior data"
           node scripts/update-worldbank.mjs || echo "worldbank step failed; keeping prior commodities"
       - name: Commit and push if data changed
         run: |
