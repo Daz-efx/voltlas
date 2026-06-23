@@ -3,19 +3,24 @@
 import { useState, useRef } from "react";
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-// Handles weekly ISO dates (YYYY-MM-DD) and monthly codes (YYYYMmm).
+// Handles weekly ISO dates (YYYY-MM-DD), monthly codes (YYYYMmm), and semesters (YYYY-S1/S2).
 const fmtCode = (code) => {
   const s = String(code);
   let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if (m) return `${+m[3]} ${MON[+m[2] - 1]} ${m[1]}`;
   m = /^(\d{4})M(\d{2})$/.exec(s);
   if (m) return `${MON[+m[2] - 1]} ${m[1]}`;
+  m = /^(\d{4})-?S([12])$/.exec(s);
+  if (m) return `H${m[2]} ${m[1]}`;
   return s;
 };
-const fmtNum = (v) => Number(v).toLocaleString("en-US", { minimumFractionDigits: Math.abs(v) < 100 ? 2 : 0, maximumFractionDigits: 2 });
+const fmtNum = (v) => {
+  const a = Math.abs(v);
+  return Number(v).toLocaleString("en-US", { minimumFractionDigits: a < 100 ? 2 : 0, maximumFractionDigits: a < 1 ? 3 : 2 });
+};
 const C = { text: "#E8E4DA", dim: "rgba(232,228,218,0.62)", faint: "rgba(232,228,218,0.40)", accent: "#F2A93B", panel: "#1C2438", line: "rgba(232,228,218,0.14)", bg: "#171E2E" };
 
-export default function FuelHistoryChart({ points, color = C.accent }) {
+export default function FuelHistoryChart({ points, color = C.accent, unit = "/L" }) {
   const [hi, setHi] = useState(null);
   const ref = useRef(null);
 
@@ -90,7 +95,7 @@ export default function FuelHistoryChart({ points, color = C.accent }) {
             <circle cx={tip.px} cy={tip.py} r="4.5" fill={color} stroke={C.bg} strokeWidth="1.5" />
             <rect x={tip.tx} y={tip.ty} width={tip.tw} height={tip.th} rx="6" fill={C.panel} stroke={C.line} />
             <text x={tip.tx + tip.tw / 2} y={tip.ty + 16} fill={C.faint} fontSize="11" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{tip.label}</text>
-            <text x={tip.tx + tip.tw / 2} y={tip.ty + 32} fill={C.text} fontSize="15" fontWeight="700" fontFamily="'Saira Condensed',sans-serif" textAnchor="middle">${tip.val}/L</text>
+            <text x={tip.tx + tip.tw / 2} y={tip.ty + 32} fill={C.text} fontSize="15" fontWeight="700" fontFamily="'Saira Condensed',sans-serif" textAnchor="middle">${tip.val}{unit}</text>
           </g>
         )}
       </svg>

@@ -9,6 +9,8 @@ const SITE = "https://voltlas.com";
 const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 const LATEST = `${SITE}/data/latest.json`;
 const HISTORY = `${SITE}/data/commodity-history.json`;
+const FUEL_HISTORY = `${SITE}/data/fuel-history.json`;
+const ENERGY_HISTORY = `${SITE}/data/energy-history.json`;
 const C = { bg: "#171E2E", panel: "#1C2438", text: "#E8E4DA", dim: "rgba(232,228,218,0.62)", faint: "rgba(232,228,218,0.40)", accent: "#F2A93B", line: "rgba(232,228,218,0.14)" };
 
 export const metadata = {
@@ -54,7 +56,7 @@ export default function DataPage() {
       {
         "@type": "Dataset",
         name: "Voltlas — current energy, fuel & commodity prices",
-        description: "Latest household and business electricity, residential gas, pump prices (gasoline & diesel), and benchmark commodity prices worldwide, in USD. Compiled from official sources.",
+        description: "Latest household and business electricity, residential gas, pump prices (petrol & diesel), and benchmark commodity prices worldwide, in USD. Compiled from official sources.",
         url: `${SITE}/data`,
         license: LICENSE,
         isAccessibleForFree: true,
@@ -114,11 +116,20 @@ export default function DataPage() {
 
         <H2>The datasets</H2>
         <Card title="Current prices" url={LATEST}>
-          A full snapshot in one file. Key arrays: <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>COMMODITIES</code> (energy, metals, precious, agriculture), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>DATA</code> (electricity &amp; gas by country, USD/kWh), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FUEL_DATA</code> (gasoline &amp; diesel by country, USD/litre), and <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX</code> (the reference rates used for USD conversion, with <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX_DATE</code>).
+          A full snapshot in one file. Key arrays: <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>COMMODITIES</code> (energy, metals, precious, agriculture), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>DATA</code> (electricity &amp; gas by country, USD/kWh), <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FUEL_DATA</code> (petrol &amp; diesel by country, USD/liter), and <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX</code> (the reference rates used for USD conversion, with <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>FX_DATE</code>).
         </Card>
         <Card title="Commodity price history" url={HISTORY}>
           Up to 25 years of monthly history per commodity — metals, precious metals, agriculture and energy — ready to chart.
         </Card>
+        <Card title="Fuel price history" url={FUEL_HISTORY}>
+          Weekly pump-price history (gasoline &amp; diesel, USD/liter) per country — about 10 years for the EU (EC Oil Bulletin) and the US (EIA), keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
+        </Card>
+        <Card title="Energy price history" url={ENERGY_HISTORY}>
+          Semi-annual household &amp; business electricity and household gas history (USD/kWh) per country, from Eurostat, keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
+        </Card>
+        <p style={{ color: C.faint, fontSize: 13.5, lineHeight: 1.65, marginTop: 12 }}>
+          Note on history in USD: non-USD historical series are converted at a single recent reference rate, so they track price movements in the original currency redrawn in dollars rather than week-by-week exchange-rate swings.
+        </p>
 
         <H2>Field reference</H2>
         <div style={{ font: `600 12px ${mono}`, color: C.faint, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 2 }}>COMMODITIES[]</div>

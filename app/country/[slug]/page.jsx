@@ -6,15 +6,27 @@ import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RANKINGS } from "../../rankings/config";
+import { COMPARISONS } from "../../compare/config";
+import FuelHistoryChart from "./FuelHistoryChart";
 
 export const dynamicParams = false; // only the countries we build; everything else 404s
 
 const SITE = "https://voltlas.com";
 const YEAR = new Date().getFullYear();
+const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 
 function loadData() {
   const file = path.join(process.cwd(), "public", "data", "latest.json");
   return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+function loadFuelHistory() {
+  try { return JSON.parse(fs.readFileSync(path.join(process.cwd(), "public", "data", "fuel-history.json"), "utf8")); }
+  catch { return { series: {} }; }
+}
+function loadEnergyHistory() {
+  try { return JSON.parse(fs.readFileSync(path.join(process.cwd(), "public", "data", "energy-history.json"), "utf8")); }
+  catch { return { series: {} }; }
 }
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const usd = (v) => `$${Number(v).toFixed(3)}`;
@@ -23,7 +35,9 @@ const usd2 = (v) => `$${Number(v).toFixed(2)}`;
 function find(slug) {
   const data = loadData();
   const country = data.DATA.find((c) => slugify(c.geo) === slug) || null;
-  return { data, country };
+  const fuelHist = country ? (loadFuelHistory().series || {})[country.geo] || null : null;
+  const energyHist = country ? (loadEnergyHistory().series || {})[country.geo] || null : null;
+  return { data, country, fuelHist, energyHist };
 }
 
 export function generateStaticParams() {
@@ -63,7 +77,7 @@ function Metric({ label, value, sub }) {
 
 export default async function CountryPage({ params }) {
   const { slug } = await params;
-  const { data, country } = find(slug);
+  const { data, country, fuelHist, energyHist } = find(slug);
   if (!country) notFound();
 
   const ccy = data.COUNTRY_CCY[country.geo] || "USD";
@@ -74,14 +88,21 @@ export default async function CountryPage({ params }) {
   const fuel = (data.FUEL_DATA || []).find((f) => f.geo === country.geo);
   const subs = (data.SUBNATIONAL && data.SUBNATIONAL[country.geo]) || null;
   const subMeta = (data.SUB_META && data.SUB_META[country.geo]) || null;
+  const related =
+    country.geo === "United States"
+      ? ["us-electricity-prices-by-state", "us-gas-prices-by-state", "electricity-prices-by-country", "natural-gas-prices-by-country"]
+      : country.region === "Europe"
+      ? ["cheapest-electricity-in-europe", "most-expensive-electricity-in-europe", "natural-gas-prices-by-country", "electricity-prices-by-country"]
+      : ["electricity-prices-by-country", "natural-gas-prices-by-country"];
+  const compares = COMPARISONS.filter(([a, b]) => a === country.geo || b === country.geo).slice(0, 6);
 
   const url = `${SITE}/country/${slug}`;
   const measured = [
     country.elecRes != null && { "@type": "PropertyValue", name: "Residential electricity price", value: country.elecRes, unitText: "USD per kWh" },
     country.elecBiz != null && { "@type": "PropertyValue", name: "Business electricity price", value: country.elecBiz, unitText: "USD per kWh" },
     country.gasRes != null && { "@type": "PropertyValue", name: "Residential natural gas price", value: country.gasRes, unitText: "USD per kWh" },
-    fuel && fuel.petrol != null && { "@type": "PropertyValue", name: "Petrol price", value: fuel.petrol, unitText: "USD per litre" },
-    fuel && fuel.diesel != null && { "@type": "PropertyValue", name: "Diesel price", value: fuel.diesel, unitText: "USD per litre" },
+    fuel && fuel.petrol != null && { "@type": "PropertyValue", name: "Petrol price", value: fuel.petrol, unitText: "USD per liter" },
+    fuel && fuel.diesel != null && { "@type": "PropertyValue", name: "Diesel price", value: fuel.diesel, unitText: "USD per liter" },
   ].filter(Boolean);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -98,6 +119,7 @@ export default async function CountryPage({ params }) {
         name: `${country.geo} electricity, gas and fuel prices`,
         description: `Retail electricity, natural gas and transport-fuel prices for ${country.geo}, in USD, from ${country.source}.`,
         url,
+        license: LICENSE,
         isAccessibleForFree: true,
         creator: { "@type": "Organization", name: "Voltlas", url: SITE },
         sourceOrganization: { "@type": "Organization", name: country.source },
@@ -128,6 +150,8 @@ export default async function CountryPage({ params }) {
           {fuel && fuel.diesel != null && <Metric label="Diesel" value={`${usd2(fuel.diesel)}/L`} sub={`${usd2(fuel.diesel * 3.78541)}/gal`} />}
         </div>
 
+        <Link href={`/electricity-bill-calculator?country=${slug}`} style={{ display: "inline-block", marginTop: 16, padding: "9px 16px", background: C.accent, color: C.bg, font: "700 12px 'Archivo',sans-serif", textTransform: "uppercase", letterSpacing: ".06em", textDecoration: "none" }}>Estimate your {country.geo} bill →</Link>
+
         {ppp != null && (
           <div style={{ marginTop: 18, padding: "14px 16px", background: "rgba(242,169,59,0.07)", border: "1px solid rgba(242,169,59,0.22)" }}>
             <div style={{ font: "600 10px 'Archivo',sans-serif", letterSpacing: ".1em", textTransform: "uppercase", color: C.accent }}>Adjusted for purchasing power</div>
@@ -136,6 +160,54 @@ export default async function CountryPage({ params }) {
             </p>
           </div>
         )}
+
+        {energyHist && (() => {
+          const MINPTS = 4;
+          const charts = [
+            { label: "Electricity · household", pts: energyHist.elecRes || [], color: C.accent },
+            { label: "Electricity · business", pts: energyHist.elecBiz || [], color: "#9B8CFF" },
+            { label: "Natural gas · household", pts: energyHist.gasRes || [], color: "#5FC9A6" },
+          ].filter((c) => c.pts.length >= MINPTS);
+          if (!charts.length) return null;
+          return (
+            <section style={{ marginTop: 30 }}>
+              <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "0 0 2px" }}>Energy price history</h2>
+              <div style={{ fontSize: 12.5, color: C.dim, fontFamily: "'IBM Plex Mono',monospace", marginBottom: 6 }}>USD per kWh, all taxes included \u00b7 Eurostat</div>
+              {charts.map((c) => (
+                <div key={c.label}>
+                  <div style={{ font: "600 12px 'IBM Plex Mono',monospace", color: C.dim, textTransform: "uppercase", letterSpacing: ".06em", margin: "14px 0 2px" }}>{c.label}</div>
+                  <FuelHistoryChart points={c.pts} color={c.color} unit="/kWh" />
+                </div>
+              ))}
+            </section>
+          );
+        })()}
+
+        {fuelHist && (() => {
+          const MINPTS = 6;
+          const pe = fuelHist.petrol || [];
+          const di = fuelHist.diesel || [];
+          const showPe = pe.length >= MINPTS, showDi = di.length >= MINPTS;
+          if (!showPe && !showDi) return null;
+          return (
+            <section style={{ marginTop: 30 }}>
+              <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "0 0 2px" }}>Pump-price history</h2>
+              <div style={{ fontSize: 12.5, color: C.dim, fontFamily: "'IBM Plex Mono',monospace", marginBottom: 6 }}>USD per liter{fuel && fuel.source ? ` \u00b7 ${fuel.source}` : ""}</div>
+              {showPe && (
+                <>
+                  <div style={{ font: "600 12px 'IBM Plex Mono',monospace", color: C.dim, textTransform: "uppercase", letterSpacing: ".06em", margin: "12px 0 2px" }}>Gasoline</div>
+                  <FuelHistoryChart points={pe} />
+                </>
+              )}
+              {showDi && (
+                <>
+                  <div style={{ font: "600 12px 'IBM Plex Mono',monospace", color: C.dim, textTransform: "uppercase", letterSpacing: ".06em", margin: "16px 0 2px" }}>Diesel</div>
+                  <FuelHistoryChart points={di} color="#7FB0E8" />
+                </>
+              )}
+            </section>
+          );
+        })()}
 
         {subs && (
           <section style={{ marginTop: 30 }}>
@@ -148,6 +220,28 @@ export default async function CountryPage({ params }) {
               ))}
             </div>
             {subMeta && subMeta.note && <p style={{ fontSize: 11, color: C.dim, marginTop: 8 }}>※ {subMeta.note}</p>}
+          </section>
+        )}
+
+        {related.length > 0 && (
+          <section style={{ marginTop: 30 }}>
+            <h2 style={{ font: "800 18px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em" }}>Related rankings</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", marginTop: 10 }}>
+              {related.map((s) => { const r = RANKINGS.find((x) => x.slug === s); return r ? (
+                <Link key={s} href={`/rankings/${s}`} style={{ font: "500 13px 'Archivo',sans-serif", color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}`, paddingBottom: 2 }}>{r.h1}</Link>
+              ) : null; })}
+            </div>
+          </section>
+        )}
+
+        {compares.length > 0 && (
+          <section style={{ marginTop: 26 }}>
+            <h2 style={{ font: "800 18px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em" }}>Compare {country.geo}</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", marginTop: 10 }}>
+              {compares.map(([a, b]) => (
+                <Link key={`${a}-${b}`} href={`/compare/${slugify(a)}-vs-${slugify(b)}`} style={{ font: "500 13px 'Archivo',sans-serif", color: C.accent, textDecoration: "none", borderBottom: `1px solid ${C.line}`, paddingBottom: 2 }}>{a} vs {b}</Link>
+              ))}
+            </div>
           </section>
         )}
 

@@ -8,12 +8,19 @@
 //   • natural gas, household       nrg_pc_202, band D2 (20-199 GJ)     -> gasRes
 // All all-taxes-included, EUR/kWh, converted to USD via the FX rate in the file.
 //
+// It ALSO writes ~13 years of semi-annual history per country into
+// public/data/energy-history.json (same three series, USD/kWh), for the
+// country-page charts. History is merge-safe and converted at the current FX
+// rate (see the note on /data).
+//
 // Run from your project root:   node scripts/update-eurostat.mjs
 
 import fs from "node:fs";
 import path from "node:path";
 
 const DATA_FILE = path.join(process.cwd(), "public", "data", "latest.json");
+const HIST_FILE = path.join(process.cwd(), "public", "data", "energy-history.json");
+const HIST_SEMESTERS = 26; // ~13 years of semi-annual points
 
 // name -> { eu: Eurostat geo code, code: display ISO2, ccy, pli (price-level, US=100) }
 // Greece is "EL" in Eurostat. UK is intentionally absent (kept on DESNZ).
@@ -61,6 +68,11 @@ const fmtSemester = (p) => {
   const m = String(p).match(/(\d{4}).*?S?([12])/);
   return m ? `H${m[2]} ${m[1]}` : String(p);
 };
+// Sortable history code: "2024-S1" / "2024S1" -> "2024S1".
+const semCode = (p) => {
+  const m = String(p).match(/(\d{4}).*?S?([12])/);
+  return m ? `${m[1]}S${m[2]}` : String(p);
+};
 
 export function parseGeo(j) {
   if (!j.dimension || !j.value || !j.id || !j.size) throw new Error("no values");
@@ -77,15 +89,45 @@ export function parseGeo(j) {
   return { values, period };
 }
 
-async function eurostat(dataset, filters) {
+// Like parseGeo, but keeps every time period -> { geoCode: [[period, value], ...] }.
+export function parseSeries(j) {
+  if (!j.dimension || !j.value || !j.id || !j.size) throw new Error("no values");
+  const strideOf = (pos) => { let s = 1; for (let i = pos + 1; i < j.size.length; i++) s *= j.size[i]; return s; };
+  const gpos = j.id.indexOf("geo"), tpos = j.id.indexOf("time");
+  const gStride = strideOf(gpos), tStride = strideOf(tpos);
+  const gIndex = j.dimension.geo.category.index;
+  const times = Object.entries(j.dimension.time.category.index).sort((a, b) => a[1] - b[1]);
+  const out = {};
+  for (const [code, gi] of Object.entries(gIndex)) {
+    const arr = [];
+    for (const [period, ti] of times) {
+      const v = j.value[gi * gStride + ti * tStride];
+      if (v != null) arr.push([period, Number(v)]);
+    }
+    if (arr.length) out[code] = arr;
+  }
+  return out;
+}
+
+function buildUrl(dataset, filters, lastN) {
   const url = new URL(`https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${dataset}`);
   url.searchParams.set("format", "JSON");
   url.searchParams.set("lang", "EN");
-  url.searchParams.set("lastTimePeriod", "1");
+  url.searchParams.set("lastTimePeriod", String(lastN));
   for (const [k, v] of Object.entries(filters)) url.searchParams.set(k, v);
-  const res = await fetch(url);
+  return url;
+}
+
+async function eurostat(dataset, filters) {
+  const res = await fetch(buildUrl(dataset, filters, 1));
   if (!res.ok) throw new Error(`${dataset} HTTP ${res.status}`);
   return parseGeo(await res.json());
+}
+
+async function eurostatSeries(dataset, filters, lastN) {
+  const res = await fetch(buildUrl(dataset, filters, lastN));
+  if (!res.ok) throw new Error(`${dataset} HTTP ${res.status}`);
+  return parseSeries(await res.json());
 }
 
 async function tryFetch(label, dataset, filters) {
@@ -99,17 +141,30 @@ async function tryFetch(label, dataset, filters) {
   }
 }
 
+async function tryHist(label, dataset, filters) {
+  try {
+    const s = await eurostatSeries(dataset, filters, HIST_SEMESTERS);
+    console.log(`  hist ${label}: ${Object.keys(s).length} countries`);
+    return s;
+  } catch (e) {
+    console.warn(`  ⚠ hist ${label} failed (${e.message})`);
+    return {};
+  }
+}
+
+const F_ELEC_H = { nrg_cons: "KWH2500-4999", unit: "KWH", tax: "I_TAX", currency: "EUR" };
+const F_ELEC_B = { nrg_cons: "MWH500-1999", unit: "KWH", tax: "I_TAX", currency: "EUR" };
+const F_GAS_H = { nrg_cons: "GJ20-199", unit: "KWH", tax: "I_TAX", currency: "EUR" };
+
 async function main() {
   const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
   const eurToUsd = data.FX?.EUR?.usd ?? 1.084;
   for (const [ccy, rate] of Object.entries(FX_ADD)) if (!(ccy in data.FX)) data.FX[ccy] = rate;
 
-  const elecH = await tryFetch("electricity household", "nrg_pc_204",
-    { nrg_cons: "KWH2500-4999", unit: "KWH", tax: "I_TAX", currency: "EUR" });
-  const elecB = await tryFetch("electricity business", "nrg_pc_205",
-    { nrg_cons: "MWH500-1999", unit: "KWH", tax: "I_TAX", currency: "EUR" });
-  const gasH = await tryFetch("gas household", "nrg_pc_202",
-    { nrg_cons: "GJ20-199", unit: "KWH", tax: "I_TAX", currency: "EUR" });
+  console.log("Latest:");
+  const elecH = await tryFetch("electricity household", "nrg_pc_204", F_ELEC_H);
+  const elecB = await tryFetch("electricity business", "nrg_pc_205", F_ELEC_B);
+  const gasH = await tryFetch("gas household", "nrg_pc_202", F_GAS_H);
 
   const period = elecH.period ? fmtSemester(elecH.period) : (gasH.period ? fmtSemester(gasH.period) : null);
   let updated = 0, added = 0;
@@ -134,10 +189,30 @@ async function main() {
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n");
   console.log(`✓ Eurostat update — ${updated} European countries with live data (${added} newly added)${period ? " · " + period : ""}.`);
-  const newOnes = ["Luxembourg", "Bulgaria", "Iceland", "Estonia"].map((n) => {
-    const r = data.DATA.find((d) => d.geo === n); return r ? `${n} $${r.elecRes}` : null;
-  }).filter(Boolean);
-  console.log("  new e.g.: " + newOnes.join(" · "));
+
+  // --- semi-annual history -> energy-history.json (merge-safe) ---
+  console.log("History:");
+  const ehHist = await tryHist("electricity household", "nrg_pc_204", F_ELEC_H);
+  const ebHist = await tryHist("electricity business", "nrg_pc_205", F_ELEC_B);
+  const ghHist = await tryHist("gas household", "nrg_pc_202", F_GAS_H);
+
+  let energy = { series: {} };
+  try { energy = JSON.parse(fs.readFileSync(HIST_FILE, "utf8")); } catch {}
+  const series = { ...(energy.series || {}) };
+  const toPts = (raw) => (raw || []).map(([p, v]) => [semCode(p), round3(v * eurToUsd)]).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+
+  let nHist = 0;
+  for (const [name, info] of Object.entries(COUNTRIES)) {
+    const elecRes = toPts(ehHist[info.eu]);
+    const elecBiz = toPts(ebHist[info.eu]);
+    const gasRes = toPts(ghHist[info.eu]);
+    if (!elecRes.length && !elecBiz.length && !gasRes.length) continue;
+    series[name] = { geo: name, region: "Europe", elecRes, elecBiz, gasRes };
+    nHist++;
+  }
+  fs.writeFileSync(HIST_FILE, JSON.stringify({ updated: new Date().toISOString().slice(0, 10), series }));
+  const sampleN = (series["Germany"]?.elecRes || []).length;
+  console.log(`✓ energy-history.json — ${nHist} countries with semi-annual history (e.g. Germany ${sampleN} elec points).`);
 }
 
 const isMain = import.meta.url === `file://${process.argv[1]}`;
