@@ -106,6 +106,16 @@ const STATES = [
   { name: "Texas",         series: "EMM_EPMR_PTE_STX_DPG" },
 ];
 
+// EIA's 5 PADD regions blanket all 50 states at a coarser grain. Unlike the
+// states, EIA publishes regional diesel too, so these carry both fuels.
+const REGIONS = [
+  { name: "East Coast (PADD 1)",     gas: "EMM_EPMR_PTE_R10_DPG", diesel: "EMD_EPD2D_PTE_R10_DPG" },
+  { name: "Midwest (PADD 2)",        gas: "EMM_EPMR_PTE_R20_DPG", diesel: "EMD_EPD2D_PTE_R20_DPG" },
+  { name: "Gulf Coast (PADD 3)",     gas: "EMM_EPMR_PTE_R30_DPG", diesel: "EMD_EPD2D_PTE_R30_DPG" },
+  { name: "Rocky Mountain (PADD 4)", gas: "EMM_EPMR_PTE_R40_DPG", diesel: "EMD_EPD2D_PTE_R40_DPG" },
+  { name: "West Coast (PADD 5)",     gas: "EMM_EPMR_PTE_R50_DPG", diesel: "EMD_EPD2D_PTE_R50_DPG" },
+];
+
 async function main() {
   const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
   data.FUEL_DATA = data.FUEL_DATA || [];
@@ -133,12 +143,24 @@ async function main() {
     const r = await tryS(s.name, s.series);
     if (r) subs.push({ name: s.name, petrol: perL(r.value), diesel: null });
   }
-  subs.sort((a, b) => b.petrol - a.petrol);
+
+  console.log("PADD regions (gasoline + diesel):");
+  let regionsResolved = 0;
+  for (const rg of REGIONS) {
+    const g = await tryS(rg.name + " gasoline", rg.gas);
+    const d = await tryS(rg.name + " diesel", rg.diesel);
+    if (g || d) {
+      subs.push({ name: rg.name, petrol: g ? perL(g.value) : null, diesel: d ? perL(d.value) : null });
+      regionsResolved++;
+    }
+  }
+
+  subs.sort((a, b) => (b.petrol ?? 0) - (a.petrol ?? 0));
   if (subs.length) data.FUEL_SUBNATIONAL["United States"] = subs;
   else delete data.FUEL_SUBNATIONAL["United States"];
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n");
-  console.log(`\u2713 Transport fuels \u2014 US national ${gas || dsl ? "written" : "unchanged"}, ${subs.length}/${STATES.length} states resolved.`);
+  console.log(`\u2713 Transport fuels \u2014 US national ${gas || dsl ? "written" : "unchanged"}, ${subs.length - regionsResolved}/${STATES.length} states + ${regionsResolved}/${REGIONS.length} PADD regions resolved.`);
 
   // --- Weekly history backfill for the per-country fuel charts (merged, non-fatal) ---
   try {
