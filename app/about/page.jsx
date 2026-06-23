@@ -26,7 +26,9 @@ const C = { bg: "#171E2E", panel: "#1C2438", text: "#E8E4DA", dim: "rgba(232,228
 const SOURCES = [
   ["U.S. Energy Information Administration (EIA)", "US electricity, natural gas, energy-commodity spot prices, and weekly retail road-fuel prices. Public domain."],
   ["Eurostat", "Household and business electricity and natural gas prices across the EU, taxes included."],
-  ["EC Weekly Oil Bulletin", "Consumer gasoline and diesel prices, taxes included, for the 27 EU member states."],
+  ["EC Weekly Oil Bulletin", "Consumer petrol and diesel prices, taxes included, for the 27 EU member states."],
+  ["Statistics Canada", "Monthly average retail gasoline and diesel prices for Canada and major cities (table 18-10-0001). StatCan Open Licence."],
+  ["Comisi\u00f3n Reguladora de Energ\u00eda (CRE)", "Mexico's official station-level pump prices for gasoline and diesel, aggregated to a national median. Mexican open-data licence."],
   ["World Bank \u201cPink Sheet\u201d", "Monthly metals, precious metals, and agricultural commodity prices (the Prospects Group commodity data)."],
 ];
 
@@ -67,7 +69,7 @@ export default function AboutPage() {
         <div style={{ font: "600 11px 'IBM Plex Mono',monospace", letterSpacing: ".18em", color: C.accent, textTransform: "uppercase", margin: "26px 0 6px" }}>About</div>
         <h1 style={{ font: "800 46px/1 'Saira Condensed',sans-serif", margin: 0, textTransform: "uppercase" }}>About Voltlas</h1>
         <p style={{ color: C.dim, fontSize: 15.5, lineHeight: 1.65, marginTop: 14 }}>
-          Voltlas tracks the price of energy — and the fuels and materials that power it — across the world, in one clean, free place. Every figure is pulled from an official source that permits public republication, converted to US dollars, and labelled with its origin and date. It covers retail electricity and natural gas, gasoline and diesel at the pump, and benchmark commodities, with coverage strongest across Europe and North America.
+          Voltlas tracks the price of energy — and the fuels and materials that power it — across the world, in one clean, free place. Every figure is pulled from an official source that permits public republication, converted to US dollars, and labeled with its origin and date. It covers retail electricity and natural gas, petrol and diesel at the pump, and benchmark commodities, with coverage strongest across Europe and North America.
         </p>
 
         <H2>How it works</H2>
