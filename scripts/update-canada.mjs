@@ -1,24 +1,23 @@
 // scripts/update-canada.mjs
 // Canadian retail pump prices (taxes incl.) from Statistics Canada table
 // 18-10-0001 "Monthly average retail prices for gasoline and fuel oil, by
-// geography", via the free WDS REST API (no key). Monthly, cents/litre (CAD).
+// geography", via the free full-table CSV download (no key). cents/litre (CAD).
 //
-//   national + city regular unleaded gasoline -> petrol
-//   national + city diesel at self service     -> diesel
+//   regular unleaded gasoline at self service -> petrol
+//   diesel fuel at self service                -> diesel
+// for Canada + the table's cities, taking each geography's most recent month
+// that actually has a value. Converts cents/L -> USD/L with the CAD rate in
+// latest.json (seeded if absent; the FX connector refines it from ECB).
 //
-// Converts CAD cents/L -> USD/L with the CAD rate in latest.json (seeded if
-// absent; the FX connector keeps it current from ECB). Owns the "Canada" row
-// of FUEL_DATA (source "Statistics Canada") + its city sub-national list;
-// everything else is preserved.
-//
-// Self-discovers the table's geography & fuel members at runtime, so it keeps
-// working if Statistics Canada renumbers them.
+// Owns the "Canada" row of FUEL_DATA (source "Statistics Canada") + its city
+// sub-national list; everything else is preserved.
 //
 //   node scripts/update-canada.mjs          (writes latest.json)
 //   node scripts/update-canada.mjs --dry     (prints, writes nothing)
 
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 
 const WDS = "https://www150.statcan.gc.ca/t1/wds/rest";
@@ -30,53 +29,84 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 
 const round3 = (v) => Math.round(v * 1000) / 1000;
 const centsToUsdL = (cents, cadUsd) => round3((Number(cents) / 100) * cadUsd);
-const fmtPer = (p) => { // "2026-03" -> "Mar 2026"
-  const m = String(p).match(/(\d{4})-(\d{2})/);
-  return m ? `${MONTHS[+m[2] - 1]} ${m[1]}` : String(p);
-};
+const fmtPer = (p) => { const m = String(p).match(/(\d{4})-(\d{2})/); return m ? `${MONTHS[+m[2] - 1]} ${m[1]}` : String(p); };
 const cityName = (geo) => String(geo).split(",")[0].trim();
 
-async function post(endpoint, body) {
-  const res = await fetch(`${WDS}/${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(`${endpoint} HTTP ${res.status}`);
-  return res.json();
-}
+// --- dependency-free zip + csv (unit-tested) ----------------------------
 
-// --- pure helpers (unit-tested) -----------------------------------------
-
-// From cube metadata, return { geo: [{id,name}], fuel: {regularId, dieselId} }.
-export function readMembers(meta) {
-  const obj = Array.isArray(meta) ? meta[0]?.object : meta?.object;
-  const dims = obj?.dimension || [];
-  const findDim = (re) => dims.find((d) => re.test(String(d.dimensionNameEn || "")));
-  const geoDim = findDim(/geograph/i) || dims[0];
-  const fuelDim = findDim(/fuel|product/i) || dims[1];
-  const geo = (geoDim?.member || []).map((m) => ({ id: m.memberId, name: m.memberNameEn }));
-  const fmembers = fuelDim?.member || [];
-  const pick = (re) => { const m = fmembers.find((x) => re.test(String(x.memberNameEn || ""))); return m ? m.memberId : null; };
-  const regularId = pick(/regular.*gasoline|gasoline.*regular/i);
-  const dieselId = pick(/diesel/i);
-  return { geo, regularId, dieselId };
-}
-
-export const coord = (geoId, fuelId) => `${geoId}.${fuelId}.0.0.0.0.0.0.0.0`;
-
-// Map StatCan data responses -> { coordinate: {value, refPer} }.
-export function indexData(rows) {
-  const out = {};
-  for (const r of rows || []) {
-    const o = r.object || {};
-    const dp = (o.vectorDataPoint || [])[0];
-    if (o.coordinate && dp && dp.value != null) out[o.coordinate] = { value: Number(dp.value), refPer: dp.refPer };
+export function unzipEntries(buf) {
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= 0 && i > buf.length - 22 - 65536; i--) {
+    if (buf.readUInt32LE(i) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error("not a zip (no end-of-central-directory)");
+  const cdCount = buf.readUInt16LE(eocd + 10);
+  let off = buf.readUInt32LE(eocd + 16);
+  const out = [];
+  for (let n = 0; n < cdCount; n++) {
+    if (buf.readUInt32LE(off) !== 0x02014b50) break;
+    const method = buf.readUInt16LE(off + 10);
+    const compSize = buf.readUInt32LE(off + 20);
+    const nameLen = buf.readUInt16LE(off + 28);
+    const extraLen = buf.readUInt16LE(off + 30);
+    const commentLen = buf.readUInt16LE(off + 32);
+    const lhOff = buf.readUInt32LE(off + 42);
+    const name = buf.toString("utf8", off + 46, off + 46 + nameLen);
+    const lnameLen = buf.readUInt16LE(lhOff + 26), lextraLen = buf.readUInt16LE(lhOff + 28);
+    const ds = lhOff + 30 + lnameLen + lextraLen;
+    const comp = buf.subarray(ds, ds + compSize);
+    out.push({ name, data: method === 0 ? comp : zlib.inflateRawSync(comp) });
+    off += 46 + nameLen + extraLen + commentLen;
   }
   return out;
 }
 
-// --- main ----------------------------------------------------------------
+// Parse one CSV line into fields, honoring quotes and "" escapes.
+export function parseCsvLine(line) {
+  const out = []; let cur = "", q = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (q) {
+      if (c === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += c;
+    } else {
+      if (c === '"') q = true;
+      else if (c === ",") { out.push(cur); cur = ""; }
+      else cur += c;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+// From StatCan CSV text -> { geo: { petrol:{ref,val}, diesel:{ref,val} } },
+// keeping each geo/fuel's most recent non-empty month.
+export function extractLatest(csvText) {
+  const lines = csvText.split(/\r?\n/);
+  const header = parseCsvLine(lines[0]).map((h) => h.replace(/^"|"$/g, ""));
+  const ci = (re) => header.findIndex((h) => re.test(h));
+  const ri = ci(/^ref_date$/i), gi = ci(/^geo$/i), fi = ci(/type of fuel|fuel/i), vi = ci(/^value$/i);
+  if (ri < 0 || gi < 0 || fi < 0 || vi < 0) throw new Error(`CSV columns not found (ref=${ri} geo=${gi} fuel=${fi} val=${vi})`);
+  const out = {};
+  for (let k = 1; k < lines.length; k++) {
+    if (!lines[k]) continue;
+    const r = parseCsvLine(lines[k]);
+    const ref = r[ri], geo = r[gi], fuel = String(r[fi] || ""), vs = r[vi];
+    if (!geo || !ref || vs == null || vs === "") continue;
+    const val = Number(vs);
+    if (!isFinite(val) || val <= 0) continue;
+    let key = null;
+    if (/regular/i.test(fuel) && /gasoline/i.test(fuel) && /self.?service/i.test(fuel)) key = "petrol";
+    else if (/diesel/i.test(fuel) && /self.?service/i.test(fuel)) key = "diesel";
+    if (!key) continue;
+    out[geo] = out[geo] || {};
+    const cur = out[geo][key];
+    if (!cur || String(ref) > String(cur.ref)) out[geo][key] = { ref, val };
+  }
+  return out;
+}
+
+// --- live fetch + main ---------------------------------------------------
 
 async function main() {
   const dry = process.argv.includes("--dry");
@@ -87,70 +117,54 @@ async function main() {
   data.FUEL_DATA = data.FUEL_DATA || [];
   data.FUEL_SUBNATIONAL = data.FUEL_SUBNATIONAL || {};
 
-  console.log("fetching cube metadata…");
-  const meta = await post("getCubeMetadata", [{ productId: PRODUCT }]);
-  const { geo, regularId, dieselId } = readMembers(meta);
-  if (!geo.length) throw new Error("no geography members found");
-  if (!regularId && !dieselId) throw new Error("could not locate regular-gasoline / diesel fuel members");
-  console.log(`members: ${geo.length} geographies · regular=${regularId} diesel=${dieselId}`);
+  console.log("requesting full-table CSV link…");
+  const metaRes = await fetch(`${WDS}/getFullTableDownloadCSV/${PRODUCT}/en`);
+  if (!metaRes.ok) throw new Error(`CSV-link HTTP ${metaRes.status}`);
+  const meta = await metaRes.json();
+  const zipUrl = meta && meta.object;
+  if (!zipUrl) throw new Error("no CSV zip URL in response");
+  console.log("downloading", zipUrl);
 
-  // Build the coordinates we want (Canada + every city, for both fuels).
-  const wants = [];
-  for (const g of geo) {
-    if (regularId) wants.push({ geo: g, fuel: "petrol", coordinate: coord(g.id, regularId) });
-    if (dieselId) wants.push({ geo: g, fuel: "diesel", coordinate: coord(g.id, dieselId) });
-  }
-  console.log(`requesting ${wants.length} series…`);
-  const reqs = wants.map((w) => ({ productId: PRODUCT, coordinate: w.coordinate, latestN: 12 }));
-  const resp = await post("getDataFromCubePidCoordAndLatestNPeriods", reqs);
-  const list = Array.isArray(resp) ? resp : [resp];
+  const zres = await fetch(zipUrl);
+  if (!zres.ok) throw new Error(`zip HTTP ${zres.status}`);
+  const buf = Buffer.from(await zres.arrayBuffer());
+  const entries = unzipEntries(buf);
+  const csvEntry = entries.find((e) => /(^|\/)\d+\.csv$/i.test(e.name) && !/metadata/i.test(e.name)) || entries.find((e) => /\.csv$/i.test(e.name) && !/metadata/i.test(e.name));
+  if (!csvEntry) throw new Error(`no data CSV in zip (entries: ${entries.map((e) => e.name).join(", ")})`);
+  console.log(`parsing ${csvEntry.name} (${(csvEntry.data.length / 1e6).toFixed(1)} MB)…`);
 
-  // Assemble per-geography { petrol, diesel, refPer } by request order. The very
-  // latest month is often an unpublished null placeholder, so per series we take
-  // the most recent data point that actually has a value.
-  const rows = {};
-  let resolved = 0;
-  for (let i = 0; i < wants.length; i++) {
-    const w = wants[i];
-    const o = list[i] && list[i].object ? list[i].object : null;
-    const pts = (o && o.vectorDataPoint) || [];
-    let best = null;
-    for (const dp of pts) {
-      if (dp.value == null) continue;
-      if (!best || String(dp.refPer) > String(best.refPer)) best = dp;
-    }
-    if (!best) continue;
-    resolved++;
-    const name = w.geo.name;
-    rows[name] = rows[name] || { geo: name, refPer: best.refPer };
-    rows[name][w.fuel] = centsToUsdL(best.value, cadUsd);
-    if (best.refPer && String(best.refPer) > String(rows[name].refPer || "")) rows[name].refPer = best.refPer;
-  }
-  console.log(`resolved ${resolved}/${wants.length} data points`);
-  if (resolved === 0) {
-    console.error("\nNo data points came back. Raw first response item (for debugging):");
-    console.error(JSON.stringify(list[0], null, 2).slice(0, 1500));
-    throw new Error("StatCan returned no usable data — see the raw item above");
-  }
+  const rows = extractLatest(csvEntry.data.toString("utf8"));
+  const geos = Object.keys(rows);
+  console.log(`geographies with data: ${geos.length}`);
 
   const canada = rows["Canada"];
-  if (!canada || (canada.petrol == null && canada.diesel == null)) throw new Error("no national Canada value resolved; aborting");
-  const period = fmtPer(canada.refPer);
-
-  const natRow = { geo: "Canada", region: "N. America", petrol: canada.petrol ?? null, diesel: canada.diesel ?? null, source: SOURCE, period };
+  if (!canada || (!canada.petrol && !canada.diesel)) {
+    throw new Error(`no national Canada value; geos seen: ${geos.slice(0, 8).join(" | ")}`);
+  }
+  const period = fmtPer((canada.petrol || canada.diesel).ref);
+  const natRow = {
+    geo: "Canada", region: "N. America",
+    petrol: canada.petrol ? centsToUsdL(canada.petrol.val, cadUsd) : null,
+    diesel: canada.diesel ? centsToUsdL(canada.diesel.val, cadUsd) : null,
+    source: SOURCE, period,
+  };
   data.FUEL_DATA = [...data.FUEL_DATA.filter((r) => r.geo !== "Canada"), natRow];
 
   const subs = [];
-  for (const [name, r] of Object.entries(rows)) {
-    if (name === "Canada") continue;
-    if (r.petrol == null && r.diesel == null) continue;
-    subs.push({ name: cityName(name), petrol: r.petrol ?? null, diesel: r.diesel ?? null });
+  for (const [geo, v] of Object.entries(rows)) {
+    if (geo === "Canada") continue;
+    if (!v.petrol && !v.diesel) continue;
+    subs.push({
+      name: cityName(geo),
+      petrol: v.petrol ? centsToUsdL(v.petrol.val, cadUsd) : null,
+      diesel: v.diesel ? centsToUsdL(v.diesel.val, cadUsd) : null,
+    });
   }
   subs.sort((a, b) => (b.petrol ?? 0) - (a.petrol ?? 0));
   if (subs.length) data.FUEL_SUBNATIONAL["Canada"] = subs;
 
   console.log(`\nCanada (${period}): petrol ${natRow.petrol != null ? "$" + natRow.petrol + "/L" : "n/a"}, diesel ${natRow.diesel != null ? "$" + natRow.diesel + "/L" : "n/a"}  ·  ${subs.length} cities`);
-  for (const s of subs.slice(0, 6)) console.log(`  ${cityName(s.name).padEnd(14)} petrol ${s.petrol != null ? "$" + s.petrol : "—"}  diesel ${s.diesel != null ? "$" + s.diesel : "—"}`);
+  for (const s of subs.slice(0, 6)) console.log(`  ${s.name.padEnd(14)} petrol ${s.petrol != null ? "$" + s.petrol : "—"}  diesel ${s.diesel != null ? "$" + s.diesel : "—"}`);
 
   if (dry) { console.log("\n--dry: nothing written."); return; }
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n");
