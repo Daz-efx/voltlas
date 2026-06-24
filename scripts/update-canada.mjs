@@ -101,24 +101,30 @@ async function main() {
     if (dieselId) wants.push({ geo: g, fuel: "diesel", coordinate: coord(g.id, dieselId) });
   }
   console.log(`requesting ${wants.length} series…`);
-  const reqs = wants.map((w) => ({ productId: PRODUCT, coordinate: w.coordinate, latestN: 1 }));
+  const reqs = wants.map((w) => ({ productId: PRODUCT, coordinate: w.coordinate, latestN: 12 }));
   const resp = await post("getDataFromCubePidCoordAndLatestNPeriods", reqs);
   const list = Array.isArray(resp) ? resp : [resp];
 
-  // Assemble per-geography { petrol, diesel, refPer } by request order (robust
-  // to however StatCan echoes the coordinate string).
+  // Assemble per-geography { petrol, diesel, refPer } by request order. The very
+  // latest month is often an unpublished null placeholder, so per series we take
+  // the most recent data point that actually has a value.
   const rows = {};
   let resolved = 0;
   for (let i = 0; i < wants.length; i++) {
     const w = wants[i];
     const o = list[i] && list[i].object ? list[i].object : null;
-    const dp = o && (o.vectorDataPoint || [])[0];
-    if (!dp || dp.value == null) continue;
+    const pts = (o && o.vectorDataPoint) || [];
+    let best = null;
+    for (const dp of pts) {
+      if (dp.value == null) continue;
+      if (!best || String(dp.refPer) > String(best.refPer)) best = dp;
+    }
+    if (!best) continue;
     resolved++;
     const name = w.geo.name;
-    rows[name] = rows[name] || { geo: name, refPer: dp.refPer };
-    rows[name][w.fuel] = centsToUsdL(dp.value, cadUsd);
-    if (dp.refPer) rows[name].refPer = dp.refPer;
+    rows[name] = rows[name] || { geo: name, refPer: best.refPer };
+    rows[name][w.fuel] = centsToUsdL(best.value, cadUsd);
+    if (best.refPer && String(best.refPer) > String(rows[name].refPer || "")) rows[name].refPer = best.refPer;
   }
   console.log(`resolved ${resolved}/${wants.length} data points`);
   if (resolved === 0) {
