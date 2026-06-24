@@ -103,17 +103,28 @@ async function main() {
   console.log(`requesting ${wants.length} series…`);
   const reqs = wants.map((w) => ({ productId: PRODUCT, coordinate: w.coordinate, latestN: 1 }));
   const resp = await post("getDataFromCubePidCoordAndLatestNPeriods", reqs);
-  const byCoord = indexData(resp);
+  const list = Array.isArray(resp) ? resp : [resp];
 
-  // Assemble per-geography { petrol, diesel, refPer }.
+  // Assemble per-geography { petrol, diesel, refPer } by request order (robust
+  // to however StatCan echoes the coordinate string).
   const rows = {};
-  for (const w of wants) {
-    const hit = byCoord[w.coordinate];
-    if (!hit) continue;
+  let resolved = 0;
+  for (let i = 0; i < wants.length; i++) {
+    const w = wants[i];
+    const o = list[i] && list[i].object ? list[i].object : null;
+    const dp = o && (o.vectorDataPoint || [])[0];
+    if (!dp || dp.value == null) continue;
+    resolved++;
     const name = w.geo.name;
-    rows[name] = rows[name] || { geo: name, refPer: hit.refPer };
-    rows[name][w.fuel] = centsToUsdL(hit.value, cadUsd);
-    if (hit.refPer) rows[name].refPer = hit.refPer;
+    rows[name] = rows[name] || { geo: name, refPer: dp.refPer };
+    rows[name][w.fuel] = centsToUsdL(dp.value, cadUsd);
+    if (dp.refPer) rows[name].refPer = dp.refPer;
+  }
+  console.log(`resolved ${resolved}/${wants.length} data points`);
+  if (resolved === 0) {
+    console.error("\nNo data points came back. Raw first response item (for debugging):");
+    console.error(JSON.stringify(list[0], null, 2).slice(0, 1500));
+    throw new Error("StatCan returned no usable data — see the raw item above");
   }
 
   const canada = rows["Canada"];
