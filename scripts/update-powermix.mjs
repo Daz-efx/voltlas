@@ -61,13 +61,15 @@ export function extractMix(csvText) {
     const country = r[iCountry];
     const year = parseInt(r[iYear], 10);
     if (!country || !year) continue;
-    const mix = {}; let any = false, sum = 0;
+    const mix = {}; let any = false, sum = 0, renRaw = 0, renAny = false;
+    const RENEW = new Set(["hydro", "wind", "solar", "bioenergy", "other"]);
     for (const [k, j] of fuelIx) {
       const v = r[j];
       if (v === "" || v == null) { mix[k] = null; continue; }
       const n = Number(v);
       if (!isFinite(n)) { mix[k] = null; continue; }
       mix[k] = Math.round(n * 10) / 10; any = true; sum += mix[k];
+      if (RENEW.has(k)) { renRaw += n; renAny = true; } // sum raw, round once below
     }
     if (!any || sum < 50) continue; // skip rows without a genuine, full mix
     if (series[country] && series[country].year >= year) continue;
@@ -76,6 +78,7 @@ export function extractMix(csvText) {
       year,
       ci: r[iCi] !== "" && isFinite(ciN) ? Math.round(ciN) : null,
       genTWh: r[iGen] !== "" && isFinite(genN) ? Math.round(genN) : null,
+      ren: renAny ? Math.min(100, Math.round(renRaw * 10) / 10) : null,
       mix,
     };
   }
@@ -110,18 +113,12 @@ async function main() {
   try {
     const latestPath = path.join(process.cwd(), "public", "data", "latest.json");
     const latest = JSON.parse(fs.readFileSync(latestPath, "utf8"));
-    const renOf = (mix) => {
-      const keys = ["hydro", "wind", "solar", "bioenergy", "other"];
-      let s = 0, any = false;
-      for (const k of keys) if (mix[k] != null) { s += mix[k]; any = true; }
-      return any ? Math.round(s * 10) / 10 : null;
-    };
     const apply = (arr) => {
       let c = 0;
       for (const row of arr || []) {
         const s = series[row.geo];
         if (!s) continue;
-        row.mixCi = s.ci; row.mixRen = renOf(s.mix); row.mixYear = s.year; c++;
+        row.mixCi = s.ci; row.mixRen = s.ren; row.mixYear = s.year; c++;
       }
       return c;
     };
