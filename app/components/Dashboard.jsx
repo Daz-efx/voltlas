@@ -56,7 +56,7 @@ function viewerIsUS() {
 const NAV_QUICK = [
   ["/rankings/electricity-prices-by-country", "Electricity by country"],
   ["/rankings/cheapest-electricity-in-europe", "Cheapest in Europe"],
-  ["/rankings/cheapest-petrol-in-europe", "Cheapest gasoline"],
+  ["/rankings/cheapest-petrol-in-europe", "Cheapest petrol"],
   ["/compare/germany-vs-france", "Compare countries"],
   ["/electricity-bill-calculator", "Bill calculator"],
 ];
@@ -69,10 +69,10 @@ const NAV_GROUPS = [
     ["/rankings/us-electricity-prices-by-state", "US electricity by state"],
   ]],
   ["Fuel rankings", [
-    ["/rankings/cheapest-petrol-in-europe", "Cheapest gasoline in Europe"],
-    ["/rankings/most-expensive-petrol-in-europe", "Most expensive gasoline in Europe"],
+    ["/rankings/cheapest-petrol-in-europe", "Cheapest petrol in Europe"],
+    ["/rankings/most-expensive-petrol-in-europe", "Most expensive petrol in Europe"],
     ["/rankings/cheapest-diesel-in-europe", "Cheapest diesel in Europe"],
-    ["/rankings/petrol-prices-by-country", "Gasoline prices by country"],
+    ["/rankings/petrol-prices-by-country", "Petrol prices by country"],
     ["/rankings/diesel-prices-by-country", "Diesel prices by country"],
   ]],
   ["Compare & tools", [
@@ -88,6 +88,7 @@ const NAV_GROUPS = [
 
 export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META, SUBNATIONAL, FX, FX_DATE, COUNTRY_CCY, FUEL_DATA, FUEL_CADENCE, FUEL_SUB_META, FUEL_SUBNATIONAL, COMMODITY_CATS, COMMODITIES }) {
   const [view, setView] = useState("energy"); // energy | fuels | commodities | map
+  const [mapMetric, setMapMetric] = useState("price"); // price | carbon | renew
   const [fuel, setFuel] = useState("electricity");
   const [sector, setSector] = useState("res");
   const [tfuel, setTfuel] = useState("petrol");
@@ -218,7 +219,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
       e && e.elecRes != null && { label: "Electricity · household", v: e.elecRes, unit: "/kWh", key: `${detail}-er`, big: true },
       e && e.elecBiz != null && { label: "Electricity · business", v: e.elecBiz, unit: "/kWh", key: `${detail}-eb` },
       e && e.gasRes != null && { label: "Natural gas · household", v: e.gasRes, unit: "/kWh", key: `${detail}-gr` },
-      f && f.petrol != null && { label: "Gasoline", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe` },
+      f && f.petrol != null && { label: "Petrol", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe` },
       f && f.diesel != null && { label: "Diesel", v: toU(f.diesel), unit: "/" + fuLabel, key: `${detail}-di` },
     ].filter(Boolean);
     return { e, f, metrics };
@@ -263,8 +264,8 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
           </h1>
           <p style={{ margin: "10px 0 0", color: "rgba(232,228,218,0.62)", fontSize: 14, maxWidth: 650 }}>
             {view === "commodities" ? "Global benchmark prices in USD: energy spot prices — crude oil (WTI, Brent) and natural gas (Henry Hub) — from the EIA, plus metals, precious metals and agricultural commodities from the World Bank. Click any commodity for its full price history. Live intraday exchange quotes are licensed and excluded."
-              : view === "fuels" ? "Retail gasoline and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
-              : view === "map" ? "Residential electricity price by country, shaded low to high. Click any tile for the country's full energy, fuel and commodity-context profile."
+              : view === "fuels" ? "Retail petrol and diesel at the pump, taxes included — 27 EU countries from the EC Weekly Oil Bulletin and the United States from the EIA, refreshed weekly. Toggle $/litre and $/US gallon; click the US for its state-by-state breakdown."
+              : view === "map" ? "Every country shaded by one of three lenses — residential electricity price, grid carbon intensity, or the renewable share of generation. Toggle below; click any tile for its full profile."
               : `End-user prices in USD per kWh${fuel === "gas" ? "-equivalent" : ""}, taxes included. Tap or hover a price for the FX rate; click a country for its full profile; expand for state/province detail.`}
           </p>
           <div style={{ marginTop: 10, display: "inline-block", font: "600 10px 'IBM Plex Mono'", letterSpacing: ".12em", color: "#171E2E", background: "#E8E4DA", padding: "3px 8px", textTransform: "uppercase" }}>Live · free official sources</div>
@@ -370,7 +371,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
           <>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 20, alignItems: "center" }}>
               <div style={{ display: "flex" }}>
-                {[["petrol", "Gasoline"], ["diesel", "Diesel"]].map(([k, label]) => (
+                {[["petrol", "Petrol"], ["diesel", "Diesel"]].map(([k, label]) => (
                   <button key={k} className="seg" onClick={() => setTfuel(k)} style={{ background: tfuel === k ? accent : "transparent", color: tfuel === k ? "#171E2E" : "#E8E4DA", borderColor: tfuel === k ? accent : "rgba(232,228,218,0.22)" }}>{label}</button>
                 ))}
               </div>
@@ -480,34 +481,56 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
 
         {/* MAP */}
         {view === "map" && (() => {
-          const mapData = DATA.filter((d) => d.elecRes != null);
-          const vals = mapData.map((d) => d.elecRes);
+          const CODE2 = { Canada: "CA", Mexico: "MX" };
+          // Countries that carry a generation mix (price set = those with a retail
+          // electricity price; carbon/renewables = anything tagged with mix data,
+          // which adds Canada, Mexico, Iceland, etc.).
+          const mixGeos = (() => {
+            const m = {};
+            for (const d of DATA) if (d.mixCi != null) m[d.geo] = { geo: d.geo, code: d.code, region: d.region, ci: d.mixCi, ren: d.mixRen };
+            for (const d of FUEL_DATA) if (d.mixCi != null && !m[d.geo]) m[d.geo] = { geo: d.geo, code: CODE2[d.geo] || d.code || "", region: d.region, ci: d.mixCi, ren: d.mixRen };
+            return Object.values(m);
+          })();
+          const METRICS = {
+            price: { label: "Electricity price", legend: "Residential electricity, USD/kWh", fmtV: (v) => fmt(v), dir: 1, get: () => DATA.filter((d) => d.elecRes != null).map((d) => ({ geo: d.geo, code: d.code, val: d.elecRes })) },
+            carbon: { label: "Carbon intensity", legend: "Grid carbon intensity, gCO\u2082/kWh", fmtV: (v) => `${Math.round(v)}`, dir: 1, get: () => mixGeos.filter((d) => d.ci != null).map((d) => ({ geo: d.geo, code: d.code, val: d.ci })) },
+            renew: { label: "Renewables", legend: "Renewable share of generation, %", fmtV: (v) => `${v}%`, dir: -1, get: () => mixGeos.filter((d) => d.ren != null).map((d) => ({ geo: d.geo, code: d.code, val: d.ren })) },
+          };
+          const m = METRICS[mapMetric] || METRICS.price;
+          const rows = m.get();
+          if (!rows.length) return (
+            <p style={{ font: "400 12px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)", padding: "12px 0" }}>No data for this lens yet.</p>
+          );
+          const vals = rows.map((d) => d.val);
           const lo = Math.min(...vals), hi = Math.max(...vals);
-          const sorted = [...mapData].sort((a, b) => b.elecRes - a.elecRes);
+          const sorted = [...rows].sort((a, b) => b.val - a.val);
+          const ramp = (v) => { const norm = (v - lo) / (hi - lo || 1); return hexFromRamp(m.dir === 1 ? norm : 1 - norm); };
           return (
             <>
+              <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+                {Object.entries(METRICS).map(([k, mm]) => (
+                  <button key={k} className="seg" onClick={() => setMapMetric(k)} style={{ background: mapMetric === k ? accent : "transparent", color: mapMetric === k ? "#14110A" : "#E8E4DA" }}>{mm.label}</button>
+                ))}
+              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-                <span style={{ font: "400 11px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>Residential electricity, USD/kWh</span>
+                <span style={{ font: "400 11px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{m.legend}{mapMetric !== "price" ? " · Ember" : ""}</span>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
-                  <span style={{ font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{fmt(lo)}</span>
+                  <span style={{ font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{m.fmtV(m.dir === 1 ? lo : hi)}</span>
                   <div style={{ width: 120, height: 10, background: `linear-gradient(90deg, ${hexFromRamp(0)}, ${hexFromRamp(0.5)}, ${hexFromRamp(1)})` }} />
-                  <span style={{ font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{fmt(hi)}</span>
+                  <span style={{ font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{m.fmtV(m.dir === 1 ? hi : lo)}</span>
                 </div>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(108px, 1fr))", gap: 6 }}>
-                {sorted.map((d) => {
-                  const t = (d.elecRes - lo) / (hi - lo || 1);
-                  return (
-                    <button key={d.geo} className="tile" onClick={() => setDetail(d.geo)} style={{ background: hexFromRamp(t) }}>
-                      <div style={{ font: "700 11px 'IBM Plex Mono'", letterSpacing: ".05em" }}>{d.code}</div>
-                      <div style={{ font: "600 12px 'Archivo'", lineHeight: 1.15, margin: "2px 0 3px" }}>{d.geo}</div>
-                      <div style={{ font: "700 13px 'IBM Plex Mono'" }}>{fmt(d.elecRes)}</div>
-                    </button>
-                  );
-                })}
+                {sorted.map((d) => (
+                  <button key={d.geo} className="tile" onClick={() => setDetail(d.geo)} style={{ background: ramp(d.val) }}>
+                    <div style={{ font: "700 11px 'IBM Plex Mono'", letterSpacing: ".05em" }}>{d.code}</div>
+                    <div style={{ font: "600 12px 'Archivo'", lineHeight: 1.15, margin: "2px 0 3px" }}>{d.geo}</div>
+                    <div style={{ font: "700 13px 'IBM Plex Mono'" }}>{m.fmtV(d.val)}</div>
+                  </button>
+                ))}
               </div>
               <p style={{ marginTop: 18, font: "400 11px 'Archivo'", color: "rgba(232,228,218,0.45)", maxWidth: 660, lineHeight: 1.6 }}>
-                This prototype uses a color-coded tile cartogram so it stays self-contained. In production this becomes a true geographic choropleth (d3-geo + world-atlas boundaries, plus a US-states layer) — a build-time asset, not a data change. Tiles are shaded by residential electricity; click any for the country's full profile.
+                A colour-coded tile cartogram, kept self-contained (a true geographic choropleth is a build-time swap). On carbon and renewables, cooler tiles are cleaner. Price covers countries with a retail-price source; carbon and renewables come from Ember and add every country with a generation mix. Click any tile for its full profile.
               </p>
             </>
           );

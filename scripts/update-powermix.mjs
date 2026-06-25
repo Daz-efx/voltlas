@@ -103,6 +103,34 @@ async function main() {
   if (dry) { console.log(`\n--dry: would write ${n} countries.`); return; }
   fs.writeFileSync(OUT, JSON.stringify({ updated: new Date().toISOString().slice(0, 10), source: SOURCE, series }));
   console.log(`\n\u2713 wrote power-mix.json — ${n} countries.`);
+
+  // Stamp carbon intensity + renewable share onto latest.json rows so the
+  // homepage map can shade tiles by them (the map is a client component and
+  // only sees what the page passes through DATA / FUEL_DATA).
+  try {
+    const latestPath = path.join(process.cwd(), "public", "data", "latest.json");
+    const latest = JSON.parse(fs.readFileSync(latestPath, "utf8"));
+    const renOf = (mix) => {
+      const keys = ["hydro", "wind", "solar", "bioenergy", "other"];
+      let s = 0, any = false;
+      for (const k of keys) if (mix[k] != null) { s += mix[k]; any = true; }
+      return any ? Math.round(s * 10) / 10 : null;
+    };
+    const apply = (arr) => {
+      let c = 0;
+      for (const row of arr || []) {
+        const s = series[row.geo];
+        if (!s) continue;
+        row.mixCi = s.ci; row.mixRen = renOf(s.mix); row.mixYear = s.year; c++;
+      }
+      return c;
+    };
+    const a = apply(latest.DATA), b = apply(latest.FUEL_DATA);
+    fs.writeFileSync(latestPath, JSON.stringify(latest, null, 2) + "\n");
+    console.log(`enriched latest.json — ${a} DATA + ${b} FUEL_DATA rows tagged with carbon/renewable`);
+  } catch (e) {
+    console.warn("latest.json enrichment skipped:", e.message);
+  }
 }
 
 const invoked = process.argv[1] ? path.resolve(process.argv[1]) : "";
