@@ -156,8 +156,8 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
   const clampPos = (v, b) => Math.max(0, Math.min(100, ((v - b.lo) / (b.hi - b.lo)) * 100));
   const pos = (v) => clampPos(v, railBounds);
   const tPos = (v) => clampPos(v, tRailBounds);
-  const fmt = (v) => `$${v.toFixed(3)}`;
-  const fmtFuel = (v) => `$${v.toFixed(2)}`;
+  const fmt = (v) => (v == null ? "—" : `$${v.toFixed(3)}`);
+  const fmtFuel = (v) => (v == null ? "—" : `$${v.toFixed(2)}`);
   const fmtCommodity = (v) => (v >= 100 ? v.toLocaleString("en-US", { maximumFractionDigits: 0 }) : v.toFixed(2));
   const commoditySlug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -183,7 +183,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
     if (ccy === "USD") return `${fmtFuel(disp)}/${fuLabel} — quoted natively in USD, no conversion`;
     return `${fmtLocal(toLocal(disp, ccy), ccy)}/${fuLabel} local  ·  1 ${ccy} = $${FX[ccy].usd}  ·  ${FX_DATE}`;
   };
-  const pppOf = (usdVal, geo) => (PLI[geo] ? usdVal / (PLI[geo] / 100) : null);
+  const pppOf = (usdVal, geo) => (usdVal != null && PLI[geo] ? usdVal / (PLI[geo] / 100) : null);
   const tipProps = (text) => ({
     onMouseEnter: (e) => setTip({ text, x: e.clientX, y: e.clientY }),
     onMouseMove: (e) => setTip({ text, x: e.clientX, y: e.clientY }),
@@ -574,7 +574,19 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               </div>
             ))}
 
-            {detailData.e && pppOf(detailData.e.elecRes, detail) != null && (
+            {(() => {
+              const mx = detailData.e || detailData.f;
+              if (!mx || mx.mixCi == null) return null;
+              return (
+                <div style={{ marginTop: 14, display: "flex", gap: 18, flexWrap: "wrap", alignItems: "baseline", font: "400 12px 'IBM Plex Mono'", color: "rgba(232,228,218,0.7)" }}>
+                  <span>Grid carbon intensity <strong style={{ color: "#E8E4DA" }}>{Math.round(mx.mixCi)} gCO\u2082/kWh</strong></span>
+                  {mx.mixRen != null && <span>Renewables <strong style={{ color: "#E8E4DA" }}>{mx.mixRen}%</strong></span>}
+                  <span style={{ opacity: 0.6 }}>Ember{mx.mixYear ? ` ${mx.mixYear}` : ""}</span>
+                </div>
+              );
+            })()}
+
+            {detailData.e && detailData.e.elecRes != null && pppOf(detailData.e.elecRes, detail) != null && (
               <div style={{ marginTop: 14, padding: "12px 14px", background: "rgba(242,169,59,0.07)", border: "1px solid rgba(242,169,59,0.2)" }}>
                 <div style={{ font: "600 10px 'Archivo'", letterSpacing: ".1em", textTransform: "uppercase", color: "#F2A93B" }}>Adjusted for purchasing power</div>
                 <div style={{ fontSize: 13, color: "rgba(232,228,218,0.8)", marginTop: 4 }}>Household electricity at <strong>{fmt(pppOf(detailData.e.elecRes, detail))} international $/kWh</strong> (nominal {fmt(detailData.e.elecRes)}), using a price-level index of {PLI[detail]} vs US = 100. This reflects local affordability, not just the market exchange rate. <em>Illustrative.</em></div>
@@ -595,7 +607,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             )}
 
             <div style={{ marginTop: 18, font: "400 11px 'Archivo'", color: "rgba(232,228,218,0.5)", lineHeight: 1.6 }}>
-              Sources: {detailData.e ? `${detailData.e.source} (${SOURCE_CADENCE[detailData.e.source]})` : ""}{detailData.f ? `, ${detailData.f.source} for fuels` : ""}. All figures converted from local currency at {FX_DATE}.{detailData.e && detailData.e.note ? ` Note: ${detailData.e.note}.` : ""}
+              Sources: {detailData.e && detailData.e.source ? `${detailData.e.source}${SOURCE_CADENCE[detailData.e.source] ? ` (${SOURCE_CADENCE[detailData.e.source]})` : ""}` : ""}{detailData.f ? `${detailData.e && detailData.e.source ? ", " : ""}${detailData.f.source} for fuels` : ""}{(detailData.e && detailData.e.source) || detailData.f ? `. All figures converted from local currency at ${FX_DATE}.` : ""}{detailData.e && detailData.e.note ? ` Note: ${detailData.e.note}.` : ""}
               <div style={{ marginTop: 6, opacity: 0.7 }}>In production this is a dedicated page at <code>/country/{detail.toLowerCase().replace(/ /g, "-")}</code> — the SEO landing page for "{detail} energy prices".</div>
             </div>
           </div>
