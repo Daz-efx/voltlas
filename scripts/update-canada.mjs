@@ -82,10 +82,11 @@ export function parseCsvLine(line) {
 // From StatCan CSV text -> { geo: { petrol:{ref,val}, diesel:{ref,val} } },
 // keeping each geo/fuel's most recent non-empty month.
 export function extractLatest(csvText) {
+  csvText = csvText.replace(/^\uFEFF/, ""); // strip UTF-8 byte-order mark
   const lines = csvText.split(/\r?\n/);
-  const header = parseCsvLine(lines[0]).map((h) => h.replace(/^"|"$/g, ""));
+  const header = parseCsvLine(lines[0]).map((h) => h.replace(/^\uFEFF/, "").trim());
   const ci = (re) => header.findIndex((h) => re.test(h));
-  const ri = ci(/^ref_date$/i), gi = ci(/^geo$/i), fi = ci(/type of fuel|fuel/i), vi = ci(/^value$/i);
+  const ri = ci(/ref.?date/i), gi = ci(/^geo$/i), fi = ci(/type of fuel|fuel/i), vi = ci(/^value$/i);
   if (ri < 0 || gi < 0 || fi < 0 || vi < 0) throw new Error(`CSV columns not found (ref=${ri} geo=${gi} fuel=${fi} val=${vi})`);
   const out = {};
   for (let k = 1; k < lines.length; k++) {
