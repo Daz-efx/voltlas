@@ -39,12 +39,13 @@ jobs:
           node scripts/update-canada.mjs || echo "canada step failed; keeping prior data"
           node scripts/update-mexico.mjs || echo "mexico step failed; keeping prior data"
           node scripts/update-powermix.mjs || echo "powermix step failed; keeping prior data"
+          node scripts/update-state-mix.mjs || echo "state-mix step failed; keeping prior data"
           node scripts/update-worldbank.mjs || echo "worldbank step failed; keeping prior commodities"
       - name: Commit and push if data changed
         run: |
           git config user.name "voltlas-bot"
           git config user.email "voltlas-bot@users.noreply.github.com"
-          git add public/data/latest.json public/data/commodity-history.json public/data/fuel-history.json public/data/energy-history.json public/data/power-mix.json
+          git add public/data/latest.json public/data/commodity-history.json public/data/fuel-history.json public/data/energy-history.json public/data/power-mix.json public/data/state-mix.json
           if git diff --cached --quiet; then
             echo "No data changes — nothing to commit or push."
           else
