@@ -29,6 +29,7 @@ const SOURCES = [
   ["EC Weekly Oil Bulletin", "Consumer petrol and diesel prices, taxes included, for the 27 EU member states."],
   ["Statistics Canada", "Monthly average retail gasoline and diesel prices for Canada and major cities (table 18-10-0001). StatCan Open Licence."],
   ["Comisi\u00f3n Reguladora de Energ\u00eda (CRE)", "Mexico's official station-level pump prices for gasoline and diesel, aggregated to a national median. Mexican open-data licence."],
+  ["Ember", "Electricity generation mix (share by source) and carbon intensity per country, from Ember's yearly electricity data (which aggregates EIA, Eurostat, UN and national statistics). CC BY 4.0."],
   ["World Bank \u201cPink Sheet\u201d", "Monthly metals, precious metals, and agricultural commodity prices (the Prospects Group commodity data)."],
 ];
 

@@ -11,6 +11,7 @@ const LATEST = `${SITE}/data/latest.json`;
 const HISTORY = `${SITE}/data/commodity-history.json`;
 const FUEL_HISTORY = `${SITE}/data/fuel-history.json`;
 const ENERGY_HISTORY = `${SITE}/data/energy-history.json`;
+const POWER_MIX = `${SITE}/data/power-mix.json`;
 const C = { bg: "#171E2E", panel: "#1C2438", text: "#E8E4DA", dim: "rgba(232,228,218,0.62)", faint: "rgba(232,228,218,0.40)", accent: "#F2A93B", line: "rgba(232,228,218,0.14)" };
 
 export const metadata = {
@@ -126,6 +127,9 @@ export default function DataPage() {
         </Card>
         <Card title="Energy price history" url={ENERGY_HISTORY}>
           Semi-annual household &amp; business electricity and household gas history (USD/kWh) per country, from Eurostat, keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
+        </Card>
+        <Card title="Electricity generation mix" url={POWER_MIX}>
+          Share of electricity generation by source (coal, gas, nuclear, hydro, wind, solar and more) plus carbon intensity (gCO\u2082/kWh) per country, from Ember, keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
         </Card>
         <p style={{ color: C.faint, fontSize: 13.5, lineHeight: 1.65, marginTop: 12 }}>
           Note on history in USD: non-USD historical series are converted at a single recent reference rate, so they track price movements in the original currency redrawn in dollars rather than week-by-week exchange-rate swings.

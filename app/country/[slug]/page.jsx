@@ -28,6 +28,10 @@ function loadEnergyHistory() {
   try { return JSON.parse(fs.readFileSync(path.join(process.cwd(), "public", "data", "energy-history.json"), "utf8")); }
   catch { return { series: {} }; }
 }
+function loadPowerMix() {
+  try { return JSON.parse(fs.readFileSync(path.join(process.cwd(), "public", "data", "power-mix.json"), "utf8")); }
+  catch { return { series: {} }; }
+}
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const usd = (v) => `$${Number(v).toFixed(3)}`;
 const usd2 = (v) => `$${Number(v).toFixed(2)}`;
@@ -37,7 +41,8 @@ function find(slug) {
   const country = data.DATA.find((c) => slugify(c.geo) === slug) || null;
   const fuelHist = country ? (loadFuelHistory().series || {})[country.geo] || null : null;
   const energyHist = country ? (loadEnergyHistory().series || {})[country.geo] || null : null;
-  return { data, country, fuelHist, energyHist };
+  const powerMix = country ? (loadPowerMix().series || {})[country.geo] || null : null;
+  return { data, country, fuelHist, energyHist, powerMix };
 }
 
 export function generateStaticParams() {
@@ -65,6 +70,19 @@ export async function generateMetadata({ params }) {
 
 const C = { bg: "#171E2E", panel: "#1C2438", text: "#E8E4DA", dim: "rgba(232,228,218,0.6)", accent: "#F2A93B", line: "rgba(232,228,218,0.14)" };
 
+// Generation-mix slices, in stacking order, with display colors.
+const FUEL_META = [
+  ["coal", "Coal", "#6B6B6B"],
+  ["oil", "Oil", "#8A6D3B"],
+  ["gas", "Natural gas", "#D08A3E"],
+  ["nuclear", "Nuclear", "#B07FD8"],
+  ["hydro", "Hydro", "#4A90D9"],
+  ["wind", "Wind", "#5FB6C9"],
+  ["solar", "Solar", "#F2C14E"],
+  ["bioenergy", "Bioenergy", "#6AA84F"],
+  ["other", "Other renewables", "#8F9AA6"],
+];
+
 function Metric({ label, value, sub }) {
   return (
     <div style={{ border: `1px solid ${C.line}`, padding: "16px 18px", background: C.panel }}>
@@ -77,7 +95,7 @@ function Metric({ label, value, sub }) {
 
 export default async function CountryPage({ params }) {
   const { slug } = await params;
-  const { data, country, fuelHist, energyHist } = find(slug);
+  const { data, country, fuelHist, energyHist, powerMix } = find(slug);
   if (!country) notFound();
 
   const ccy = data.COUNTRY_CCY[country.geo] || "USD";
@@ -160,6 +178,36 @@ export default async function CountryPage({ params }) {
             </p>
           </div>
         )}
+
+        {powerMix && (() => {
+          const slices = FUEL_META
+            .map(([k, label, color]) => ({ k, label, color, v: (powerMix.mix && powerMix.mix[k]) || 0 }))
+            .filter((s) => s.v > 0);
+          if (!slices.length) return null;
+          const total = slices.reduce((a, s) => a + s.v, 0) || 1;
+          return (
+            <section style={{ marginTop: 30 }}>
+              <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "0 0 2px" }}>How {country.geo} makes its electricity</h2>
+              <div style={{ fontSize: 12.5, color: C.dim, fontFamily: "'IBM Plex Mono',monospace", marginBottom: 12 }}>
+                Share of generation, {powerMix.year}{powerMix.ci != null ? ` \u00b7 ${powerMix.ci} gCO\u2082/kWh` : ""}{powerMix.genTWh != null ? ` \u00b7 ${powerMix.genTWh.toLocaleString()} TWh` : ""} \u00b7 Ember
+              </div>
+              <div style={{ display: "flex", width: "100%", height: 30, borderRadius: 3, overflow: "hidden", border: `1px solid ${C.line}` }}>
+                {slices.map((s) => (
+                  <div key={s.k} title={`${s.label} ${s.v}%`} style={{ width: `${(s.v / total) * 100}%`, background: s.color }} />
+                ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "6px 14px", marginTop: 12 }}>
+                {slices.map((s) => (
+                  <div key={s.k} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13 }}>
+                    <span style={{ width: 11, height: 11, background: s.color, borderRadius: 2, flexShrink: 0 }} />
+                    <span style={{ color: C.dim }}>{s.label}</span>
+                    <span style={{ marginLeft: "auto", fontFamily: "'IBM Plex Mono',monospace", fontWeight: 600, color: C.text }}>{s.v}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {energyHist && (() => {
           const MINPTS = 4;
