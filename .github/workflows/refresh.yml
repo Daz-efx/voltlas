@@ -41,6 +41,7 @@ jobs:
           node scripts/update-powermix.mjs || echo "powermix step failed; keeping prior data"
           node scripts/update-state-mix.mjs || echo "state-mix step failed; keeping prior data"
           node scripts/update-worldbank.mjs || echo "worldbank step failed; keeping prior commodities"
+          node scripts/update-sparklines.mjs || echo "sparklines step failed; keeping prior sparklines"
       - name: Commit and push if data changed
         run: |
           git config user.name "voltlas-bot"

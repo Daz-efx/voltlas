@@ -12,18 +12,12 @@ import React, { useState, useMemo, useEffect } from "react";
 const UP = "#6FCF97", DOWN = "#EB6E5B";
 const COOL = [44, 95, 90], WARM = [242, 169, 59]; // map gradient endpoints (RGB)
 
-// ── Deterministic 12-point history for sparklines (seeded, ends near current). ──
-function sparkSeries(seed, current, n = 12, vol = 0.06) {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
-  const rand = () => { h = (Math.imul(h, 1103515245) + 12345) & 0x7fffffff; return h / 0x7fffffff; };
-  const pts = []; let v = current * (1 - vol);
-  for (let i = 0; i < n; i++) { v = v * (1 + (rand() - 0.45) * vol); pts.push(v); }
-  const k = current / pts[n - 1];
-  return pts.map((p) => p * k);
-}
-function Spark({ seed, value, color, w = 58, h = 20 }) {
-  const s = sparkSeries(seed, value);
+// ── Sparkline of real recent history (values stamped onto each row by
+// update-sparklines.mjs). Renders an empty spacer when no series is available,
+// never a fabricated line. ──
+function Spark({ data, color, w = 58, h = 20 }) {
+  if (!Array.isArray(data) || data.length < 2) return <span style={{ display: "inline-block", width: w, height: h }} aria-hidden="true" />;
+  const s = data;
   const min = Math.min(...s), max = Math.max(...s), span = max - min || 1;
   const pts = s.map((v, i) => `${((i / (s.length - 1)) * w).toFixed(1)},${(h - ((v - min) / span) * h).toFixed(1)}`).join(" ");
   const up = s[s.length - 1] >= s[0];
@@ -216,11 +210,11 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
     const e = DATA.find((d) => d.geo === detail);
     const f = FUEL_DATA.find((d) => d.geo === detail);
     const metrics = [
-      e && e.elecRes != null && { label: "Electricity · household", v: e.elecRes, unit: "/kWh", key: `${detail}-er`, big: true },
-      e && e.elecBiz != null && { label: "Electricity · business", v: e.elecBiz, unit: "/kWh", key: `${detail}-eb` },
-      e && e.gasRes != null && { label: "Natural gas · household", v: e.gasRes, unit: "/kWh", key: `${detail}-gr` },
-      f && f.petrol != null && { label: "Gasoline", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe` },
-      f && f.diesel != null && { label: "Diesel", v: toU(f.diesel), unit: "/" + fuLabel, key: `${detail}-di` },
+      e && e.elecRes != null && { label: "Electricity · household", v: e.elecRes, unit: "/kWh", key: `${detail}-er`, big: true, spark: e.spark && e.spark.elecRes },
+      e && e.elecBiz != null && { label: "Electricity · business", v: e.elecBiz, unit: "/kWh", key: `${detail}-eb`, spark: e.spark && e.spark.elecBiz },
+      e && e.gasRes != null && { label: "Natural gas · household", v: e.gasRes, unit: "/kWh", key: `${detail}-gr`, spark: e.spark && e.spark.gasRes },
+      f && f.petrol != null && { label: "Gasoline", v: toU(f.petrol), unit: "/" + fuLabel, key: `${detail}-pe`, spark: f.spark && f.spark.petrol },
+      f && f.diesel != null && { label: "Diesel", v: toU(f.diesel), unit: "/" + fuLabel, key: `${detail}-di`, spark: f.spark && f.spark.diesel },
     ].filter(Boolean);
     return { e, f, metrics };
   }, [detail, fUnit]);
@@ -317,7 +311,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             )}
 
             <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.45)", padding: "0 0 6px", borderBottom: "1px solid rgba(232,228,218,0.16)" }}>
-              <span>COUNTRY</span><span>GLOBAL RANGE {fmt(railBounds.lo)}–{fmt(railBounds.hi)}</span><span>12-MO</span><span style={{ textAlign: "right" }}>USD/kWh</span>
+              <span>COUNTRY</span><span>GLOBAL RANGE {fmt(railBounds.lo)}–{fmt(railBounds.hi)}</span><span>TREND</span><span style={{ textAlign: "right" }}>USD/kWh</span>
             </div>
 
             {rows.map((d, i) => {
@@ -339,7 +333,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                       )}
                     </div>
                     <Rail pct={pos(d[field])} aria={`${d.geo}: ${fmt(d[field])} per kWh`} dim={false} />
-                    <Spark seed={d.geo + field} value={d[field]} />
+                    <Spark data={d.spark && d.spark[field]} />
                     <div style={{ textAlign: "right" }}>
                       <div {...tipProps(fxTip(d[field], d.geo))} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmt(d[field])}</div>
                       <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.42)" }}>{d.source} · {d.period}</div>
@@ -349,7 +343,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                     <div key={s.name} className="subrow" style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, alignItems: "center", padding: "7px 4px", borderBottom: "1px solid rgba(232,228,218,0.05)", background: "rgba(232,228,218,0.018)" }}>
                       <div style={{ paddingLeft: 14, borderLeft: `2px solid ${accentDim}`, marginLeft: 2, fontWeight: 500, fontSize: 13, color: "rgba(232,228,218,0.85)" }}>{s.name}</div>
                       <Rail pct={pos(s[field])} aria={`${d.geo} — ${s.name}: ${fmt(s[field])} per kWh`} dim={true} />
-                      <Spark seed={d.geo + s.name + field} value={s[field]} w={50} h={16} />
+                      <Spark data={s.spark && s.spark[field]} w={50} h={16} />
                       <div style={{ textAlign: "right" }}>
                         <div {...tipProps(fxTip(s[field], d.geo))} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmt(s[field])}</div>
                         <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.38)" }}>{meta.source}</div>
@@ -402,7 +396,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             )}
 
             <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.45)", padding: "0 0 6px", borderBottom: "1px solid rgba(232,228,218,0.16)" }}>
-              <span>COUNTRY</span><span>GLOBAL RANGE {fmtFuel(toU(tRailBounds.lo))}–{fmtFuel(toU(tRailBounds.hi))}</span><span>12-MO</span><span style={{ textAlign: "right" }}>USD/{fuLabel}</span>
+              <span>COUNTRY</span><span>GLOBAL RANGE {fmtFuel(toU(tRailBounds.lo))}–{fmtFuel(toU(tRailBounds.hi))}</span><span>TREND</span><span style={{ textAlign: "right" }}>USD/{fuLabel}</span>
             </div>
 
             {tRows.map((d, i) => {
@@ -421,7 +415,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                       )}
                     </div>
                     <Rail pct={tPos(d[tField])} aria={`${d.geo}: ${fmtFuel(d[tField])} per litre`} dim={false} />
-                    <Spark seed={d.geo + tField} value={d[tField]} />
+                    <Spark data={d.spark && d.spark[tField]} />
                     <div style={{ textAlign: "right" }}>
                       <div {...tipProps(fxTipFuel(d[tField], d.geo))} style={{ font: "600 15px 'IBM Plex Mono'", cursor: "help", color: i === 0 && sortDesc ? accent : "#E8E4DA", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.3)" : "none", display: "inline-block" }}>{fmtFuel(toU(d[tField]))}<span style={{ fontSize: 10, color: "rgba(232,228,218,0.5)" }}>/{fuLabel}</span></div>
                       {d.geo === "United States" && <div style={{ font: "400 10px 'IBM Plex Mono'", color: accent }}>{fmtFuel(altU(d[tField]))}/{altLabel}</div>}
@@ -432,7 +426,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                     <div key={s.name} className="subrow" style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, alignItems: "center", padding: "7px 4px", borderBottom: "1px solid rgba(232,228,218,0.05)", background: "rgba(232,228,218,0.018)" }}>
                       <div style={{ paddingLeft: 14, borderLeft: `2px solid ${accentDim}`, marginLeft: 2, fontWeight: 500, fontSize: 13, color: "rgba(232,228,218,0.85)" }}>{s.name}</div>
                       <Rail pct={tPos(s[tField])} aria={`${d.geo} — ${s.name}: ${fmtFuel(s[tField])} per litre`} dim={true} />
-                      <Spark seed={d.geo + s.name + tField} value={s[tField]} w={50} h={16} />
+                      <Spark data={s.spark && s.spark[tField]} w={50} h={16} />
                       <div style={{ textAlign: "right" }}>
                         <div {...tipProps(fxTipFuel(s[tField], d.geo))} style={{ font: "600 13px 'IBM Plex Mono'", cursor: "help", color: "rgba(232,228,218,0.85)", borderBottom: ccyOf(d.geo) !== "USD" ? "1px dotted rgba(232,228,218,0.25)" : "none", display: "inline-block" }}>{fmtFuel(toU(s[tField]))}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>/{fuLabel}</span></div>
                         {d.geo === "United States" && <div style={{ font: "400 9px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{fmtFuel(altU(s[tField]))}/{altLabel}</div>}
@@ -451,7 +445,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
         {view === "commodities" && (
           <>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 58px 92px 150px", gap: 14, font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.45)", padding: "0 0 6px", borderBottom: "1px solid rgba(232,228,218,0.16)" }}>
-              <span>COMMODITY</span><span>12-MO</span><span style={{ textAlign: "right" }}>Δ</span><span style={{ textAlign: "right" }}>PRICE · SOURCE</span>
+              <span>COMMODITY</span><span>TREND</span><span style={{ textAlign: "right" }}>Δ</span><span style={{ textAlign: "right" }}>PRICE · SOURCE</span>
             </div>
             {COMMODITY_CATS.map((cat) => {
               const items = COMMODITIES.filter((c) => c.cat === cat.key);
@@ -465,7 +459,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                   {items.map((c) => (
                     <div key={c.name} className="row" style={{ display: "grid", gridTemplateColumns: "1fr 58px 92px 150px", gap: 14, alignItems: "center", padding: "10px 4px 10px 11px", borderBottom: "1px solid rgba(232,228,218,0.08)" }}>
                       <a href={`/commodity/${commoditySlug(c.name)}`} style={{ fontWeight: 600, fontSize: 14, color: "inherit", textDecoration: "none", borderBottom: "1px solid rgba(232,228,218,0.18)" }}>{c.name}</a>
-                      <Spark seed={c.name} value={c.price} color={c.chg >= 0 ? UP : DOWN} />
+                      <Spark data={c.spark} color={c.chg >= 0 ? UP : DOWN} />
                       <div style={{ textAlign: "right", font: "600 13px 'IBM Plex Mono'", color: c.chg >= 0 ? UP : DOWN }}>{c.chg >= 0 ? "▲" : "▼"} {c.chg >= 0 ? "+" : ""}{c.chg.toFixed(1)}%</div>
                       <div style={{ textAlign: "right" }}>
                         <div style={{ font: "600 15px 'IBM Plex Mono'" }}>${fmtCommodity(c.price)} <span style={{ fontSize: 10, color: "rgba(232,228,218,0.5)" }}>{c.unit}</span></div>
@@ -603,7 +597,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             {detailData.metrics.map((m) => (
               <div key={m.key} style={{ display: "grid", gridTemplateColumns: "1fr 70px 110px", gap: 12, alignItems: "center", padding: "9px 0", borderBottom: "1px solid rgba(232,228,218,0.07)" }}>
                 <div style={{ fontSize: 13, color: "rgba(232,228,218,0.88)" }}>{m.label}</div>
-                <Spark seed={detail + m.key} value={m.v} w={64} h={20} color={m.big ? "#F2A93B" : "rgba(232,228,218,0.6)"} />
+                <Spark data={m.spark} w={64} h={20} color={m.big ? "#F2A93B" : "rgba(232,228,218,0.6)"} />
                 <div style={{ textAlign: "right", font: "600 15px 'IBM Plex Mono'" }}>{(m.unit === "/L" || m.unit === "/gal") ? fmtFuel(m.v) : fmt(m.v)}<span style={{ fontSize: 9, color: "rgba(232,228,218,0.45)" }}>{m.unit}</span></div>
               </div>
             ))}
