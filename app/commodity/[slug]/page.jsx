@@ -32,7 +32,14 @@ function find(slug) {
   const list = data.COMMODITIES || [];
   const row = list.find((c) => slugify(c.name) === slug);
   if (!row) return null;
-  const series = hist.series ? hist.series[row.name] : null;
+  // History is keyed by display name. Fall back to a slug match so a name drift
+  // between the catalog and the history file (e.g. "Coal" vs "Coal — Australia")
+  // still resolves instead of dropping to the no-history fallback.
+  let series = hist.series ? hist.series[row.name] : null;
+  if (!series && hist.series) {
+    const hit = Object.entries(hist.series).find(([k]) => slugify(k) === slug);
+    if (hit) series = hit[1];
+  }
   const related = list.filter((c) => c.cat === row.cat && c.name !== row.name).slice(0, 6);
   const catLabel = (data.COMMODITY_CATS || []).find((c) => c.key === row.cat)?.label || CAT_LABEL[row.cat] || row.cat;
   return { row, series, related, catLabel, updated: hist.updated };
@@ -146,7 +153,7 @@ export default async function CommodityPage({ params }) {
           </>
         ) : (
           <div style={{ marginTop: 24, padding: "16px 18px", background: C.panel, border: `1px solid ${C.line}`, borderRadius: 10, fontSize: 14, color: C.dim, lineHeight: 1.6 }}>
-            We track the live {row.name.toLowerCase()} price from {row.source}; an extended monthly history chart for this commodity is coming soon.
+            We track the live {row.name.toLowerCase()} price from {row.source}. A longer price history isn't available for this series.
           </div>
         )}
 
