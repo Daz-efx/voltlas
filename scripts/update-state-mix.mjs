@@ -32,6 +32,7 @@ const RENEW = new Set(["hydro", "wind", "solar", "bioenergy", "other"]);
 const CI_FACTOR = { coal: 1000, oil: 650, gas: 450, nuclear: 0, hydro: 0, wind: 0, solar: 0, bioenergy: 0, other: 0 };
 
 const STATES = new Set("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" "));
+const NAME = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware", DC: "District of Columbia", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming" };
 
 // Build per-state mix from the flat EIA rows.
 export function buildStateMix(rows) {
@@ -63,6 +64,7 @@ export function buildStateMix(rows) {
       ciNum += share * (CI_FACTOR[cat] || 0);
     }
     series[st] = {
+      name: NAME[st] || st,
       year: s.year,
       ren: Math.min(100, Math.round(ren * 10) / 10),
       ciEst: Math.round(ciNum / 100),
@@ -108,6 +110,18 @@ async function main() {
   if (dry) { console.log(`\n--dry: would write ${n} states.`); return; }
   fs.writeFileSync(OUT, JSON.stringify({ updated: new Date().toISOString().slice(0, 10), source: "EIA Form EIA-923", note: "Carbon intensity is estimated from the generation mix using standard emission factors.", series }));
   console.log(`\n\u2713 wrote state-mix.json — ${n} states.`);
+
+  // Mirror into latest.json under STATE_MIX so the homepage (which spreads every
+  // top-level key into <Dashboard {...data}/>) hands it to the map with no page edit.
+  try {
+    const latestPath = path.join(process.cwd(), "public", "data", "latest.json");
+    const latest = JSON.parse(fs.readFileSync(latestPath, "utf8"));
+    latest.STATE_MIX = series;
+    fs.writeFileSync(latestPath, JSON.stringify(latest, null, 2) + "\n");
+    console.log(`mirrored STATE_MIX into latest.json (${n} states)`);
+  } catch (e) {
+    console.warn("latest.json STATE_MIX mirror skipped:", e.message);
+  }
 }
 
 const invoked = process.argv[1] ? path.resolve(process.argv[1]) : "";
