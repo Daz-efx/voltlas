@@ -189,7 +189,7 @@ export default async function CountryPage({ params }) {
             <section style={{ marginTop: 30 }}>
               <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "0 0 2px" }}>How {country.geo} makes its electricity</h2>
               <div style={{ fontSize: 12.5, color: C.dim, fontFamily: "'IBM Plex Mono',monospace", marginBottom: 12 }}>
-                Share of generation, {powerMix.year}{powerMix.ci != null ? ` \u00b7 ${powerMix.ci} gCO\u2082/kWh` : ""}{powerMix.genTWh != null ? ` \u00b7 ${powerMix.genTWh.toLocaleString()} TWh` : ""} \u00b7 Ember
+                Share of generation, {powerMix.year}{powerMix.ci != null ? ` · ${powerMix.ci} gCO₂/kWh` : ""}{powerMix.genTWh != null ? ` · ${powerMix.genTWh.toLocaleString()} TWh` : ""} · Ember
               </div>
               <div style={{ display: "flex", width: "100%", height: 30, borderRadius: 3, overflow: "hidden", border: `1px solid ${C.line}` }}>
                 {slices.map((s) => (
@@ -220,7 +220,7 @@ export default async function CountryPage({ params }) {
           return (
             <section style={{ marginTop: 30 }}>
               <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "0 0 2px" }}>Energy price history</h2>
-              <div style={{ fontSize: 12.5, color: C.dim, fontFamily: "'IBM Plex Mono',monospace", marginBottom: 6 }}>USD per kWh, all taxes included \u00b7 Eurostat</div>
+              <div style={{ fontSize: 12.5, color: C.dim, fontFamily: "'IBM Plex Mono',monospace", marginBottom: 6 }}>USD per kWh, all taxes included · Eurostat</div>
               {charts.map((c) => (
                 <div key={c.label}>
                   <div style={{ font: "600 12px 'IBM Plex Mono',monospace", color: C.dim, textTransform: "uppercase", letterSpacing: ".06em", margin: "14px 0 2px" }}>{c.label}</div>

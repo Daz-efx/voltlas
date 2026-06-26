@@ -130,7 +130,7 @@ export default function DataPage() {
           Semi-annual household &amp; business electricity and household gas history (USD/kWh) per country, from Eurostat, keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
         </Card>
         <Card title="Electricity generation mix" url={POWER_MIX}>
-          Share of electricity generation by source (coal, gas, nuclear, hydro, wind, solar and more) plus carbon intensity (gCO\u2082/kWh) per country, from Ember, keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
+          Share of electricity generation by source (coal, gas, nuclear, hydro, wind, solar and more) plus carbon intensity (gCO₂/kWh) per country, from Ember, keyed by country under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>.
         </Card>
         <Card title="US state generation mix" url={STATE_MIX}>
           Generation mix by source for all 50 states and DC, from EIA Form EIA-923, keyed by state code under <code style={{ color: C.text, font: `600 12.5px ${mono}` }}>series</code>. Carbon intensity here is <em>estimated</em> from the mix using standard emission factors, not measured.

@@ -31,10 +31,10 @@ jobs:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
         run: |
           node scripts/update-fx.mjs || echo "fx step failed; keeping prior FX rates"
-          node scripts/update-eia.mjs
-          node scripts/update-eurostat.mjs
-          node scripts/update-commodities.mjs
-          node scripts/update-fuels.mjs
+          node scripts/update-eia.mjs || echo "eia step failed; keeping prior electricity/gas"
+          node scripts/update-eurostat.mjs || echo "eurostat step failed; keeping prior EU energy"
+          node scripts/update-commodities.mjs || echo "commodities step failed; keeping prior commodities"
+          node scripts/update-fuels.mjs || echo "fuels step failed; keeping prior US fuels"
           node scripts/update-eu-fuels.mjs || echo "eu-fuels step failed; keeping prior EU data"
           node scripts/update-canada.mjs || echo "canada step failed; keeping prior data"
           node scripts/update-mexico.mjs || echo "mexico step failed; keeping prior data"
