@@ -4,8 +4,8 @@ import React, { useState, useMemo, useEffect } from "react";
 // ════════════════════════════════════════════════════════════════
 // VOLTLAS — the price of energy, the fuels and materials that power it.
 // FREE-SOURCE ONLY. Every figure comes from a source that permits public
-// republication. Prototype data is representative; in production each array
-// is replaced by a fetch() of the generated /v1 JSON (see hosting guide).
+// republication. All values are passed in from public/data/latest.json, which
+// the connectors in scripts/ regenerate and the weekly workflow commits.
 // ════════════════════════════════════════════════════════════════
 
 // ── National retail energy, USD per kWh. `note` flags non-average figures. ──
@@ -642,8 +642,12 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
 
             <div style={{ marginTop: 18, font: "400 11px 'Archivo'", color: "rgba(232,228,218,0.5)", lineHeight: 1.6 }}>
               Sources: {detailData.e && detailData.e.source ? `${detailData.e.source}${SOURCE_CADENCE[detailData.e.source] ? ` (${SOURCE_CADENCE[detailData.e.source]})` : ""}` : ""}{detailData.f ? `${detailData.e && detailData.e.source ? ", " : ""}${detailData.f.source} for fuels` : ""}{(detailData.e && detailData.e.source) || detailData.f ? `. All figures converted from local currency at ${FX_DATE}.` : ""}{detailData.e && detailData.e.note ? ` Note: ${detailData.e.note}.` : ""}
-              <div style={{ marginTop: 6, opacity: 0.7 }}>In production this is a dedicated page at <code>/country/{detail.toLowerCase().replace(/ /g, "-")}</code> — the SEO landing page for "{detail} energy prices".</div>
             </div>
+            {detailData.e && detailData.e.elecRes != null && (
+              <div style={{ marginTop: 14 }}>
+                <a href={`/country/${detail.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`} style={{ color: "#F2A93B", textDecoration: "none", font: "600 13px 'Archivo'", borderBottom: "1px solid rgba(242,169,59,0.4)", paddingBottom: 2 }}>View the full {detail} profile →</a>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -660,7 +664,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               <p style={{ marginTop: 0 }}><strong>Free sources only.</strong> Every figure comes from a source that permits public republication: the EIA (US electricity, natural gas and energy-commodity spot prices — public domain) and Eurostat (EU household and business electricity and gas), with EU road-fuel prices from the EC Weekly Oil Bulletin. More official sources are being wired in as coverage expands. No licensed feeds are displayed.</p>
               <p><strong>What each number is.</strong> Retail energy is taxes-included, stored in local currency and converted to USD at display time. Some figures aren't consumption-weighted averages — the US value is EIA's revenue-per-kWh proxy, and several European figures are regulated tariffs; these are flagged with ※.</p>
               <p><strong>Cadence &amp; freshness.</strong> US electricity refreshes monthly and energy-commodity spot prices daily (both EIA); Eurostat publishes semi-annually. The site re-runs every connector weekly and self-updates. Every figure carries its source and period.</p>
-              <p><strong>Coverage gaps are shown, not filled.</strong> Coverage is strongest across Europe and North America. Where no free source exists, the country is absent rather than estimated. Sub-national drill-down appears only where a free source publishes it (US, all 50 states).</p>
+              <p><strong>Coverage gaps are shown, not filled.</strong> Coverage is strongest across Europe and North America. Where no free source exists, the country is absent rather than estimated. Sub-national drill-down appears only where a free source publishes it (US states).</p>
               <p style={{ marginBottom: 0 }}><strong>Currency &amp; PPP.</strong> Tap or hover any price for the exact FX rate and date. Country profiles also show a purchasing-power-adjusted figure (illustrative), which reflects local affordability rather than the market exchange rate.</p>
             </div>
           </div>
