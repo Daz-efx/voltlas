@@ -86,7 +86,7 @@ const NAV_GROUPS = [
   ]],
 ];
 
-export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META, SUBNATIONAL, FX, FX_DATE, COUNTRY_CCY, FUEL_DATA, FUEL_CADENCE, FUEL_SUB_META, FUEL_SUBNATIONAL, COMMODITY_CATS, COMMODITIES }) {
+export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META, SUBNATIONAL, FX, FX_DATE, COUNTRY_CCY, FUEL_DATA, FUEL_CADENCE, FUEL_SUB_META, FUEL_SUBNATIONAL, COMMODITY_CATS, COMMODITIES, STATE_MIX = {} }) {
   const [view, setView] = useState("energy"); // energy | fuels | commodities | map
   const [mapMetric, setMapMetric] = useState("price"); // price | carbon | renew
   const [fuel, setFuel] = useState("electricity");
@@ -529,8 +529,42 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
                   </button>
                 ))}
               </div>
-              <p style={{ marginTop: 18, font: "400 11px 'Archivo'", color: "rgba(232,228,218,0.45)", maxWidth: 660, lineHeight: 1.6 }}>
-                A colour-coded tile cartogram, kept self-contained (a true geographic choropleth is a build-time swap). On carbon and renewables, cooler tiles are cleaner. Price covers countries with a retail-price source; carbon and renewables come from Ember and add every country with a generation mix. Click any tile for its full profile.
+
+              {(mapMetric === "carbon" || mapMetric === "renew") && (() => {
+                const field = mapMetric === "carbon" ? "ciEst" : "ren";
+                const srows = Object.entries(STATE_MIX)
+                  .filter(([, v]) => v && v[field] != null)
+                  .map(([code, v]) => ({ code, name: v.name || code, val: v[field] }));
+                if (srows.length < 10) return null;
+                const sv = srows.map((d) => d.val);
+                const sLo = Math.min(...sv), sHi = Math.max(...sv);
+                const sSorted = [...srows].sort((a, b) => b.val - a.val);
+                const sRamp = (v) => { const norm = (v - sLo) / (sHi - sLo || 1); return hexFromRamp(m.dir === 1 ? norm : 1 - norm); };
+                return (
+                  <div style={{ marginTop: 30 }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+                      <span style={{ font: "800 16px 'Saira Condensed'", letterSpacing: ".05em", textTransform: "uppercase" }}>United States · by state</span>
+                      <span style={{ font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.5)" }}>{m.legend}{mapMetric === "carbon" ? " · estimated from mix" : " · EIA"}</span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(82px, 1fr))", gap: 5 }}>
+                      {sSorted.map((d) => (
+                        <div key={d.code} title={`${d.name} · ${m.fmtV(d.val)}`} style={{ background: sRamp(d.val), color: "#14110A", padding: "6px 7px", border: "1px solid rgba(0,0,0,0.25)" }}>
+                          <div style={{ font: "700 10px 'IBM Plex Mono'", letterSpacing: ".05em" }}>{d.code}</div>
+                          <div style={{ font: "700 12px 'IBM Plex Mono'", marginTop: 2 }}>{m.fmtV(d.val)}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {mapMetric === "carbon" && (
+                      <p style={{ marginTop: 10, font: "400 10.5px 'Archivo'", color: "rgba(232,228,218,0.4)", maxWidth: 660, lineHeight: 1.55 }}>
+                        State carbon intensity is <em>estimated</em> from each state's generation mix (EIA Form EIA-923) using standard emission factors — country figures above are measured (Ember).
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
+
+              <p style={{ marginTop: 22, font: "400 11px 'Archivo'", color: "rgba(232,228,218,0.45)", maxWidth: 680, lineHeight: 1.6 }}>
+                A colour-coded tile cartogram, kept self-contained (a true geographic choropleth is a build-time swap). On carbon and renewables, cooler tiles are cleaner; those two lenses add every country with a generation mix (Ember) and break the US into states (EIA). The price lens covers countries with a retail-price source. Click any country tile for its full profile.
               </p>
             </>
           );
