@@ -70,12 +70,17 @@ export default function FuelHistoryChart({ points, color = C.accent, unit = "/L"
     >
       <svg viewBox={`0 0 ${W} ${Hh}`} width="100%" style={{ display: "block" }} role="img" aria-label="Fuel price history chart — hover or drag to read values">
         <line x1={padL} y1={Hh - padB} x2={W - padR} y2={Hh - padB} stroke={C.line} strokeWidth="1" />
-        {ticks.map((t) => (
-          <g key={t.i}>
-            <line x1={X(t.i)} y1={padT} x2={X(t.i)} y2={Hh - padB} stroke={C.line} strokeWidth="1" strokeDasharray="2 4" opacity="0.5" />
-            <text x={X(t.i)} y={Hh - padB + 15} fill={C.faint} fontSize="11" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{t.label}</text>
-          </g>
-        ))}
+        {ticks.map((t) => {
+          const tx0 = X(t.i);
+          const anchor = tx0 < 24 ? "start" : tx0 > W - 24 ? "end" : "middle";
+          const lx = anchor === "start" ? padL : anchor === "end" ? W - padR : tx0;
+          return (
+            <g key={t.i}>
+              <line x1={tx0} y1={padT} x2={tx0} y2={Hh - padB} stroke={C.line} strokeWidth="1" strokeDasharray="2 4" opacity="0.5" />
+              <text x={lx} y={Hh - padB + 15} fill={C.faint} fontSize="11" fontFamily="'IBM Plex Mono',monospace" textAnchor={anchor}>{t.label}</text>
+            </g>
+          );
+        })}
         <path d={area} fill={color} opacity="0.10" />
         <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
 
@@ -84,7 +89,7 @@ export default function FuelHistoryChart({ points, color = C.accent, unit = "/L"
             <circle cx={X(maxI)} cy={Y(max)} r="3" fill={C.text} />
             <text x={Math.min(W - 40, Math.max(28, X(maxI)))} y={Y(max) - 7} fill={C.dim} fontSize="10.5" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{fmtNum(max)}</text>
             <circle cx={X(minI)} cy={Y(min)} r="3" fill={C.text} />
-            <text x={Math.min(W - 40, Math.max(28, X(minI)))} y={Y(min) + 15} fill={C.dim} fontSize="10.5" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{fmtNum(min)}</text>
+            <text x={Math.min(W - 40, Math.max(28, X(minI)))} y={Y(min) - 7} fill={C.dim} fontSize="10.5" fontFamily="'IBM Plex Mono',monospace" textAnchor="middle">{fmtNum(min)}</text>
             <circle cx={X(lastI)} cy={Y(points[lastI][1])} r="3.5" fill={color} />
           </g>
         )}
