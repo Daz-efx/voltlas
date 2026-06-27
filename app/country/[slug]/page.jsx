@@ -231,6 +231,42 @@ export default async function CountryPage({ params }) {
           );
         })()}
 
+        {fuel && (fuel.petrolNet != null || fuel.dieselNet != null) && (() => {
+          const mono = "'IBM Plex Mono',monospace";
+          const splits = [
+            fuel.petrol != null && fuel.petrolNet != null && { label: "Gasoline", retail: fuel.petrol, net: fuel.petrolNet },
+            fuel.diesel != null && fuel.dieselNet != null && { label: "Diesel", retail: fuel.diesel, net: fuel.dieselNet },
+          ].filter(Boolean);
+          if (!splits.length) return null;
+          return (
+            <section style={{ marginTop: 30 }}>
+              <h2 style={{ font: "800 20px 'Saira Condensed',sans-serif", textTransform: "uppercase", letterSpacing: ".04em", margin: "0 0 2px" }}>What's tax at the pump</h2>
+              <div style={{ fontSize: 12.5, color: C.dim, fontFamily: mono, marginBottom: 14 }}>{`Pre-tax price vs duties & VAT${fuel.period ? ` · ${fuel.period}` : ""} · EC Oil Bulletin`}</div>
+              {splits.map((s) => {
+                const tax = Math.round((s.retail - s.net) * 1000) / 1000;
+                const pct = Math.round((tax / s.retail) * 100);
+                const netPct = (s.net / s.retail) * 100;
+                return (
+                  <div key={s.label} style={{ marginBottom: 16 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 13, marginBottom: 5 }}>
+                      <span style={{ fontWeight: 600 }}>{s.label}</span>
+                      <span style={{ fontFamily: mono, color: C.dim }}><strong style={{ color: C.text }}>{pct}% tax</strong>{` · $${tax.toFixed(2)} of $${s.retail.toFixed(2)}/L`}</span>
+                    </div>
+                    <div style={{ display: "flex", height: 22, borderRadius: 3, overflow: "hidden", border: `1px solid ${C.line}` }}>
+                      <div title={`Pre-tax $${s.net.toFixed(2)}/L`} style={{ width: `${netPct}%`, background: "#5BAE9B" }} />
+                      <div title={`Tax $${tax.toFixed(2)}/L`} style={{ width: `${100 - netPct}%`, background: C.accent }} />
+                    </div>
+                  </div>
+                );
+              })}
+              <div style={{ display: "flex", gap: 16, fontSize: 11.5, color: C.dim, fontFamily: mono }}>
+                <span><span style={{ display: "inline-block", width: 9, height: 9, background: "#5BAE9B", marginRight: 5, borderRadius: 2, verticalAlign: "middle" }} />pre-tax</span>
+                <span><span style={{ display: "inline-block", width: 9, height: 9, background: C.accent, marginRight: 5, borderRadius: 2, verticalAlign: "middle" }} />tax (duties + VAT)</span>
+              </div>
+            </section>
+          );
+        })()}
+
         {fuelHist && (() => {
           const MINPTS = 6;
           const pe = fuelHist.petrol || [];
