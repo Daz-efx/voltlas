@@ -614,6 +614,23 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
               );
             })()}
 
+            {(() => {
+              const f = detailData.f;
+              if (!f) return null;
+              const items = [];
+              if (f.petrol != null && f.petrolNet != null) items.push(["Gasoline", f.petrol, f.petrolNet]);
+              if (f.diesel != null && f.dieselNet != null) items.push(["Diesel", f.diesel, f.dieselNet]);
+              if (!items.length) return null;
+              return (
+                <div style={{ marginTop: 14, font: "400 12px 'IBM Plex Mono'", color: "rgba(232,228,218,0.7)" }}>
+                  <span style={{ color: "rgba(232,228,218,0.5)" }}>Tax in the pump price: </span>
+                  {items.map(([label, retail, net], i) => (
+                    <span key={label}>{i > 0 ? " · " : ""}{label} <strong style={{ color: "#E8E4DA" }}>{Math.round(((retail - net) / retail) * 100)}%</strong></span>
+                  ))}
+                </div>
+              );
+            })()}
+
             {detailData.e && detailData.e.elecRes != null && pppOf(detailData.e.elecRes, detail) != null && (
               <div style={{ marginTop: 14, padding: "12px 14px", background: "rgba(242,169,59,0.07)", border: "1px solid rgba(242,169,59,0.2)" }}>
                 <div style={{ font: "600 10px 'Archivo'", letterSpacing: ".1em", textTransform: "uppercase", color: "#F2A93B" }}>Adjusted for purchasing power</div>
