@@ -18,6 +18,7 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://voltlas.com"),
+  alternates: { canonical: "/" },
   title: {
     default: "Voltlas — global energy, fuel & commodity prices",
     template: "%s · Voltlas",
