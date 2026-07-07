@@ -67,6 +67,24 @@ export function findXlsxUrlFromHtml(html) {
   return cand ? absUrl(cand.href) : null;
 }
 
+// Companion "prices WITHOUT taxes" (net) file — same format, used to derive the
+// tax share. Mirror of findXlsxUrlFromHtml selecting the net file instead.
+export function findNetXlsxUrlFromHtml(html) {
+  const re = /href\s*=\s*"([^"]*document\/download\/[^"]*)"/gi;
+  const items = []; let m;
+  while ((m = re.exec(html))) {
+    const href = decEnt(m[1]);
+    const label = stripTags(html.slice(Math.max(0, m.index - 220), m.index)).slice(-110);
+    items.push({ href, label });
+  }
+  const dec = (h) => { try { return decodeURIComponent(h); } catch { return h; } };
+  const hay = (it) => (dec(it.href) + " " + it.label).toLowerCase();
+  const cand =
+    items.find((it) => { const h = hay(it); return h.includes("without taxes") && h.includes(".xlsx"); }) ||
+    items.find((it) => hay(it).includes("prices without taxes"));
+  return cand ? absUrl(cand.href) : null;
+}
+
 function cellVal(v) {
   if (v == null) return null;
   if (v instanceof Date) return v;
@@ -203,6 +221,42 @@ async function main() {
   const extracted = extract(grid);
   console.log("data period:", extracted.period, "| petrol col", extracted.cols.petrol, "diesel col", extracted.cols.diesel);
   const fuelRows = toFuelRows(extracted, eurUsd);
+
+  // Pre-tax (net) prices from the companion "without taxes" bulletin file, so
+  // each row can show how much of the pump price is tax. Fully optional: any
+  // failure here leaves the with-tax rows intact and simply omits the split.
+  try {
+    const netUrl = findNetXlsxUrlFromHtml(html);
+    if (!netUrl) {
+      console.warn("net (without-taxes) xlsx link not found; skipping tax split");
+    } else {
+      console.log("net xlsx link:", netUrl);
+      const netBuf = await getBuffer(netUrl);
+      const netWb = new ExcelJS.Workbook();
+      await netWb.xlsx.load(netBuf);
+      const netExtracted = extract(sheetToGrid(netWb.worksheets[0]));
+      const netByGeo = {};
+      for (const r of netExtracted.rows) netByGeo[r.geo] = r;
+      let tagged = 0;
+      for (const row of fuelRows) {
+        const nr = netByGeo[row.geo];
+        if (!nr) continue;
+        const pn = nr.petrolEUR == null ? null : round3((nr.petrolEUR / 1000) * eurUsd);
+        const dn = nr.dieselEUR == null ? null : round3((nr.dieselEUR / 1000) * eurUsd);
+        // Only attach when it's a sane split (net positive and below retail).
+        if (pn != null && row.petrol != null && pn > 0 && pn < row.petrol) row.petrolNet = pn;
+        if (dn != null && row.diesel != null && dn > 0 && dn < row.diesel) row.dieselNet = dn;
+        if (row.petrolNet != null || row.dieselNet != null) tagged++;
+      }
+      console.log(`tax split: net prices attached for ${tagged} EU countries (period ${netExtracted.period})`);
+      for (const r of fuelRows.filter((x) => x.petrolNet != null).slice(0, 4)) {
+        const tax = round3(r.petrol - r.petrolNet), pct = Math.round((tax / r.petrol) * 100);
+        console.log(`    ${r.geo.padEnd(12)} gasoline $${r.petrol}/L = net $${r.petrolNet} + tax $${tax} (${pct}%)`);
+      }
+    }
+  } catch (e) {
+    console.warn("tax-split step skipped:", e.message);
+  }
 
   console.log("\nparsed " + fuelRows.length + " EU countries:");
   for (const r of fuelRows) {
