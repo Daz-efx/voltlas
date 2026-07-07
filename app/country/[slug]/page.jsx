@@ -160,6 +160,43 @@ export default async function CountryPage({ params }) {
           What households and businesses in {country.geo} pay for electricity and natural gas, in US dollars, from free official sources. Figures from {country.source}, latest period {country.period}.
         </p>
 
+        {(() => {
+          // Auto-generated summary: ranks this country against everything else in the
+          // dataset. Unique visible text per page (SEO depth), zero new data sources.
+          const ord = (n) => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+          const med = (arr) => { const a = [...arr].sort((x, y) => x - y), m = Math.floor(a.length / 2); return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; };
+          const rankOf = (v, vals) => vals.filter((x) => x > v).length + 1;
+          const nth = (r, word) => (r === 1 ? `the ${word}` : `the ${ord(r)} ${word}`);
+          const parts = [];
+          if (country.elecRes != null) {
+            const vals = data.DATA.filter((c) => c.elecRes != null).map((c) => c.elecRes);
+            const r = rankOf(country.elecRes, vals), m = med(vals);
+            const pct = Math.round(Math.abs(country.elecRes / m - 1) * 100);
+            const rel = pct < 3 ? "right around the median" : country.elecRes > m ? `about ${pct}% above the median of ${usd(m)}/kWh` : `about ${pct}% below the median of ${usd(m)}/kWh`;
+            parts.push(`At ${usd(country.elecRes)} per kWh, household electricity in ${country.geo} is ${nth(r, "most expensive")} of the ${vals.length} countries Voltlas tracks — ${rel}.`);
+          }
+          if (country.gasRes != null) {
+            const vals = data.DATA.filter((c) => c.gasRes != null).map((c) => c.gasRes);
+            parts.push(`Household natural gas runs ${usd(country.gasRes)} per kWh, ${ord(rankOf(country.gasRes, vals))} of ${vals.length}.`);
+          }
+          if (fuel && fuel.petrol != null) {
+            const vals = (data.FUEL_DATA || []).filter((c) => c.petrol != null).map((c) => c.petrol);
+            const r = rankOf(fuel.petrol, vals);
+            let s = `Filling up costs ${usd2(fuel.petrol)} per liter of gasoline (${usd2(fuel.petrol * 3.78541)}/gal), ${nth(r, "highest")} of ${vals.length}`;
+            if (fuel.petrolNet != null) s += ` — and roughly ${Math.round(((fuel.petrol - fuel.petrolNet) / fuel.petrol) * 100)}% of that pump price is duties and VAT`;
+            parts.push(s + ".");
+          }
+          if (powerMix && powerMix.ren != null && powerMix.ci != null) {
+            parts.push(`Behind the meter, ${Math.round(powerMix.ren)}% of ${country.geo}'s electricity came from renewables in ${powerMix.year}, with grid carbon intensity around ${Math.round(powerMix.ci)} gCO₂ per kWh.`);
+          }
+          if (!parts.length) return null;
+          return (
+            <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.text, maxWidth: 680, marginTop: 14 }}>
+              {parts.join(" ")}
+            </p>
+          );
+        })()}
+
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}`, marginTop: 26 }}>
           {country.elecRes != null && <Metric label="Electricity · household" value={`${usd(country.elecRes)}/kWh`} sub={local(country.elecRes) ? `${local(country.elecRes)}/kWh local` : null} />}
           {country.elecBiz != null && <Metric label="Electricity · business" value={`${usd(country.elecBiz)}/kWh`} sub={local(country.elecBiz) ? `${local(country.elecBiz)}/kWh local` : null} />}
