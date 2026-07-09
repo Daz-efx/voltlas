@@ -1,27 +1,77 @@
 {
-  "updated_at": "2026-07-09T19:09:32.000Z",
+  "updated_at": "2026-07-09T19:59:26.005Z",
   "constraints": {
+    "AMR-SND 138": {
+      "constraint_name": "AMR-SND 138",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-09T19:45:00-00:00",
+          "interval_end": "2026-07-09T20:00:00-00:00",
+          "constraint_id": "AMR-SND 138",
+          "constraint_name": "AMR-SND 138",
+          "market": "RTM",
+          "shadow_price": 55.53791,
+          "binding": true,
+          "contingency_id": "Base Case"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-09T19:45:00-00:00",
+        "interval_end": "2026-07-09T20:00:00-00:00",
+        "constraint_id": "AMR-SND 138",
+        "constraint_name": "AMR-SND 138",
+        "market": "RTM",
+        "shadow_price": 55.53791,
+        "binding": true,
+        "contingency_id": "Base Case"
+      }
+    },
     "LDWP_IPP_NORTH": {
       "constraint_name": "LDWP_IPP_NORTH",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-09T19:00:00-00:00",
-          "interval_end": "2026-07-09T19:15:00-00:00",
+          "interval_start": "2026-07-09T19:45:00-00:00",
+          "interval_end": "2026-07-09T20:00:00-00:00",
           "constraint_id": "LDWP_IPP_NORTH",
           "constraint_name": "LDWP_IPP_NORTH",
           "market": "RTM",
-          "shadow_price": -1.43221,
+          "shadow_price": -1.82099,
           "binding": false,
           "contingency_id": "Base Case"
         }
       },
       "worst": {
-        "interval_start": "2026-07-09T19:00:00-00:00",
-        "interval_end": "2026-07-09T19:15:00-00:00",
+        "interval_start": "2026-07-09T19:45:00-00:00",
+        "interval_end": "2026-07-09T20:00:00-00:00",
         "constraint_id": "LDWP_IPP_NORTH",
         "constraint_name": "LDWP_IPP_NORTH",
         "market": "RTM",
-        "shadow_price": -1.43221,
+        "shadow_price": -1.82099,
+        "binding": false,
+        "contingency_id": "Base Case"
+      }
+    },
+    "PARKER_ITC": {
+      "constraint_name": "PARKER_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-09T19:45:00-00:00",
+          "interval_end": "2026-07-09T20:00:00-00:00",
+          "constraint_id": "PARKER_ITC",
+          "constraint_name": "PARKER_ITC",
+          "market": "RTM",
+          "shadow_price": -0.0004,
+          "binding": false,
+          "contingency_id": "Base Case"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-09T19:45:00-00:00",
+        "interval_end": "2026-07-09T20:00:00-00:00",
+        "constraint_id": "PARKER_ITC",
+        "constraint_name": "PARKER_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0004,
         "binding": false,
         "contingency_id": "Base Case"
       }
