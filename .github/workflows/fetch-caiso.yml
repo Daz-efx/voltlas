@@ -1,0 +1,92 @@
+# .github/workflows/fetch-caiso.yml
+# CAISO congestion data pipeline for Voltlas.
+# Constraints: every 15 min (matches RTM cadence)
+# Outages: hourly (event-driven data, but hourly polling is sufficient
+#          and avoids commit noise)
+#
+# NOTE: GitHub cron is best-effort — actual run intervals can slip 5-15 min
+# under load. Fine for this use case; don't promise "real-time" on the page,
+# say "updated every ~15 minutes" instead.
+
+name: fetch-caiso-data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # constraints every run
+    - cron: '5 * * * *'      # hourly marker (outages gate below)
+  workflow_dispatch:
+    inputs:
+      run_outages:
+        description: 'Also fetch outages'
+        type: boolean
+        default: true
+
+concurrency:
+  group: caiso-fetch
+  cancel-in-progress: false   # let a running fetch finish; queue the next
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Pull latest before we commit, to reduce push conflicts with
+          # the existing weekly commodity pipeline
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci --omit=dev
+        # adm-zip must be in package.json dependencies
+
+      - name: Fetch constraint shadow prices
+        run: node scripts/fetch-caiso-constraints.mjs
+        continue-on-error: true
+        id: constraints
+
+      - name: Decide whether to fetch outages
+        id: gate
+        run: |
+          MINUTE=$(date -u +%M)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=${{ inputs.run_outages }}" >> "$GITHUB_OUTPUT"
+          elif [ "$MINUTE" -lt 15 ]; then
+            # Only the first run of each hour fetches outages
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fetch transmission outages
+        if: steps.gate.outputs.run == 'true'
+        run: node scripts/fetch-caiso-outages.mjs
+        continue-on-error: true
+
+      - name: Commit updated data
+        run: |
+          git config user.name "voltlas-bot"
+          git config user.email "bot@voltlas.com"
+          git add data/caiso/
+          if git diff --staged --quiet; then
+            echo "No data changes."
+            exit 0
+          fi
+          git commit -m "chore(caiso): update constraint/outage data"
+          # Rebase-push loop to coexist with other pipelines pushing to main
+          for i in 1 2 3; do
+            git push && break
+            git pull --rebase && continue
+          done
+
+      - name: Fail workflow if constraints step failed
+        if: steps.constraints.outcome == 'failure'
+        run: |
+          echo "::error::Constraint fetch failed this run — check OASIS availability or column mapping."
+          exit 1
