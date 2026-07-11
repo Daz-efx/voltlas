@@ -12,7 +12,7 @@
 //   a) copy/symlink data/caiso into public/data/caiso and use '/data/caiso'
 //   b) fetch straight from raw.githubusercontent.com (works without redeploys)
 // Set accordingly:
-const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/caiso'; // or 'https://raw.githubusercontent.com/<user>/<repo>/main/data/caiso'
+const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/caiso';
 
 // Approximate display coordinates for known interties/interfaces.
 // ILLUSTRATIVE positions, not surveyed. Interfaces not listed here still
@@ -38,9 +38,12 @@ const C = {
 const mono = { fontFamily: "'IBM Plex Mono', ui-monospace, monospace" };
 const grotesk = { fontFamily: "'Space Grotesk', system-ui, sans-serif" };
 
+// Severity is MAGNITUDE: CAISO reports these shadow prices as negative
+// values (LP dual convention) — more negative = more binding.
+function sev(price) { return Math.abs(price ?? 0); }
 function priceColor(price, binding) {
   if (!binding) return C.teal;
-  return price > 50 ? C.red : C.amber;
+  return sev(price) > 50 ? C.red : C.amber;
 }
 
 // ---------- tiny dependency-free SVG line chart ----------
@@ -59,8 +62,8 @@ function Sparkline({ points, color }) {
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
       <path d={area} fill={color} opacity="0.12" />
       <path d={d} fill="none" stroke={color} strokeWidth="2" />
-      <text x={PAD} y={12} fill={C.muted} fontSize="9" style={mono}>${max.toFixed(0)}</text>
-      <text x={PAD} y={H - PAD - 2} fill={C.muted} fontSize="9" style={mono}>${min.toFixed(0)}</text>
+      <text x={PAD} y={12} fill={C.muted} fontSize="9" style={mono}>|${max.toFixed(0)}|</text>
+      <text x={PAD} y={H - PAD - 2} fill={C.muted} fontSize="9" style={mono}>|${min.toFixed(0)}|</text>
     </svg>
   );
 }
@@ -122,7 +125,7 @@ export default function CongestionPage() {
         const ids = Object.keys(cur.constraints ?? {});
         if (ids.length) {
           const worstId = ids.reduce((a, b) =>
-            (cur.constraints[a].worst?.shadow_price ?? 0) >= (cur.constraints[b].worst?.shadow_price ?? 0) ? a : b
+            Math.abs(cur.constraints[a].worst?.shadow_price ?? 0) >= Math.abs(cur.constraints[b].worst?.shadow_price ?? 0) ? a : b
           );
           setSelectedId(worstId);
         }
@@ -144,12 +147,12 @@ export default function CongestionPage() {
       return entries
         .map(([id, c]) => ({ id, name: c.constraint_name, ...c.worst }))
         .filter((r) => r.shadow_price != null)
-        .sort((a, b) => b.shadow_price - a.shadow_price);
+        .sort((a, b) => sev(b.shadow_price) - sev(a.shadow_price));
     }
     return entries
       .filter(([, c]) => c.markets[marketTab])
       .map(([id, c]) => ({ id, name: c.constraint_name, ...c.markets[marketTab] }))
-      .sort((a, b) => b.shadow_price - a.shadow_price);
+      .sort((a, b) => sev(b.shadow_price) - sev(a.shadow_price));
   }, [current, marketTab]);
 
   // ---------- derived: outage lists ----------
@@ -178,7 +181,7 @@ export default function CongestionPage() {
       .filter((h) => h.constraint_id === selected.id)
       .sort((a, b) => a.interval_start.localeCompare(b.interval_start))
       .slice(-96) // last ~24h at 15-min cadence
-      .map((h) => ({ t: h.interval_start, v: h.shadow_price }));
+      .map((h) => ({ t: h.interval_start, v: Math.abs(h.shadow_price) }));
   }, [history, selected]);
 
   // Outages on the same interface as the selected constraint (best-effort:
@@ -228,7 +231,7 @@ export default function CongestionPage() {
     for (const r of ranked) {
       const coord = COORDS[r.id];
       if (!coord) continue;
-      const radius = 6 + Math.min(12, (r.shadow_price ?? 0) / 8);
+      const radius = 6 + Math.min(12, sev(r.shadow_price) / 8);
       const m = L.circleMarker([coord.lat, coord.lng], {
         radius, color: C.ink, weight: 2,
         fillColor: priceColor(r.shadow_price, r.binding), fillOpacity: 0.9,
@@ -410,7 +413,7 @@ export default function CongestionPage() {
         </Panel>
 
         <div style={{ marginTop: 20, fontSize: 11, color: C.muted, textAlign: 'center' }}>
-          Source: CAISO OASIS (PRC_CNSTR, TRNS_OUTAGE) · Shadow prices in $/MWh · Outage feed covers interties/scheduling limits; internal network outages not yet included · Map pin positions are approximate
+          Source: CAISO OASIS (PRC_CNSTR, TRNS_OUTAGE) · Shadow prices in $/MWh, shown as reported by CAISO (negative = binding; ranked by magnitude) · Feed covers interties/scheduling limits; internal network constraints not yet included · Map pin positions are approximate
         </div>
       </div>
     </div>

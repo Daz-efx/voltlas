@@ -73,9 +73,7 @@ jobs:
         run: |
           git config user.name "voltlas-bot"
           git config user.email "bot@voltlas.com"
-          mkdir -p public/data/caiso
-          cp data/caiso/*.json public/data/caiso/
-          git add data/caiso/ public/data/caiso/
+          git add data/caiso/
           if git diff --staged --quiet; then
             echo "No data changes."
             exit 0
