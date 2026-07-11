@@ -12,7 +12,7 @@
 //   a) copy/symlink data/caiso into public/data/caiso and use '/data/caiso'
 //   b) fetch straight from raw.githubusercontent.com (works without redeploys)
 // Set accordingly:
-const DATA_BASE = '/data/caiso'; // or 'https://raw.githubusercontent.com/<user>/<repo>/main/data/caiso'
+const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/caiso'; // or 'https://raw.githubusercontent.com/<user>/<repo>/main/data/caiso'
 
 // Approximate display coordinates for known interties/interfaces.
 // ILLUSTRATIVE positions, not surveyed. Interfaces not listed here still
