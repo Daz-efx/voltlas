@@ -1,30 +1,30 @@
 {
-  "updated_at": "2026-07-14T18:12:06.046Z",
+  "updated_at": "2026-07-14T18:41:51.990Z",
   "constraints": {
     "EPE_NET_ITC": {
       "constraint_name": "EPE_NET_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-14T18:00:00-00:00",
-          "interval_end": "2026-07-14T18:15:00-00:00",
+          "interval_start": "2026-07-14T18:30:00-00:00",
+          "interval_end": "2026-07-14T18:45:00-00:00",
           "constraint_id": "EPE_NET_ITC",
           "constraint_name": "EPE_NET_ITC",
           "market": "RTM",
-          "shadow_price": -21.40221,
-          "shadow_price_abs": 21.40221,
+          "shadow_price": -22.40698,
+          "shadow_price_abs": 22.40698,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E"
         }
       },
       "worst": {
-        "interval_start": "2026-07-14T18:00:00-00:00",
-        "interval_end": "2026-07-14T18:15:00-00:00",
+        "interval_start": "2026-07-14T18:30:00-00:00",
+        "interval_end": "2026-07-14T18:45:00-00:00",
         "constraint_id": "EPE_NET_ITC",
         "constraint_name": "EPE_NET_ITC",
         "market": "RTM",
-        "shadow_price": -21.40221,
-        "shadow_price_abs": 21.40221,
+        "shadow_price": -22.40698,
+        "shadow_price_abs": 22.40698,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E"
@@ -57,6 +57,35 @@
         "binding": false,
         "contingency_id": "Base Case",
         "ti_direction": "I"
+      }
+    },
+    "TEPC_BA_EXP_ITC": {
+      "constraint_name": "TEPC_BA_EXP_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-14T18:30:00-00:00",
+          "interval_end": "2026-07-14T18:45:00-00:00",
+          "constraint_id": "TEPC_BA_EXP_ITC",
+          "constraint_name": "TEPC_BA_EXP_ITC",
+          "market": "RTM",
+          "shadow_price": -0.0004,
+          "shadow_price_abs": 0.0004,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "E"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-14T18:30:00-00:00",
+        "interval_end": "2026-07-14T18:45:00-00:00",
+        "constraint_id": "TEPC_BA_EXP_ITC",
+        "constraint_name": "TEPC_BA_EXP_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0004,
+        "shadow_price_abs": 0.0004,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "E"
       }
     },
     "COTPISO_ITC": {
