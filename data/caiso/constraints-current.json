@@ -1,71 +1,30 @@
 {
-  "updated_at": "2026-07-15T06:00:30.170Z",
+  "updated_at": "2026-07-15T06:24:17.373Z",
   "constraints": {
-    "IPPUTAH_ITC": {
-      "constraint_name": "IPPUTAH_ITC",
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-07-15T05:00:00-00:00",
-          "interval_end": "2026-07-15T05:15:00-00:00",
-          "constraint_id": "IPPUTAH_ITC",
-          "constraint_name": "IPPUTAH_ITC",
-          "market": "RTM",
-          "shadow_price": -0.0024,
-          "shadow_price_abs": 0.0024,
-          "binding": false,
-          "contingency_id": "Base Case",
-          "ti_direction": "I"
-        },
-        "DAM": {
-          "interval_start": "2026-07-15T23:00:00-00:00",
-          "interval_end": "2026-07-16T00:00:00-00:00",
-          "constraint_id": "IPPUTAH_ITC",
-          "constraint_name": "IPPUTAH_ITC",
-          "market": "DAM",
-          "shadow_price": -0.0092,
-          "shadow_price_abs": 0.0092,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "ti_direction": "I"
-        }
-      },
-      "worst": {
-        "interval_start": "2026-07-15T23:00:00-00:00",
-        "interval_end": "2026-07-16T00:00:00-00:00",
-        "constraint_id": "IPPUTAH_ITC",
-        "constraint_name": "IPPUTAH_ITC",
-        "market": "DAM",
-        "shadow_price": -0.0092,
-        "shadow_price_abs": 0.0092,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "ti_direction": "I"
-      }
-    },
     "TOTAL_WYOMING_EXPORT": {
       "constraint_name": "TOTAL_WYOMING_EXPORT",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-15T05:45:00-00:00",
-          "interval_end": "2026-07-15T06:00:00-00:00",
+          "interval_start": "2026-07-15T06:15:00-00:00",
+          "interval_end": "2026-07-15T06:30:00-00:00",
           "constraint_id": "TOTAL_WYOMING_EXPORT",
           "constraint_name": "TOTAL_WYOMING_EXPORT",
           "market": "RTM",
-          "shadow_price": 15.17837,
-          "shadow_price_abs": 15.17837,
+          "shadow_price": 24.23479,
+          "shadow_price_abs": 24.23479,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E"
         }
       },
       "worst": {
-        "interval_start": "2026-07-15T05:45:00-00:00",
-        "interval_end": "2026-07-15T06:00:00-00:00",
+        "interval_start": "2026-07-15T06:15:00-00:00",
+        "interval_end": "2026-07-15T06:30:00-00:00",
         "constraint_id": "TOTAL_WYOMING_EXPORT",
         "constraint_name": "TOTAL_WYOMING_EXPORT",
         "market": "RTM",
-        "shadow_price": 15.17837,
-        "shadow_price_abs": 15.17837,
+        "shadow_price": 24.23479,
+        "shadow_price_abs": 24.23479,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E"
@@ -98,6 +57,35 @@
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E"
+      }
+    },
+    "IPPUTAH_ITC": {
+      "constraint_name": "IPPUTAH_ITC",
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-07-15T23:00:00-00:00",
+          "interval_end": "2026-07-16T00:00:00-00:00",
+          "constraint_id": "IPPUTAH_ITC",
+          "constraint_name": "IPPUTAH_ITC",
+          "market": "DAM",
+          "shadow_price": -0.0092,
+          "shadow_price_abs": 0.0092,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "I"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-15T23:00:00-00:00",
+        "interval_end": "2026-07-16T00:00:00-00:00",
+        "constraint_id": "IPPUTAH_ITC",
+        "constraint_name": "IPPUTAH_ITC",
+        "market": "DAM",
+        "shadow_price": -0.0092,
+        "shadow_price_abs": 0.0092,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "I"
       }
     },
     "MALIN500_ISL": {
