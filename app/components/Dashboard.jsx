@@ -126,7 +126,9 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
     const nat = DATA.filter((d) => d[field] != null).map((d) => d[field]);
     const sub = Object.values(SUBNATIONAL).flat().filter((s) => s[field] != null).map((s) => s[field]);
     const all = [...nat, ...sub];
-    return { lo: Math.min(...all), hi: Math.max(...all) };
+    // Rails span states too (their diamonds share this scale), so the range can
+    // be wider than the country-only Lowest/Highest stat boxes — label it as such.
+    return { lo: Math.min(...all), hi: Math.max(...all), hasSub: sub.length > 0 };
   }, [field]);
 
   // ── Fuels view ──
@@ -144,7 +146,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
   const tRailBounds = useMemo(() => {
     const nat = FUEL_DATA.filter((d) => d[tField] != null).map((d) => d[tField]);
     const sub = Object.values(FUEL_SUBNATIONAL).flat().filter((s) => s[tField] != null).map((s) => s[tField]);
-    return { lo: Math.min(...nat, ...sub), hi: Math.max(...nat, ...sub) };
+    return { lo: Math.min(...nat, ...sub), hi: Math.max(...nat, ...sub), hasSub: sub.length > 0 };
   }, [tField]);
 
   const clampPos = (v, b) => Math.max(0, Math.min(100, ((v - b.lo) / (b.hi - b.lo)) * 100));
@@ -311,7 +313,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             )}
 
             <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.45)", padding: "0 0 6px", borderBottom: "1px solid rgba(232,228,218,0.16)" }}>
-              <span>COUNTRY</span><span>GLOBAL RANGE {fmt(railBounds.lo)}–{fmt(railBounds.hi)}</span><span>TREND</span><span style={{ textAlign: "right" }}>USD/kWh</span>
+              <span>COUNTRY</span><span>GLOBAL RANGE {fmt(railBounds.lo)}–{fmt(railBounds.hi)}{railBounds.hasSub ? " · incl. US states" : ""}</span><span>TREND</span><span style={{ textAlign: "right" }}>USD/kWh</span>
             </div>
 
             {rows.map((d, i) => {
@@ -396,7 +398,7 @@ export default function Dashboard({ DATA, REGIONS, SOURCE_CADENCE, PLI, SUB_META
             )}
 
             <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, font: "400 10px 'IBM Plex Mono'", color: "rgba(232,228,218,0.45)", padding: "0 0 6px", borderBottom: "1px solid rgba(232,228,218,0.16)" }}>
-              <span>COUNTRY</span><span>GLOBAL RANGE {fmtFuel(toU(tRailBounds.lo))}–{fmtFuel(toU(tRailBounds.hi))}</span><span>TREND</span><span style={{ textAlign: "right" }}>USD/{fuLabel}</span>
+              <span>COUNTRY</span><span>GLOBAL RANGE {fmtFuel(toU(tRailBounds.lo))}–{fmtFuel(toU(tRailBounds.hi))}{tRailBounds.hasSub ? " · incl. US states" : ""}</span><span>TREND</span><span style={{ textAlign: "right" }}>USD/{fuLabel}</span>
             </div>
 
             {tRows.map((d, i) => {
