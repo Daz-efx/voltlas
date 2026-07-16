@@ -1,30 +1,59 @@
 {
-  "updated_at": "2026-07-16T13:03:10.206Z",
+  "updated_at": "2026-07-16T14:14:42.438Z",
   "constraints": {
-    "LDWP_IPP_NORTH": {
-      "constraint_name": "LDWP_IPP_NORTH",
+    "EPE_NET_ITC": {
+      "constraint_name": "EPE_NET_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-16T12:45:00-00:00",
-          "interval_end": "2026-07-16T13:00:00-00:00",
-          "constraint_id": "LDWP_IPP_NORTH",
-          "constraint_name": "LDWP_IPP_NORTH",
+          "interval_start": "2026-07-16T13:45:00-00:00",
+          "interval_end": "2026-07-16T14:00:00-00:00",
+          "constraint_id": "EPE_NET_ITC",
+          "constraint_name": "EPE_NET_ITC",
           "market": "RTM",
-          "shadow_price": -0.0012,
-          "shadow_price_abs": 0.0012,
+          "shadow_price": -11.65045,
+          "shadow_price_abs": 11.65045,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-16T13:45:00-00:00",
+        "interval_end": "2026-07-16T14:00:00-00:00",
+        "constraint_id": "EPE_NET_ITC",
+        "constraint_name": "EPE_NET_ITC",
+        "market": "RTM",
+        "shadow_price": -11.65045,
+        "shadow_price_abs": 11.65045,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E"
+      }
+    },
+    "MALIN500_ISL": {
+      "constraint_name": "MALIN500_ISL",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-16T14:00:00-00:00",
+          "interval_end": "2026-07-16T14:15:00-00:00",
+          "constraint_id": "MALIN500_ISL",
+          "constraint_name": "MALIN500_ISL",
+          "market": "RTM",
+          "shadow_price": -0.0036,
+          "shadow_price_abs": 0.0036,
           "binding": false,
           "contingency_id": "Base Case",
           "ti_direction": "E"
         }
       },
       "worst": {
-        "interval_start": "2026-07-16T12:45:00-00:00",
-        "interval_end": "2026-07-16T13:00:00-00:00",
-        "constraint_id": "LDWP_IPP_NORTH",
-        "constraint_name": "LDWP_IPP_NORTH",
+        "interval_start": "2026-07-16T14:00:00-00:00",
+        "interval_end": "2026-07-16T14:15:00-00:00",
+        "constraint_id": "MALIN500_ISL",
+        "constraint_name": "MALIN500_ISL",
         "market": "RTM",
-        "shadow_price": -0.0012,
-        "shadow_price_abs": 0.0012,
+        "shadow_price": -0.0036,
+        "shadow_price_abs": 0.0036,
         "binding": false,
         "contingency_id": "Base Case",
         "ti_direction": "E"
@@ -34,26 +63,26 @@
       "constraint_name": "PACE_FOURCORNE345_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-16T12:45:00-00:00",
-          "interval_end": "2026-07-16T13:00:00-00:00",
+          "interval_start": "2026-07-16T13:45:00-00:00",
+          "interval_end": "2026-07-16T14:00:00-00:00",
           "constraint_id": "PACE_FOURCORNE345_ITC",
           "constraint_name": "PACE_FOURCORNE345_ITC",
           "market": "RTM",
-          "shadow_price": -0.0024,
-          "shadow_price_abs": 0.0024,
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
           "binding": false,
           "contingency_id": "Base Case",
           "ti_direction": "I"
         }
       },
       "worst": {
-        "interval_start": "2026-07-16T12:45:00-00:00",
-        "interval_end": "2026-07-16T13:00:00-00:00",
+        "interval_start": "2026-07-16T13:45:00-00:00",
+        "interval_end": "2026-07-16T14:00:00-00:00",
         "constraint_id": "PACE_FOURCORNE345_ITC",
         "constraint_name": "PACE_FOURCORNE345_ITC",
         "market": "RTM",
-        "shadow_price": -0.0024,
-        "shadow_price_abs": 0.0024,
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
         "binding": false,
         "contingency_id": "Base Case",
         "ti_direction": "I"
@@ -63,8 +92,8 @@
       "constraint_name": "WALC_NVE_EXPORT_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-16T12:45:00-00:00",
-          "interval_end": "2026-07-16T13:00:00-00:00",
+          "interval_start": "2026-07-16T14:00:00-00:00",
+          "interval_end": "2026-07-16T14:15:00-00:00",
           "constraint_id": "WALC_NVE_EXPORT_ITC",
           "constraint_name": "WALC_NVE_EXPORT_ITC",
           "market": "RTM",
@@ -76,8 +105,8 @@
         }
       },
       "worst": {
-        "interval_start": "2026-07-16T12:45:00-00:00",
-        "interval_end": "2026-07-16T13:00:00-00:00",
+        "interval_start": "2026-07-16T14:00:00-00:00",
+        "interval_end": "2026-07-16T14:15:00-00:00",
         "constraint_id": "WALC_NVE_EXPORT_ITC",
         "constraint_name": "WALC_NVE_EXPORT_ITC",
         "market": "RTM",
