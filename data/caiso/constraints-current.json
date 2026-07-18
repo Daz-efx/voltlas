@@ -1,30 +1,59 @@
 {
-  "updated_at": "2026-07-18T01:00:12.696Z",
+  "updated_at": "2026-07-18T03:22:54.060Z",
   "constraints": {
-    "EPE_NET_ITC": {
-      "constraint_name": "EPE_NET_ITC",
+    "MERCHANT_ITC": {
+      "constraint_name": "MERCHANT_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-18T00:45:00-00:00",
-          "interval_end": "2026-07-18T01:00:00-00:00",
-          "constraint_id": "EPE_NET_ITC",
-          "constraint_name": "EPE_NET_ITC",
+          "interval_start": "2026-07-18T02:45:00-00:00",
+          "interval_end": "2026-07-18T03:00:00-00:00",
+          "constraint_id": "MERCHANT_ITC",
+          "constraint_name": "MERCHANT_ITC",
           "market": "RTM",
-          "shadow_price": -14.12215,
-          "shadow_price_abs": 14.12215,
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "I"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-18T02:45:00-00:00",
+        "interval_end": "2026-07-18T03:00:00-00:00",
+        "constraint_id": "MERCHANT_ITC",
+        "constraint_name": "MERCHANT_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "I"
+      }
+    },
+    "TOTAL_WYOMING_EXPORT": {
+      "constraint_name": "TOTAL_WYOMING_EXPORT",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-18T03:15:00-00:00",
+          "interval_end": "2026-07-18T03:30:00-00:00",
+          "constraint_id": "TOTAL_WYOMING_EXPORT",
+          "constraint_name": "TOTAL_WYOMING_EXPORT",
+          "market": "RTM",
+          "shadow_price": 1.69442,
+          "shadow_price_abs": 1.69442,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E"
         }
       },
       "worst": {
-        "interval_start": "2026-07-18T00:45:00-00:00",
-        "interval_end": "2026-07-18T01:00:00-00:00",
-        "constraint_id": "EPE_NET_ITC",
-        "constraint_name": "EPE_NET_ITC",
+        "interval_start": "2026-07-18T03:15:00-00:00",
+        "interval_end": "2026-07-18T03:30:00-00:00",
+        "constraint_id": "TOTAL_WYOMING_EXPORT",
+        "constraint_name": "TOTAL_WYOMING_EXPORT",
         "market": "RTM",
-        "shadow_price": -14.12215,
-        "shadow_price_abs": 14.12215,
+        "shadow_price": 1.69442,
+        "shadow_price_abs": 1.69442,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E"
