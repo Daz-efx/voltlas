@@ -25,8 +25,8 @@ _Last updated: 2026-07-12_
 
 ## Open items
 1. ~~SEO layer~~ DONE 2026-07-12
-2. Pending: my domain review of Explainer.jsx prose (shadow price + OTC wording)
-3. Submit /congestion/caiso in Google Search Console for indexing
+2. ~~Domain review of Explainer.jsx~~ DONE 2026-07-12 (branch/nomogram taxonomy fix)
+3. ~~Search Console indexing~~ REQUESTED 2026-07-19
 4. Consider softening "every ~15 min" label to match observed cadence
 5. PRC_NOMOGRAM ingestion — internal flowgate constraints (v2 data layer)
 6. Map COORDS table only covers 7 interties; non-ITC constraints get no pin
