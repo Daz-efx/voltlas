@@ -26,6 +26,7 @@ export default function sitemap() {
     { url: `${SITE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE}/data`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/electricity-bill-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE}/congestion/caiso`, lastModified: now, changeFrequency: "hourly", priority: 0.9 },
     ...rankings, ...comparisons, ...commodities, ...countries,
   ];
 }
