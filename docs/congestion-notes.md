@@ -1,13 +1,16 @@
 # CAISO Congestion Monitor — Project Notes
 
-_Last updated: 2026-07-11_
+_Last updated: 2026-07-12_
 
 ## Current state
-- Live at voltlas.com/congestion, all known defects closed as of commit `947637a`
+- Live at voltlas.com/congestion/caiso (moved from /congestion, which now
+  redirects — future multi-ISO hub structure)
+- SEO layer COMPLETE: layout.jsx metadata, opengraph-image.jsx, Explainer.jsx
+  prose, sitemap entry (hourly / 0.9)
 - Pipeline: GitHub Actions (`fetch-caiso.yml`) pulls PRC_CNSTR (DAM+RTM) and
   TRNS_OUTAGE from CAISO OASIS, commits JSON to `data/caiso/`
-- Page fetches data client-side from raw.githubusercontent.com (deploys decoupled;
-  Vercel Ignored Build Step skips data-only commits)
+- Page fetches data client-side from raw.githubusercontent.com (deploys
+  decoupled; Vercel Ignored Build Step skips data-only commits)
 - Binding = |shadow_price| > 0.005; ranked by magnitude (CAISO reports mixed signs)
 
 ## Verified facts (hard-won, don't rediscover)
@@ -21,12 +24,13 @@ _Last updated: 2026-07-11_
 - GitHub cron delivers ~30-60 min in practice, not the requested 15
 
 ## Open items
-1. SEO layer (next): generateMetadata, OG image (existing ImageResponse pattern),
-   sitemap entry, explainer prose (shadow prices, negative signs, curtailments)
-2. Consider softening "every ~15 min" label to match observed cadence
-3. PRC_NOMOGRAM ingestion — internal flowgate constraints (v2 data layer)
-4. Map COORDS table only covers 7 interties; non-ITC constraints get no pin
+1. ~~SEO layer~~ DONE 2026-07-12
+2. Pending: my domain review of Explainer.jsx prose (shadow price + OTC wording)
+3. Submit /congestion/caiso in Google Search Console for indexing
+4. Consider softening "every ~15 min" label to match observed cadence
+5. PRC_NOMOGRAM ingestion — internal flowgate constraints (v2 data layer)
+6. Map COORDS table only covers 7 interties; non-ITC constraints get no pin
    (graceful, but expand as new IDs appear)
-5. Outage↔constraint linkage only matches where ti_id aligns (intertie-only)
-6. Later: corridor weather overlay, curtailment/negative-price correlation,
-   multi-ISO expansion (NYISO easiest first)
+7. Outage↔constraint linkage only matches where ti_id aligns (intertie-only)
+8. Later: corridor weather overlay, curtailment/negative-price correlation,
+   multi-ISO expansion (NYISO easiest first; ERCOT pairs with nomogram work)
