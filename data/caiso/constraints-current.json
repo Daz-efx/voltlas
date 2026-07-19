@@ -1,12 +1,41 @@
 {
-  "updated_at": "2026-07-19T15:26:46.809Z",
+  "updated_at": "2026-07-19T16:29:02.784Z",
   "constraints": {
+    "LDWP_IPP_NORTH": {
+      "constraint_name": "LDWP_IPP_NORTH",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-19T16:15:00-00:00",
+          "interval_end": "2026-07-19T16:30:00-00:00",
+          "constraint_id": "LDWP_IPP_NORTH",
+          "constraint_name": "LDWP_IPP_NORTH",
+          "market": "RTM",
+          "shadow_price": -0.85214,
+          "shadow_price_abs": 0.85214,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "I"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-19T16:15:00-00:00",
+        "interval_end": "2026-07-19T16:30:00-00:00",
+        "constraint_id": "LDWP_IPP_NORTH",
+        "constraint_name": "LDWP_IPP_NORTH",
+        "market": "RTM",
+        "shadow_price": -0.85214,
+        "shadow_price_abs": 0.85214,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "I"
+      }
+    },
     "PACE_FOURCORNE345_ITC": {
       "constraint_name": "PACE_FOURCORNE345_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-19T15:15:00-00:00",
-          "interval_end": "2026-07-19T15:30:00-00:00",
+          "interval_start": "2026-07-19T16:15:00-00:00",
+          "interval_end": "2026-07-19T16:30:00-00:00",
           "constraint_id": "PACE_FOURCORNE345_ITC",
           "constraint_name": "PACE_FOURCORNE345_ITC",
           "market": "RTM",
@@ -18,8 +47,8 @@
         }
       },
       "worst": {
-        "interval_start": "2026-07-19T15:15:00-00:00",
-        "interval_end": "2026-07-19T15:30:00-00:00",
+        "interval_start": "2026-07-19T16:15:00-00:00",
+        "interval_end": "2026-07-19T16:30:00-00:00",
         "constraint_id": "PACE_FOURCORNE345_ITC",
         "constraint_name": "PACE_FOURCORNE345_ITC",
         "market": "RTM",
