@@ -1,6 +1,8 @@
 // app/congestion/caiso/Explainer.jsx
 // SEO/educational prose rendered below the dashboard. This text is what
 // search engines index and rank. Imported by page.jsx; renders via SSR.
+// Reviewed for market-ops accuracy 2026-07-12 (branch/nomogram taxonomy,
+// LMP expansion, sign-convention wording).
 
 const C = {
   ink: '#0A0D10', panel: '#12171C', line: '#1E262C',
@@ -21,13 +23,13 @@ export default function Explainer() {
     <section style={{ marginTop: 48, paddingTop: 32, borderTop: `1px solid ${C.line}` }}>
       <h2 style={{ ...h2, marginTop: 0 }}>What this page shows</h2>
       <p style={p}>
-        This monitor tracks <span style={em}>transmission congestion in the California ISO (CAISO)
-        market</span> using two official data feeds: constraint shadow prices from the day-ahead
-        (DAM) and real-time (RTM) markets, and transmission outage curtailments on the
-        interties that connect CAISO to neighboring grids. Both are pulled automatically from
-        CAISO&apos;s OASIS system and refreshed throughout the day. There is no login, no paywall,
-        and no modeled or estimated data — every number on this page comes from CAISO&apos;s own
-        published market results.
+        This monitor tracks <span style={em}>transmission congestion in the California ISO
+        (CAISO) market</span>{' '}using two official data feeds: constraint shadow prices from
+        the day-ahead (DAM) and real-time (RTM) markets, and transmission outage curtailments
+        on the interties that connect CAISO to neighboring grids. Both are pulled automatically
+        from CAISO&apos;s OASIS system and refreshed throughout the day. There is no login, no
+        paywall, and no modeled or estimated data — every number on this page comes from
+        CAISO&apos;s own published market results.
       </p>
 
       <h2 style={h2}>What is a shadow price?</h2>
@@ -39,22 +41,22 @@ export default function Explainer() {
         that limit were relaxed by one megawatt. A constraint with a shadow price of zero is not
         limiting anything. A constraint with a large shadow price is <span style={em}>binding</span>:
         the grid is pushed up against that limit, and the market is paying real money to route
-        around it. Shadow prices are the root cause behind locational price (LMP) spreads —
-        when you see a large price separation between two CAISO zones, a binding constraint with
-        a significant shadow price is usually why.
+        around it. Shadow prices are the root cause behind locational marginal price (LMP)
+        spreads — when you see a large price separation between two CAISO zones, a binding
+        constraint with a significant shadow price is usually why.
       </p>
 
       <h2 style={h2}>Why are some shadow prices negative?</h2>
       <p style={p}>
-        The sign is an accounting convention from the underlying optimization, not a market anomaly.
-        In the convention CAISO uses for this report, a negative value on a binding scheduling
-        constraint means that adding one more megawatt of transfer capability would
-        <span style={em}> reduce</span> total system cost by that amount — a shadow price of
+        The sign is an accounting convention from the underlying optimization, not a market
+        anomaly. In the convention CAISO uses for this report, a negative value on a binding
+        constraint means that adding one more megawatt of transfer capability would{' '}
+        <span style={em}>reduce</span>{' '}total system cost by that amount — a shadow price of
         &minus;$15/MWh reads as &ldquo;this limit is costing the system $15 for every megawatt it
         holds back.&rdquo; Different constraint types in the same report can carry different sign
         conventions, which is why this page ranks constraints by <span style={em}>magnitude</span>:
-        the absolute value is the severity signal, regardless of sign. The raw signed value is
-        shown exactly as CAISO reports it.
+        the absolute value is the primary severity signal, regardless of sign. The raw signed
+        value is shown exactly as CAISO reports it.
       </p>
 
       <h2 style={h2}>Interties, curtailments, and standing limitations</h2>
@@ -88,10 +90,10 @@ export default function Explainer() {
         Constraint shadow prices come from CAISO OASIS report PRC_CNSTR (day-ahead and real-time
         markets); outage and curtailment data come from the OASIS transmission outage feed. Data
         refreshes automatically on a schedule of roughly every 15&ndash;60 minutes. This feed
-        covers scheduling constraints — predominantly interties — and does not yet include
-        CAISO&apos;s internal flowgate (nomogram) constraints. Map pin positions are approximate
-        corridor locations for orientation, not surveyed coordinates. This page is informational
-        only and is not trading, financial, or operational advice.
+        currently covers scheduling constraints — predominantly interties — and does not yet
+        include CAISO&apos;s internal branch or nomogram constraints. Map pin positions are
+        approximate corridor locations for orientation, not surveyed coordinates. This page is
+        informational only and is not trading, financial, or operational advice.
       </p>
     </section>
   );
