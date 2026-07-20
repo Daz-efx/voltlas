@@ -1,30 +1,59 @@
 {
-  "updated_at": "2026-07-20T10:32:45.068Z",
+  "updated_at": "2026-07-20T11:09:48.325Z",
   "constraints": {
+    "LDWP_IPP_NORTH": {
+      "constraint_name": "LDWP_IPP_NORTH",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-07-20T11:00:00-00:00",
+          "interval_end": "2026-07-20T11:15:00-00:00",
+          "constraint_id": "LDWP_IPP_NORTH",
+          "constraint_name": "LDWP_IPP_NORTH",
+          "market": "RTM",
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "E"
+        }
+      },
+      "worst": {
+        "interval_start": "2026-07-20T11:00:00-00:00",
+        "interval_end": "2026-07-20T11:15:00-00:00",
+        "constraint_id": "LDWP_IPP_NORTH",
+        "constraint_name": "LDWP_IPP_NORTH",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "E"
+      }
+    },
     "TEPC_BA_EXP_ITC": {
       "constraint_name": "TEPC_BA_EXP_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-07-20T10:30:00-00:00",
-          "interval_end": "2026-07-20T10:45:00-00:00",
+          "interval_start": "2026-07-20T11:00:00-00:00",
+          "interval_end": "2026-07-20T11:15:00-00:00",
           "constraint_id": "TEPC_BA_EXP_ITC",
           "constraint_name": "TEPC_BA_EXP_ITC",
           "market": "RTM",
-          "shadow_price": -2.22717,
-          "shadow_price_abs": 2.22717,
+          "shadow_price": -10.29325,
+          "shadow_price_abs": 10.29325,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E"
         }
       },
       "worst": {
-        "interval_start": "2026-07-20T10:30:00-00:00",
-        "interval_end": "2026-07-20T10:45:00-00:00",
+        "interval_start": "2026-07-20T11:00:00-00:00",
+        "interval_end": "2026-07-20T11:15:00-00:00",
         "constraint_id": "TEPC_BA_EXP_ITC",
         "constraint_name": "TEPC_BA_EXP_ITC",
         "market": "RTM",
-        "shadow_price": -2.22717,
-        "shadow_price_abs": 2.22717,
+        "shadow_price": -10.29325,
+        "shadow_price_abs": 10.29325,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E"
