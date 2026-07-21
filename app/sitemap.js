@@ -8,6 +8,10 @@ const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|
 export default function sitemap() {
   const file = path.join(process.cwd(), "public", "data", "latest.json");
   const data = JSON.parse(fs.readFileSync(file, "utf8"));
+  let registry = { constraints: {} };
+  try {
+    registry = JSON.parse(fs.readFileSync(path.join(process.cwd(), "data", "caiso", "constraint-registry.json"), "utf8"));
+  } catch {}
   const now = new Date();
   const countries = data.DATA.filter((c) => c.elecRes != null).map((c) => ({
     url: `${SITE}/country/${slugify(c.geo)}`, lastModified: now, changeFrequency: "monthly", priority: 0.7,
@@ -27,7 +31,15 @@ export default function sitemap() {
     { url: `${SITE}/data`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/electricity-bill-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE}/congestion/caiso`, lastModified: now, changeFrequency: "hourly", priority: 0.9 },
+    { url: `${SITE}/congestion/caiso/constraint`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    ...Object.keys(registry.constraints || {}).map((slug) => ({
+      url: `${SITE}/congestion/caiso/constraint/${slug}`, lastModified: now, changeFrequency: "daily", priority: 0.6,
+    })),
     { url: `${SITE}/congestion/caiso`, lastModified: now, changeFrequency: "hourly", priority: 0.9 },
+    { url: `${SITE}/congestion/caiso/constraint`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    ...Object.keys(registry.constraints || {}).map((slug) => ({
+      url: `${SITE}/congestion/caiso/constraint/${slug}`, lastModified: now, changeFrequency: "daily", priority: 0.6,
+    })),
     ...rankings, ...comparisons, ...commodities, ...countries,
   ];
 }
