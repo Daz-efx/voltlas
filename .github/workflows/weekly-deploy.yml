@@ -1,0 +1,39 @@
+# .github/workflows/weekly-deploy.yml
+# Weekly Vercel rebuild so newly-observed constraints get their pages.
+#
+# WHY: data commits are excluded from Vercel builds by the Ignored Build Step,
+# which keeps the 15-min pipeline from burning ~96 builds/day. But per-constraint
+# pages are generated at BUILD time from data/caiso/constraint-registry.json —
+# so a constraint first seen on Tuesday has no page until something triggers a
+# deploy. This does that once a week (~4 builds/month, negligible against the
+# 100/day Hobby limit).
+#
+# The hook URL is a credential: it lives in the VERCEL_DEPLOY_HOOK repo secret,
+# never in this file.
+
+name: weekly-deploy
+
+on:
+  schedule:
+    - cron: '0 14 * * 0'   # Sundays 14:00 UTC (~7am PT)
+  workflow_dispatch:        # manual trigger for testing
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK secret is not set."
+            exit 1
+          fi
+          STATUS=$(curl -s -o /tmp/resp.json -w "%{http_code}" -X POST "$HOOK")
+          echo "Deploy hook responded HTTP $STATUS"
+          cat /tmp/resp.json || true
+          if [ "$STATUS" -ge 400 ]; then
+            echo "::error::Deploy hook failed with HTTP $STATUS"
+            exit 1
+          fi
