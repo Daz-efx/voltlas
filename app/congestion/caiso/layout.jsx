@@ -4,11 +4,14 @@
 // opengraph-image.jsx in this folder via Next.js file conventions.
 
 export const metadata = {
-  title: 'CAISO Congestion Monitor — Live Intertie Shadow Prices & Transmission Outages | Voltlas',
+  title: 'CAISO Congestion Monitor — Live Constraint Shadow Prices & Transmission Outages | Voltlas',
   description:
-    'Live CAISO congestion data: constraint shadow prices (DAM & RTM), binding intertie limits, transmission outage curtailments, and standing path limitations. Updated automatically from CAISO OASIS.',
+    'Live CAISO congestion: shadow prices on internal transmission lines, transformers, and nomograms, plus intertie scheduling limits and outage curtailments. Day-ahead and real-time, from CAISO OASIS.',
   keywords: [
     'CAISO congestion',
+    'branch constraints',
+    'nomogram',
+    'CAISO internal congestion',
     'shadow prices',
     'transmission constraints',
     'intertie curtailment',
