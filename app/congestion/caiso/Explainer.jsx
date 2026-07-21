@@ -46,7 +46,7 @@ export default function Explainer() {
 
       <h2 style={h2}>Internal constraints vs. intertie constraints</h2>
       <p style={p}>
-        The <span style={em}>Internal</span> tab shows congestion inside the CAISO footprint:
+        The <span style={em}>Internal</span>{' '}tab shows congestion inside the CAISO footprint:
         individual transmission lines (branch constraints, shown as a line between two substations
         at a given voltage), transformer banks, multi-element operating
         <span style={em}> nomograms</span>, and constraints created by specific outages. This is
@@ -54,7 +54,7 @@ export default function Explainer() {
         line can clear at hundreds of dollars per megawatt-hour during a local peak.
       </p>
       <p style={p}>
-        The <span style={em}>Interties</span> tab shows scheduling constraints on the paths in and
+        The <span style={em}>Interties</span>{' '}tab shows scheduling constraints on the paths in and
         out of CAISO — the California&ndash;Oregon Intertie (COI/Malin), the Nevada&ndash;Oregon
         Border DC line, paths to the Desert Southwest, and others. These bind less often and at
         smaller magnitudes, but they move whole-system import economics when they do.
