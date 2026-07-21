@@ -58,6 +58,10 @@ jobs:
         run: node scripts/fetch-caiso-nomogram.mjs
         continue-on-error: true
 
+      - name: Rebuild constraint registry
+        run: node scripts/build-constraint-registry.mjs
+        continue-on-error: true
+
       - name: Decide whether to fetch outages
         id: gate
         run: |

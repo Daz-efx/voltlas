@@ -13,6 +13,7 @@
 // DAM shows the CURRENT hour's interval, with the day's PEAK alongside.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import Explainer from './Explainer';
 
 const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/caiso';
@@ -114,6 +115,7 @@ export default function CongestionPage() {
   const [internalHistory, setInternalHistory] = useState([]);
   const [intertieHistory, setIntertieHistory] = useState([]);
   const [outageData, setOutageData] = useState(null);
+  const [registry, setRegistry] = useState(null);
   const [error, setError] = useState(null);
 
   const [feed, setFeed] = useState('internal');   // 'internal' | 'intertie'
@@ -132,17 +134,18 @@ export default function CongestionPage() {
     async function load() {
       try {
         const j = (f) => fetch(`${DATA_BASE}/${f}`).then((r) => r.json());
-        const [nom, cns, nomH, cnsH, out] = await Promise.all([
+        const [nom, cns, nomH, cnsH, out, reg] = await Promise.all([
           j('nomogram-current.json'),
           j('constraints-current.json'),
           j('nomogram-history.json').catch(() => []),
           j('constraints-history.json').catch(() => []),
           j('outages.json'),
+          j('constraint-registry.json').catch(() => null),
         ]);
         if (!alive) return;
         setInternal(nom); setIntertie(cns);
         setInternalHistory(nomH); setIntertieHistory(cnsH);
-        setOutageData(out);
+        setOutageData(out); setRegistry(reg);
       } catch (e) {
         if (alive) setError(String(e));
       }
@@ -151,6 +154,15 @@ export default function CongestionPage() {
     const t = setInterval(load, 5 * 60_000);
     return () => { alive = false; clearInterval(t); };
   }, []);
+
+  // Map CAISO constraint IDs to their page slugs. A constraint observed
+  // since the last deploy won't have a page yet — those simply render
+  // without a link rather than 404ing.
+  const slugById = useMemo(() => {
+    const m = {};
+    for (const c of Object.values(registry?.constraints ?? {})) m[c.constraint_id] = c.slug;
+    return m;
+  }, [registry]);
 
   const activeData = feed === 'internal' ? internal : intertie;
   const activeHistory = feed === 'internal' ? internalHistory : intertieHistory;
@@ -372,7 +384,14 @@ export default function CongestionPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
             <Panel
-              title="Top Constraints Right Now"
+              title={
+                <span>
+                  Top Constraints Right Now{' '}
+                  <Link href="/congestion/caiso/constraint" style={{ color: C.muted, fontSize: 10, textDecoration: 'underline', textTransform: 'none', letterSpacing: 0 }}>
+                    (all constraints)
+                  </Link>
+                </span>
+              }
               right={
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <TabRow
@@ -414,6 +433,14 @@ export default function CongestionPage() {
                     <span style={{ ...mono, fontSize: 13, fontWeight: 600, color: priceColor(r.shadow_price, r.binding) }}>
                       ${(r.shadow_price ?? 0).toFixed(2)}
                     </span>
+                    {slugById[r.id] && (
+                      <Link
+                        href={`/congestion/caiso/constraint/${slugById[r.id]}`}
+                        onClick={(e) => e.stopPropagation()}
+                        title="Constraint detail page"
+                        style={{ color: C.muted, textDecoration: 'none', fontSize: 13, padding: '0 2px', flexShrink: 0 }}
+                      >↗</Link>
+                    )}
                   </div>
                 ))}
               </div>
@@ -432,6 +459,12 @@ export default function CongestionPage() {
                         <div style={{ ...mono, fontSize: 10.5, color: C.muted, wordBreak: 'break-all' }}>
                           {selected.id}
                         </div>
+                        {slugById[selected.id] && (
+                          <Link
+                            href={`/congestion/caiso/constraint/${slugById[selected.id]}`}
+                            style={{ color: C.teal, textDecoration: 'none', fontSize: 11.5, display: 'inline-block', marginTop: 6 }}
+                          >Full history &amp; details →</Link>
+                        )}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end', flexShrink: 0 }}>
                         <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 3, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, background: w.binding ? C.amberDim : C.tealDim, color: w.binding ? C.amber : C.teal }}>
