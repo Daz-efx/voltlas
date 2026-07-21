@@ -124,6 +124,7 @@ export default function CongestionPage() {
   const mapRef = useRef(null);
   const leafletMap = useRef(null);
   const markersRef = useRef({});
+  const resizeObs = useRef(null);
 
   // ---------- data load ----------
   useEffect(() => {
@@ -226,13 +227,40 @@ export default function CongestionPage() {
       link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
       document.head.appendChild(link);
     }
+
     function init() {
       const L = window.L;
-      if (!L || leafletMap.current) return;
-      const map = L.map(mapRef.current, { zoomControl: true, attributionControl: false }).setView([37.5, -119.8], 5.4);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 10, minZoom: 5 }).addTo(map);
+      if (!L || leafletMap.current || !mapRef.current) return;
+      const map = L.map(mapRef.current, { zoomControl: true, attributionControl: false })
+        .setView([37.5, -119.8], 5.4);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 10, minZoom: 5,
+      }).addTo(map);
       leafletMap.current = map;
+
+      // Leaflet measures its container ONCE at init. Inside a CSS grid whose
+      // layout is still settling (fonts, panel sizing, stylesheet load), that
+      // measurement is stale — Leaflet then requests tiles for the wrong
+      // rectangle and leaves grey gaps that zooming only partly repairs.
+      // Re-measure after paint, again once fonts/CSS have landed, and on any
+      // later container resize.
+      const bump = () => { try { map.invalidateSize(false); } catch {} };
+      requestAnimationFrame(bump);
+      setTimeout(bump, 250);
+      setTimeout(bump, 1000);
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(bump);
+        ro.observe(mapRef.current);
+        resizeObs.current = ro;
+      }
+      window.addEventListener('resize', bump);
+      // Stylesheet may land after init; recheck when it does.
+      const css = document.getElementById('leaflet-css');
+      if (css) css.addEventListener('load', bump, { once: true });
+      map._voltlasBump = bump;
     }
+
     if (window.L) init();
     else if (!document.getElementById('leaflet-js')) {
       const s = document.createElement('script');
@@ -240,7 +268,17 @@ export default function CongestionPage() {
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
       s.onload = init;
       document.body.appendChild(s);
+    } else {
+      // Script tag exists but Leaflet hasn't finished parsing yet.
+      const s = document.getElementById('leaflet-js');
+      s.addEventListener('load', init, { once: true });
     }
+
+    return () => {
+      const map = leafletMap.current;
+      if (resizeObs.current) { resizeObs.current.disconnect(); resizeObs.current = null; }
+      if (map?._voltlasBump) window.removeEventListener('resize', map._voltlasBump);
+    };
   }, []);
 
   // Map always shows interties + active outages (internal constraints aren't geocoded)
@@ -272,6 +310,9 @@ export default function CongestionPage() {
       m.bindPopup(`<b>${coord.label}</b><br/>${String(o.description).slice(0, 60)}<br/>${o.max_curtailed_mw ?? '?'} MW curtailed`);
       markersRef.current[`o-${o.ti_id}-${o.oms_number}`] = m;
     }
+
+    // Data arrival can resize sibling panels and therefore the map container.
+    try { map.invalidateSize(false); } catch {}
   }, [intertie, discreteOutages]);
 
   // ---------- render ----------
