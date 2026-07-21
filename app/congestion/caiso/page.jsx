@@ -1,56 +1,67 @@
 'use client';
 
-// app/congestion/page.jsx
-// CAISO Congestion Monitor — reads the real pipeline outputs:
-//   constraints-current.json  { updated_at, constraints: { [id]: { constraint_name, markets:{}, worst:{} } } }
-//   constraints-history.json  flat rows [{ interval_start, constraint_id, market, shadow_price, ... }]
-//   outages.json              { updated_at, outages: { [oms]: { ti_id, description, windows:{}, category, display_status, max_curtailed_mw, ... } } }
+// app/congestion/caiso/page.jsx
+// CAISO Congestion Monitor — two feeds:
+//   internal  → nomogram-current.json  (PRC_NOMOGRAM: branch, transformer,
+//               nomogram, outage-driven constraints — the internal grid)
+//   intertie  → constraints-current.json (PRC_CNSTR: scheduling/intertie limits)
 //
-// DATA_BASE: where the JSON lives at runtime. Because the pipeline commits
-// every 15 min but the site build is manual, DO NOT import these JSONs
-// statically — fetch at runtime. Two options:
-//   a) copy/symlink data/caiso into public/data/caiso and use '/data/caiso'
-//   b) fetch straight from raw.githubusercontent.com (works without redeploys)
-// Set accordingly:
-const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/caiso';
-
-// Approximate display coordinates for known interties/interfaces.
-// ILLUSTRATIVE positions, not surveyed. Interfaces not listed here still
-// appear in lists/tables — they just don't get a map pin.
-const COORDS = {
-  COTPISO_ITC:    { lat: 40.6,  lng: -122.4, label: 'COTP (California–Oregon Transmission Project)' },
-  MALIN500_ISL:   { lat: 42.0,  lng: -121.7, label: 'Malin 500 (COI)' },
-  SUMMIT_ITC:     { lat: 39.3,  lng: -120.6, label: 'Summit (Drum–Summit)' },
-  SILVERPK_ITC:   { lat: 37.75, lng: -118.1, label: 'Silver Peak' },
-  CASCADE_ITC:    { lat: 41.2,  lng: -121.4, label: 'Cascade' },
-  'ADLANTO-SP_ITC': { lat: 34.58, lng: -117.4, label: 'Adelanto–SP (Lugo–Victorville)' },
-  ELDORADO_ITC:   { lat: 35.0,  lng: -114.9, label: 'Eldorado' },
-};
+// Internal is the DEFAULT tab: it carries the material congestion
+// (observed $1,374/MWh on a 70 kV branch vs $65 worst-case on interties).
+//
+// Prices: raw signed value as CAISO reports it; ranked by |magnitude|.
+// DAM shows the CURRENT hour's interval, with the day's PEAK alongside.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Explainer from './Explainer';
 
+const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/caiso';
+
+// Approximate display coordinates for known interties. Internal constraints
+// (branches/transformers) are not mapped — no public coordinate source.
+const COORDS = {
+  COTPISO_ITC:      { lat: 40.6,  lng: -122.4, label: 'COTP (California–Oregon Transmission Project)' },
+  MALIN500_ISL:     { lat: 42.0,  lng: -121.7, label: 'Malin 500 (COI)' },
+  SUMMIT_ITC:       { lat: 39.3,  lng: -120.6, label: 'Summit (Drum–Summit)' },
+  SILVERPK_ITC:     { lat: 37.75, lng: -118.1, label: 'Silver Peak' },
+  CASCADE_ITC:      { lat: 41.2,  lng: -121.4, label: 'Cascade' },
+  'ADLANTO-SP_ITC': { lat: 34.58, lng: -117.4, label: 'Adelanto–SP (Lugo–Victorville)' },
+  ELDORADO_ITC:     { lat: 35.0,  lng: -114.9, label: 'Eldorado' },
+  NOB_ITC:          { lat: 34.05, lng: -118.2, label: 'NOB (Nevada–Oregon Border DC)' },
+  EPE_NET_ITC:      { lat: 32.8,  lng: -115.5, label: 'EPE net' },
+  AZPS_NET_ITC:     { lat: 33.4,  lng: -114.6, label: 'APS net' },
+};
+
 const C = {
   ink: '#0A0D10', panel: '#12171C', panel2: '#161C22', line: '#1E262C',
   text: '#E7ECEF', muted: '#7C8790', amber: '#FFB020', amberDim: '#5A4620',
-  teal: '#2DD4BF', tealDim: '#1C4A45', red: '#FF5A5F',
+  teal: '#2DD4BF', tealDim: '#1C4A45', red: '#FF5A5F', redDim: '#4A1F21',
 };
 
 const mono = { fontFamily: "'IBM Plex Mono', ui-monospace, monospace" };
 const grotesk = { fontFamily: "'Space Grotesk', system-ui, sans-serif" };
 
-// Severity is MAGNITUDE: CAISO reports these shadow prices as negative
-// values (LP dual convention) — more negative = more binding.
 function sev(price) { return Math.abs(price ?? 0); }
 function priceColor(price, binding) {
   if (!binding) return C.teal;
   return sev(price) > 50 ? C.red : C.amber;
 }
 
-// ---------- tiny dependency-free SVG line chart ----------
+const CLASS_LABEL = {
+  branch: 'Line',
+  transformer: 'Transformer',
+  nomogram: 'Nomogram',
+  outage: 'Outage-driven',
+};
+
+// ---------- dependency-free SVG line chart ----------
 function Sparkline({ points, color }) {
   if (!points || points.length < 2) {
-    return <div style={{ color: C.muted, fontSize: 12, padding: '16px 0' }}>Not enough history yet — chart appears after a few pipeline runs.</div>;
+    return (
+      <div style={{ color: C.muted, fontSize: 12, padding: '16px 0' }}>
+        Not enough history yet — chart appears after a few pipeline runs.
+      </div>
+    );
   }
   const W = 360, H = 120, PAD = 6;
   const vals = points.map((p) => p.v);
@@ -69,12 +80,11 @@ function Sparkline({ points, color }) {
   );
 }
 
-// ---------- panel chrome ----------
 function Panel({ title, right, children, style }) {
   return (
     <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 6, padding: 18, ...style }}>
       {title && (
-        <div style={{ ...grotesk, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ ...grotesk, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <span>{title}</span>{right}
         </div>
       )}
@@ -83,29 +93,34 @@ function Panel({ title, right, children, style }) {
   );
 }
 
-function TabRow({ tabs, active, onSelect }) {
+function TabRow({ tabs, active, onSelect, accent = C.teal }) {
   return (
     <div style={{ display: 'flex', gap: 8 }}>
       {tabs.map((t) => (
-        <button key={t} onClick={() => onSelect(t)} style={{
+        <button key={t.key ?? t} onClick={() => onSelect(t.key ?? t)} style={{
           fontSize: 11, padding: '5px 10px', borderRadius: 4, cursor: 'pointer',
-          background: active === t ? C.panel2 : 'transparent',
-          border: `1px solid ${active === t ? C.teal : C.line}`,
-          color: active === t ? C.text : C.muted, fontFamily: 'inherit',
-        }}>{t}</button>
+          background: active === (t.key ?? t) ? C.panel2 : 'transparent',
+          border: `1px solid ${active === (t.key ?? t) ? accent : C.line}`,
+          color: active === (t.key ?? t) ? C.text : C.muted, fontFamily: 'inherit',
+        }}>{t.label ?? t}</button>
       ))}
     </div>
   );
 }
 
 export default function CongestionPage() {
-  const [current, setCurrent] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [internal, setInternal] = useState(null);
+  const [intertie, setIntertie] = useState(null);
+  const [internalHistory, setInternalHistory] = useState([]);
+  const [intertieHistory, setIntertieHistory] = useState([]);
   const [outageData, setOutageData] = useState(null);
   const [error, setError] = useState(null);
+
+  const [feed, setFeed] = useState('internal');   // 'internal' | 'intertie'
   const [marketTab, setMarketTab] = useState('All');
   const [outageTab, setOutageTab] = useState('active');
   const [selectedId, setSelectedId] = useState(null);
+
   const mapRef = useRef(null);
   const leafletMap = useRef(null);
   const markersRef = useRef({});
@@ -115,48 +130,54 @@ export default function CongestionPage() {
     let alive = true;
     async function load() {
       try {
-        const [cur, hist, out] = await Promise.all([
-          fetch(`${DATA_BASE}/constraints-current.json`).then((r) => r.json()),
-          fetch(`${DATA_BASE}/constraints-history.json`).then((r) => r.json()).catch(() => []),
-          fetch(`${DATA_BASE}/outages.json`).then((r) => r.json()),
+        const j = (f) => fetch(`${DATA_BASE}/${f}`).then((r) => r.json());
+        const [nom, cns, nomH, cnsH, out] = await Promise.all([
+          j('nomogram-current.json'),
+          j('constraints-current.json'),
+          j('nomogram-history.json').catch(() => []),
+          j('constraints-history.json').catch(() => []),
+          j('outages.json'),
         ]);
         if (!alive) return;
-        setCurrent(cur); setHistory(hist); setOutageData(out);
-        // Default selection: worst constraint overall
-        const ids = Object.keys(cur.constraints ?? {});
-        if (ids.length) {
-          const worstId = ids.reduce((a, b) =>
-            Math.abs(cur.constraints[a].worst?.shadow_price ?? 0) >= Math.abs(cur.constraints[b].worst?.shadow_price ?? 0) ? a : b
-          );
-          setSelectedId(worstId);
-        }
+        setInternal(nom); setIntertie(cns);
+        setInternalHistory(nomH); setIntertieHistory(cnsH);
+        setOutageData(out);
       } catch (e) {
         if (alive) setError(String(e));
       }
     }
     load();
-    const t = setInterval(load, 5 * 60_000); // refresh every 5 min
+    const t = setInterval(load, 5 * 60_000);
     return () => { alive = false; clearInterval(t); };
   }, []);
 
-  // ---------- derived: ranked list ----------
-  const ranked = useMemo(() => {
-    if (!current?.constraints) return [];
-    const entries = Object.entries(current.constraints);
-    if (marketTab === 'All') {
-      // Worst-case dedup: one row per physical constraint (precomputed by pipeline)
-      return entries
-        .map(([id, c]) => ({ id, name: c.constraint_name, ...c.worst }))
-        .filter((r) => r.shadow_price != null)
-        .sort((a, b) => sev(b.shadow_price) - sev(a.shadow_price));
-    }
-    return entries
-      .filter(([, c]) => c.markets[marketTab])
-      .map(([id, c]) => ({ id, name: c.constraint_name, ...c.markets[marketTab] }))
-      .sort((a, b) => sev(b.shadow_price) - sev(a.shadow_price));
-  }, [current, marketTab]);
+  const activeData = feed === 'internal' ? internal : intertie;
+  const activeHistory = feed === 'internal' ? internalHistory : intertieHistory;
 
-  // ---------- derived: outage lists ----------
+  // ---------- ranked list ----------
+  const ranked = useMemo(() => {
+    if (!activeData?.constraints) return [];
+    const entries = Object.entries(activeData.constraints);
+    const rows =
+      marketTab === 'All'
+        ? entries
+            .map(([id, c]) => ({ id, name: c.constraint_name, cls: c.constraint_class, oms: c.oms_ref, ...c.worst }))
+            .filter((r) => r.shadow_price != null)
+        : entries
+            .filter(([, c]) => c.markets?.[marketTab])
+            .map(([id, c]) => ({ id, name: c.constraint_name, cls: c.constraint_class, oms: c.oms_ref, ...c.markets[marketTab] }));
+    return rows.sort((a, b) => sev(b.shadow_price) - sev(a.shadow_price));
+  }, [activeData, marketTab]);
+
+  // Default selection = worst in the active feed
+  useEffect(() => {
+    if (ranked.length === 0) { setSelectedId(null); return; }
+    setSelectedId((prev) =>
+      prev && activeData?.constraints?.[prev] ? prev : ranked[0].id
+    );
+  }, [ranked, activeData]);
+
+  // ---------- outages ----------
   const { discreteOutages, standingLimits } = useMemo(() => {
     const all = Object.values(outageData?.outages ?? {});
     return {
@@ -168,41 +189,43 @@ export default function CongestionPage() {
   }, [outageData]);
 
   const filteredOutages = useMemo(
-    () => discreteOutages.filter((o) => outageTab === 'all' ? true : o.display_status === outageTab),
+    () => discreteOutages.filter((o) => (outageTab === 'all' ? true : o.display_status === outageTab)),
     [discreteOutages, outageTab]
   );
 
-  // ---------- derived: selected constraint detail ----------
-  const selected = selectedId && current?.constraints?.[selectedId]
-    ? { id: selectedId, ...current.constraints[selectedId] } : null;
+  // ---------- detail ----------
+  const selected = selectedId && activeData?.constraints?.[selectedId]
+    ? { id: selectedId, ...activeData.constraints[selectedId] } : null;
 
   const selectedHistory = useMemo(() => {
-    if (!selected || !Array.isArray(history)) return [];
-    return history
+    if (!selected || !Array.isArray(activeHistory)) return [];
+    return activeHistory
       .filter((h) => h.constraint_id === selected.id)
       .sort((a, b) => a.interval_start.localeCompare(b.interval_start))
-      .slice(-96) // last ~24h at 15-min cadence
+      .slice(-96)
       .map((h) => ({ t: h.interval_start, v: Math.abs(h.shadow_price) }));
-  }, [history, selected]);
+  }, [activeHistory, selected]);
 
-  // Outages on the same interface as the selected constraint (best-effort:
-  // constraint IDs and outage TI_IDs only align for intertie constraints)
+  // Outages related to the selection: intertie by ti_id, internal by OMS ref
   const relatedOutages = useMemo(() => {
     if (!selected) return [];
-    return [...discreteOutages, ...standingLimits].filter((o) => o.ti_id === selected.id);
-  }, [selected, discreteOutages, standingLimits]);
+    const all = [...discreteOutages, ...standingLimits];
+    if (feed === 'intertie') return all.filter((o) => o.ti_id === selected.id);
+    if (selected.oms_ref) {
+      return all.filter((o) => String(o.description ?? '').includes(selected.oms_ref));
+    }
+    return [];
+  }, [selected, feed, discreteOutages, standingLimits]);
 
-  // ---------- Leaflet (CDN, client-only) ----------
+  // ---------- Leaflet ----------
   useEffect(() => {
     if (!mapRef.current || leafletMap.current) return;
-    const cssId = 'leaflet-css';
-    if (!document.getElementById(cssId)) {
+    if (!document.getElementById('leaflet-css')) {
       const link = document.createElement('link');
-      link.id = cssId; link.rel = 'stylesheet';
+      link.id = 'leaflet-css'; link.rel = 'stylesheet';
       link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
       document.head.appendChild(link);
     }
-    const scriptId = 'leaflet-js';
     function init() {
       const L = window.L;
       if (!L || leafletMap.current) return;
@@ -211,60 +234,64 @@ export default function CongestionPage() {
       leafletMap.current = map;
     }
     if (window.L) init();
-    else if (!document.getElementById(scriptId)) {
+    else if (!document.getElementById('leaflet-js')) {
       const s = document.createElement('script');
-      s.id = scriptId;
+      s.id = 'leaflet-js';
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
       s.onload = init;
       document.body.appendChild(s);
     }
   }, []);
 
-  // Redraw markers when data changes: constraint pins + active-outage pins
+  // Map always shows interties + active outages (internal constraints aren't geocoded)
   useEffect(() => {
     const L = window.L;
     const map = leafletMap.current;
-    if (!L || !map) return;
+    if (!L || !map || !intertie?.constraints) return;
     Object.values(markersRef.current).forEach((m) => map.removeLayer(m));
     markersRef.current = {};
 
-    // Constraint pins (only those with known coords)
-    for (const r of ranked) {
-      const coord = COORDS[r.id];
-      if (!coord) continue;
-      const radius = 6 + Math.min(12, sev(r.shadow_price) / 8);
+    for (const [id, c] of Object.entries(intertie.constraints)) {
+      const coord = COORDS[id];
+      if (!coord || !c.worst) continue;
       const m = L.circleMarker([coord.lat, coord.lng], {
-        radius, color: C.ink, weight: 2,
-        fillColor: priceColor(r.shadow_price, r.binding), fillOpacity: 0.9,
+        radius: 6 + Math.min(12, sev(c.worst.shadow_price) / 8),
+        color: C.ink, weight: 2,
+        fillColor: priceColor(c.worst.shadow_price, c.worst.binding), fillOpacity: 0.9,
       }).addTo(map);
-      m.bindPopup(`<b>${r.name}</b><br/>$${(r.shadow_price ?? 0).toFixed(2)}/MWh · ${r.binding ? 'Binding' : 'Not binding'}`);
-      m.on('click', () => setSelectedId(r.id));
-      markersRef.current[`c-${r.id}`] = m;
+      m.bindPopup(`<b>${c.constraint_name}</b><br/>$${(c.worst.shadow_price ?? 0).toFixed(2)}/MWh · ${c.worst.binding ? 'Binding' : 'Not binding'}`);
+      m.on('click', () => { setFeed('intertie'); setSelectedId(id); });
+      markersRef.current[`c-${id}`] = m;
     }
-    // Active outage pins (hollow amber rings), skip if a constraint pin is already there
     for (const o of discreteOutages.filter((o) => o.display_status === 'active')) {
       const coord = COORDS[o.ti_id];
       if (!coord || markersRef.current[`c-${o.ti_id}`]) continue;
       const m = L.circleMarker([coord.lat, coord.lng], {
         radius: 8, color: C.amber, weight: 2, fillColor: 'transparent', fillOpacity: 0,
       }).addTo(map);
-      m.bindPopup(`<b>${coord.label}</b><br/>Outage: ${String(o.description).slice(0, 60)}<br/>${o.max_curtailed_mw ?? '?'} MW curtailed`);
+      m.bindPopup(`<b>${coord.label}</b><br/>${String(o.description).slice(0, 60)}<br/>${o.max_curtailed_mw ?? '?'} MW curtailed`);
       markersRef.current[`o-${o.ti_id}-${o.oms_number}`] = m;
     }
-  }, [ranked, discreteOutages]);
+  }, [intertie, discreteOutages]);
 
   // ---------- render ----------
-  if (error) return <div style={{ background: C.ink, color: C.red, minHeight: '100vh', padding: 40, ...mono }}>Data load failed: {error}<br/><br/>Check DATA_BASE path in page.jsx.</div>;
+  if (error) {
+    return (
+      <div style={{ background: C.ink, color: C.red, minHeight: '100vh', padding: 40, ...mono }}>
+        Data load failed: {error}<br /><br />Check DATA_BASE path in page.jsx.
+      </div>
+    );
+  }
 
   const bindingCount = ranked.filter((r) => r.binding).length;
   const activeOutageCount = discreteOutages.filter((o) => o.display_status === 'active').length;
-  const fmt = (ts) => ts ? ts.replace('T', ' ').slice(0, 16) : '—';
+  const fmt = (ts) => (ts ? ts.replace('T', ' ').slice(0, 16) : '—');
+  const updatedAt = activeData?.updated_at;
 
   return (
     <div style={{ background: C.ink, color: C.text, minHeight: '100vh', padding: 24, fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
 
-        {/* Header */}
         <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, paddingBottom: 20, marginBottom: 20, borderBottom: `1px solid ${C.line}` }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
             <h1 style={{ ...grotesk, fontWeight: 700, fontSize: 20, margin: 0 }}>Congestion Monitor</h1>
@@ -280,14 +307,14 @@ export default function CongestionPage() {
               Active intertie outages <b style={mono}>{activeOutageCount}</b>
             </span>
             <span style={{ ...mono, fontSize: 11, color: C.muted }}>
-              Updated {current ? fmt(current.updated_at) : '…'} UTC · every ~15 min
+              Updated {updatedAt ? fmt(updatedAt) : '…'} UTC
             </span>
           </div>
         </header>
 
-        {/* Main grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.3fr) minmax(0,0.9fr)', gap: 16, alignItems: 'start' }}>
-          <Panel title="Constraint & Intertie Map" right={<span style={{ ...mono, color: C.muted, fontSize: 10 }}>PIN POSITIONS APPROXIMATE</span>}>
+
+          <Panel title="Intertie Map" right={<span style={{ ...mono, color: C.muted, fontSize: 10 }}>PIN POSITIONS APPROXIMATE</span>}>
             <div ref={mapRef} style={{ width: '100%', height: 440, borderRadius: 4, border: `1px solid ${C.line}` }} />
             <div style={{ display: 'flex', gap: 18, marginTop: 10, fontSize: 11, color: C.muted, flexWrap: 'wrap' }}>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.teal, marginRight: 6 }} />Not binding</span>
@@ -295,26 +322,60 @@ export default function CongestionPage() {
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.red, marginRight: 6 }} />High shadow price</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', border: `2px solid ${C.amber}`, marginRight: 6 }} />Active outage</span>
             </div>
+            <div style={{ fontSize: 10.5, color: C.muted, marginTop: 6 }}>
+              Map shows intertie constraints and active outages only. Internal branch,
+              transformer, and nomogram constraints are listed but not geocoded.
+            </div>
           </Panel>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <Panel title="Top Constraints Right Now" right={<TabRow tabs={['All', 'DAM', 'RTM', 'HASP']} active={marketTab} onSelect={setMarketTab} />}>
-              {ranked.length === 0 && <div style={{ color: C.muted, fontSize: 13, padding: '16px 0', textAlign: 'center' }}>No constraints in this market right now.</div>}
-              {ranked.map((r, i) => (
-                <div key={`${r.id}-${r.market}`} onClick={() => setSelectedId(r.id)} style={{
-                  display: 'flex', alignItems: 'center', gap: 10, padding: '9px 6px', cursor: 'pointer',
-                  borderBottom: `1px solid ${C.line}`, borderLeft: selectedId === r.id ? `2px solid ${C.teal}` : '2px solid transparent',
-                  background: selectedId === r.id ? C.panel2 : 'transparent', borderRadius: 4,
-                }}>
-                  <span style={{ ...mono, fontSize: 11, color: C.muted, width: 18, textAlign: 'right' }}>{i + 1}</span>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: priceColor(r.shadow_price, r.binding), flexShrink: 0 }} />
-                  <span style={{ flex: 1, fontSize: 12.5 }}>
-                    {r.name}
-                    <span style={{ fontSize: 10, color: C.muted, display: 'block' }}>{r.market}{r.binding ? ' · binding' : ''}{r.contingency_id ? ` · ${r.contingency_id}` : ''}</span>
-                  </span>
-                  <span style={{ ...mono, fontSize: 13, fontWeight: 600, color: priceColor(r.shadow_price, r.binding) }}>${(r.shadow_price ?? 0).toFixed(2)}</span>
+
+            <Panel
+              title="Top Constraints Right Now"
+              right={
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <TabRow
+                    tabs={[{ key: 'internal', label: 'Internal' }, { key: 'intertie', label: 'Interties' }]}
+                    active={feed}
+                    onSelect={(f) => { setFeed(f); setMarketTab('All'); setSelectedId(null); }}
+                    accent={C.amber}
+                  />
+                  <TabRow tabs={['All', 'DAM', 'RTM']} active={marketTab} onSelect={setMarketTab} />
                 </div>
-              ))}
+              }
+            >
+              {ranked.length === 0 && (
+                <div style={{ color: C.muted, fontSize: 13, padding: '16px 0', textAlign: 'center' }}>
+                  No constraints in this view right now.
+                </div>
+              )}
+              <div style={{ maxHeight: 460, overflowY: 'auto' }}>
+                {ranked.map((r, i) => (
+                  <div key={`${r.id}-${r.market}`} onClick={() => setSelectedId(r.id)} style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '9px 6px', cursor: 'pointer',
+                    borderBottom: `1px solid ${C.line}`,
+                    borderLeft: selectedId === r.id ? `2px solid ${C.teal}` : '2px solid transparent',
+                    background: selectedId === r.id ? C.panel2 : 'transparent', borderRadius: 4,
+                  }}>
+                    <span style={{ ...mono, fontSize: 11, color: C.muted, width: 20, textAlign: 'right' }}>{i + 1}</span>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: priceColor(r.shadow_price, r.binding), flexShrink: 0 }} />
+                    <span style={{ flex: 1, fontSize: 12.5, minWidth: 0 }}>
+                      <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</span>
+                      <span style={{ fontSize: 10, color: C.muted, display: 'block' }}>
+                        {r.market}
+                        {r.cls ? ` · ${CLASS_LABEL[r.cls] ?? r.cls}` : ''}
+                        {r.binding ? ' · binding' : ''}
+                        {r.peak && sev(r.peak.shadow_price) > sev(r.shadow_price) * 1.05
+                          ? ` · peak $${r.peak.shadow_price.toFixed(2)}`
+                          : ''}
+                      </span>
+                    </span>
+                    <span style={{ ...mono, fontSize: 13, fontWeight: 600, color: priceColor(r.shadow_price, r.binding) }}>
+                      ${(r.shadow_price ?? 0).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </Panel>
 
             <Panel title="Constraint Detail">
@@ -324,29 +385,62 @@ export default function CongestionPage() {
                 const col = priceColor(w.shadow_price, w.binding);
                 return (
                   <>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-                      <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14, gap: 12 }}>
+                      <div style={{ minWidth: 0 }}>
                         <h2 style={{ ...grotesk, fontSize: 16, margin: '0 0 4px' }}>{selected.constraint_name}</h2>
-                        <div style={{ ...mono, fontSize: 11, color: C.muted }}>{selected.id} · worst: {w.market}</div>
+                        <div style={{ ...mono, fontSize: 10.5, color: C.muted, wordBreak: 'break-all' }}>
+                          {selected.id}
+                        </div>
                       </div>
-                      <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 3, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, background: w.binding ? C.amberDim : C.tealDim, color: w.binding ? C.amber : C.teal }}>
-                        {w.binding ? 'Binding' : 'Not binding'}
-                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end', flexShrink: 0 }}>
+                        <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 3, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, background: w.binding ? C.amberDim : C.tealDim, color: w.binding ? C.amber : C.teal }}>
+                          {w.binding ? 'Binding' : 'Not binding'}
+                        </span>
+                        {selected.constraint_class && (
+                          <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 3, background: C.panel2, border: `1px solid ${C.line}`, color: C.muted }}>
+                            {CLASS_LABEL[selected.constraint_class] ?? selected.constraint_class}
+                            {selected.kv ? ` · ${selected.kv} kV` : ''}
+                          </span>
+                        )}
+                      </div>
                     </div>
+
                     <div style={{ display: 'flex', gap: 22, marginBottom: 12, flexWrap: 'wrap' }}>
-                      {Object.entries(selected.markets).map(([mkt, row]) => (
+                      {Object.entries(selected.markets ?? {}).map(([mkt, row]) => (
                         <div key={mkt}>
-                          <div style={{ fontSize: 10, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{mkt}</div>
-                          <div style={{ ...mono, fontSize: 18, fontWeight: 600, color: priceColor(row.shadow_price, row.binding) }}>${row.shadow_price.toFixed(2)}</div>
+                          <div style={{ fontSize: 10, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
+                            {mkt} · now
+                          </div>
+                          <div style={{ ...mono, fontSize: 18, fontWeight: 600, color: priceColor(row.shadow_price, row.binding) }}>
+                            ${row.shadow_price.toFixed(2)}
+                          </div>
+                          {row.peak && (
+                            <div style={{ ...mono, fontSize: 10.5, color: C.muted, marginTop: 3 }}>
+                              peak ${row.peak.shadow_price.toFixed(2)}
+                              {row.peak.interval_start ? ` @ ${row.peak.interval_start.slice(11, 16)}Z` : ''}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
+
                     <Sparkline points={selectedHistory} color={col} />
+
                     <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.line}`, fontSize: 12 }}>
-                      <div style={{ fontSize: 10, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Related outages (same interface)</div>
-                      {relatedOutages.length === 0 && <div style={{ color: C.muted }}>None on record. <span style={{ fontSize: 10 }}>(Linkage currently covers intertie constraints only.)</span></div>}
+                      <div style={{ fontSize: 10, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                        Related outages
+                      </div>
+                      {relatedOutages.length === 0 && (
+                        <div style={{ color: C.muted }}>
+                          None on record.{' '}
+                          <span style={{ fontSize: 10 }}>
+                            (Outage feed covers interties; internal constraints link only when
+                            CAISO tags them with an OMS reference.)
+                          </span>
+                        </div>
+                      )}
                       {relatedOutages.map((o) => (
-                        <div key={o.oms_number} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px dashed ${C.line}`, color: C.muted }}>
+                        <div key={o.oms_number} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px dashed ${C.line}`, color: C.muted, gap: 12 }}>
                           <span style={{ color: C.text }}>OMS {o.oms_number}</span>
                           <span style={mono}>{o.max_curtailed_mw ?? '?'} MW · {o.display_status}</span>
                         </div>
@@ -359,8 +453,11 @@ export default function CongestionPage() {
           </div>
         </div>
 
-        {/* Intertie outage log */}
-        <Panel title="Intertie Outages & Curtailments" right={<TabRow tabs={['active', 'upcoming', 'completed', 'all']} active={outageTab} onSelect={setOutageTab} />} style={{ marginTop: 16 }}>
+        <Panel
+          title="Intertie Outages & Curtailments"
+          right={<TabRow tabs={['active', 'upcoming', 'completed', 'all']} active={outageTab} onSelect={setOutageTab} />}
+          style={{ marginTop: 16 }}
+        >
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
               <thead>
@@ -380,29 +477,31 @@ export default function CongestionPage() {
                     <td style={{ ...mono, padding: '9px 10px', borderBottom: `1px solid ${C.line}` }}>{fmt(o.first_start)}</td>
                     <td style={{ ...mono, padding: '9px 10px', borderBottom: `1px solid ${C.line}` }}>{fmt(o.last_end)}</td>
                     <td style={{ padding: '9px 10px', borderBottom: `1px solid ${C.line}` }}>
-                      <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 10, fontWeight: 600,
+                      <span style={{
+                        fontSize: 10, padding: '2px 7px', borderRadius: 10, fontWeight: 600,
                         background: o.display_status === 'active' ? C.amberDim : o.display_status === 'upcoming' ? C.tealDim : C.line,
-                        color: o.display_status === 'active' ? C.amber : o.display_status === 'upcoming' ? C.teal : C.muted }}>
-                        {o.display_status}
-                      </span>
+                        color: o.display_status === 'active' ? C.amber : o.display_status === 'upcoming' ? C.teal : C.muted,
+                      }}>{o.display_status}</span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            {filteredOutages.length === 0 && <div style={{ color: C.muted, fontSize: 13, padding: '16px 0', textAlign: 'center' }}>No {outageTab} outages.</div>}
+            {filteredOutages.length === 0 && (
+              <div style={{ color: C.muted, fontSize: 13, padding: '16px 0', textAlign: 'center' }}>No {outageTab} outages.</div>
+            )}
           </div>
         </Panel>
 
-        {/* Standing limitations */}
         <Panel title={`Standing Path Limitations (${standingLimits.length})`} style={{ marginTop: 16 }}>
           <div style={{ fontSize: 11, color: C.muted, marginBottom: 10 }}>
-            Long-duration OTC derates (window &gt; 60 days) — persistent transfer-capability limits, shown separately from operational outages.
+            Long-duration OTC derates (window &gt; 60 days) — persistent transfer-capability limits,
+            shown separately from operational outages.
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
             {standingLimits.map((o) => (
               <div key={o.oms_number ?? o.record_id} style={{ background: C.panel2, border: `1px solid ${C.line}`, borderRadius: 4, padding: '10px 12px', fontSize: 12 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, gap: 8 }}>
                   <b>{o.ti_id}</b>
                   <span style={{ ...mono, color: (o.max_curtailed_mw ?? 0) > 500 ? C.amber : C.muted }}>{o.max_curtailed_mw ?? '—'} MW</span>
                 </div>
@@ -414,8 +513,12 @@ export default function CongestionPage() {
         </Panel>
 
         <Explainer />
+
         <div style={{ marginTop: 20, fontSize: 11, color: C.muted, textAlign: 'center' }}>
-          Source: CAISO OASIS (PRC_CNSTR, TRNS_OUTAGE) · Shadow prices in $/MWh, shown as reported by CAISO (negative = binding; ranked by magnitude) · Feed covers interties/scheduling limits; internal network constraints not yet included · Map pin positions are approximate
+          Source: CAISO OASIS (PRC_NOMOGRAM, PRC_CNSTR, TRNS_OUTAGE) · Shadow prices in $/MWh,
+          shown as reported by CAISO (signs vary by constraint type; ranked by magnitude) ·
+          DAM values are the current hour&apos;s interval, with the day&apos;s peak shown alongside ·
+          Map pin positions are approximate
         </div>
       </div>
     </div>
