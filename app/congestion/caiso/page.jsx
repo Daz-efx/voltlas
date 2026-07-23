@@ -387,8 +387,12 @@ export default function CongestionPage() {
               title={
                 <span>
                   Top Constraints Right Now{' '}
+                  <Link href="/congestion/caiso/most-congested" style={{ color: C.muted, fontSize: 10, textDecoration: 'underline', textTransform: 'none', letterSpacing: 0 }}>
+                    most congested
+                  </Link>
+                  <span style={{ color: C.line }}>{' · '}</span>
                   <Link href="/congestion/caiso/constraint" style={{ color: C.muted, fontSize: 10, textDecoration: 'underline', textTransform: 'none', letterSpacing: 0 }}>
-                    (all constraints)
+                    all constraints
                   </Link>
                 </span>
               }
