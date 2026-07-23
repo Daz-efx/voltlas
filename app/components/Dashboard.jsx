@@ -53,6 +53,7 @@ const NAV_QUICK = [
   ["/rankings/cheapest-petrol-in-europe", "Cheapest gasoline"],
   ["/compare/germany-vs-france", "Compare countries"],
   ["/electricity-bill-calculator", "Bill calculator"],
+  ["/congestion/caiso", "CAISO congestion"],
 ];
 const NAV_GROUPS = [
   ["Rankings", [
@@ -68,6 +69,11 @@ const NAV_GROUPS = [
     ["/rankings/cheapest-diesel-in-europe", "Cheapest diesel in Europe"],
     ["/rankings/petrol-prices-by-country", "Gasoline prices by country"],
     ["/rankings/diesel-prices-by-country", "Diesel prices by country"],
+  ]],
+  ["Grid congestion", [
+    ["/congestion/caiso", "CAISO congestion monitor"],
+    ["/congestion/caiso/most-congested", "Most congested constraints"],
+    ["/congestion/caiso/constraint", "All tracked constraints"],
   ]],
   ["Compare & tools", [
     ["/compare/germany-vs-france", "Germany vs France"],
