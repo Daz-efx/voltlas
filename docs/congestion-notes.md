@@ -62,3 +62,18 @@ _Last updated: 2026-07-20_
 7. Outage↔constraint linkage only matches where ti_id aligns (intertie-only)
 8. Later: corridor weather overlay, curtailment/negative-price correlation,
    multi-ISO expansion (NYISO easiest first; ERCOT pairs with nomogram work)
+
+## Status 2026-07-28 — SHIPPED, now waiting on Google
+- Full build complete: 3 OASIS feeds, internal + intertie congestion,
+  ~50 per-constraint pages, most-congested leaderboard, homepage links in.
+- SEO diagnosis resolved: indexing was blocked by (1) sitemap submitted under
+  www vs canonical non-www, (2) congestion pages orphaned from the link graph.
+  Both fixed. Google now shows 178 "Discovered - currently not indexed".
+- That reason = domain-authority/age, NOT a page or code problem. No fix
+  exists beyond time + the site earning traffic/links. Do NOT build more
+  pages to address it — that enlarges the unindexed pile.
+- NEXT CHECK ~mid-Aug: is "discovered" converting to indexed?
+  - Yes → strategy working, NYISO becomes worth the discovery loop.
+  - Stuck after a month → authority problem (backlinks / launch post),
+    not an engineering one.
+- Deliberately NOT building further right now.
