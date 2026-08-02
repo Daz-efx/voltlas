@@ -1,26 +1,26 @@
 {
-  "updated_at": "2026-08-02T19:23:07.155Z",
+  "updated_at": "2026-08-02T19:57:37.722Z",
   "constraints": {
     "DOSMGO-PNOCHE_230_2_1": {
       "constraint_name": "DOSMGO-PNOCHE_230_2_1",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-02T19:15:00-00:00",
-          "interval_end": "2026-08-02T19:30:00-00:00",
+          "interval_start": "2026-08-02T19:45:00-00:00",
+          "interval_end": "2026-08-02T20:00:00-00:00",
           "constraint_id": "DOSMGO-PNOCHE_230_2_1",
           "constraint_name": "DOSMGO-PNOCHE_230_2_1",
           "market": "RTM",
-          "shadow_price": 265.55079,
-          "shadow_price_abs": 265.55079,
+          "shadow_price": 73.22023,
+          "shadow_price_abs": 73.22023,
           "binding": true,
-          "contingency_id": "PG1 LOSBNS-PADRFL 230",
+          "contingency_id": "PG1 GATES-LOSBNS_1 500",
           "ti_direction": "I",
-          "intervals_published": 4,
+          "intervals_published": 5,
           "peak": {
-            "shadow_price": 284.57867,
-            "shadow_price_abs": 284.57867,
+            "shadow_price": 421.5928,
+            "shadow_price_abs": 421.5928,
             "binding": true,
-            "interval_start": "2026-08-02T18:45:00-00:00"
+            "interval_start": "2026-08-02T19:45:00-00:00"
           }
         },
         "DAM": {
@@ -44,108 +44,22 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-02T19:15:00-00:00",
-        "interval_end": "2026-08-02T19:30:00-00:00",
+        "interval_start": "2026-08-02T19:00:00-00:00",
+        "interval_end": "2026-08-02T20:00:00-00:00",
         "constraint_id": "DOSMGO-PNOCHE_230_2_1",
         "constraint_name": "DOSMGO-PNOCHE_230_2_1",
-        "market": "RTM",
-        "shadow_price": 265.55079,
-        "shadow_price_abs": 265.55079,
+        "market": "DAM",
+        "shadow_price": 245.44831,
+        "shadow_price_abs": 245.44831,
         "binding": true,
         "contingency_id": "PG1 LOSBNS-PADRFL 230",
         "ti_direction": "I",
-        "intervals_published": 4,
+        "intervals_published": 11,
         "peak": {
-          "shadow_price": 284.57867,
-          "shadow_price_abs": 284.57867,
+          "shadow_price": 345.37899,
+          "shadow_price_abs": 345.37899,
           "binding": true,
-          "interval_start": "2026-08-02T18:45:00-00:00"
-        }
-      }
-    },
-    "LDWP_IPP_NORTH": {
-      "constraint_name": "LDWP_IPP_NORTH",
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-08-02T18:45:00-00:00",
-          "interval_end": "2026-08-02T19:00:00-00:00",
-          "constraint_id": "LDWP_IPP_NORTH",
-          "constraint_name": "LDWP_IPP_NORTH",
-          "market": "RTM",
-          "shadow_price": -0.19657,
-          "shadow_price_abs": 0.19657,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "ti_direction": "E",
-          "intervals_published": 2,
-          "peak": {
-            "shadow_price": -0.19657,
-            "shadow_price_abs": 0.19657,
-            "binding": true,
-            "interval_start": "2026-08-02T18:45:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-02T18:45:00-00:00",
-        "interval_end": "2026-08-02T19:00:00-00:00",
-        "constraint_id": "LDWP_IPP_NORTH",
-        "constraint_name": "LDWP_IPP_NORTH",
-        "market": "RTM",
-        "shadow_price": -0.19657,
-        "shadow_price_abs": 0.19657,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "ti_direction": "E",
-        "intervals_published": 2,
-        "peak": {
-          "shadow_price": -0.19657,
-          "shadow_price_abs": 0.19657,
-          "binding": true,
-          "interval_start": "2026-08-02T18:45:00-00:00"
-        }
-      }
-    },
-    "PACE_FOURCORNE345_ITC": {
-      "constraint_name": "PACE_FOURCORNE345_ITC",
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-08-02T18:45:00-00:00",
-          "interval_end": "2026-08-02T19:00:00-00:00",
-          "constraint_id": "PACE_FOURCORNE345_ITC",
-          "constraint_name": "PACE_FOURCORNE345_ITC",
-          "market": "RTM",
-          "shadow_price": -0.0012,
-          "shadow_price_abs": 0.0012,
-          "binding": false,
-          "contingency_id": "Base Case",
-          "ti_direction": "E",
-          "intervals_published": 2,
-          "peak": {
-            "shadow_price": -0.0012,
-            "shadow_price_abs": 0.0012,
-            "binding": false,
-            "interval_start": "2026-08-02T18:30:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-02T18:45:00-00:00",
-        "interval_end": "2026-08-02T19:00:00-00:00",
-        "constraint_id": "PACE_FOURCORNE345_ITC",
-        "constraint_name": "PACE_FOURCORNE345_ITC",
-        "market": "RTM",
-        "shadow_price": -0.0012,
-        "shadow_price_abs": 0.0012,
-        "binding": false,
-        "contingency_id": "Base Case",
-        "ti_direction": "E",
-        "intervals_published": 2,
-        "peak": {
-          "shadow_price": -0.0012,
-          "shadow_price_abs": 0.0012,
-          "binding": false,
-          "interval_start": "2026-08-02T18:30:00-00:00"
+          "interval_start": "2026-08-02T23:00:00-00:00"
         }
       }
     },
