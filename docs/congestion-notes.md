@@ -77,3 +77,18 @@ _Last updated: 2026-07-20_
   - Stuck after a month → authority problem (backlinks / launch post),
     not an engineering one.
 - Deliberately NOT building further right now.
+
+## 2026-08-10 — data-freshness incident + fix
+- Discovery: commodities visibly stale on-site. Root cause NOT a code bug —
+  every connector step ended in `|| echo "... keeping prior ..."`, so a
+  ~6-week silent failure on the World Bank scraper (transient on their end)
+  went undetected. Every scheduled run reported green while writing stale
+  numbers back.
+- Ran script manually → worked → rebuilt latest.json → committed.
+- Real fix: scripts/check-freshness.mjs — runs after connectors, parses
+  each source's period string, exits 1 if any exceeds its per-source max age.
+  Thresholds: FX 5d, EIA/World Bank 50d, Eurostat 260d.
+- Kept the `|| echo` swallows on connector steps (correct: one flaky source
+  shouldn't block others). The alarm sits AFTER them and catches the result.
+- Watch Eurostat: currently 37d margin, S1 2026 release expected ~October.
+  If checker fires on Eurostat before Nov, it's a real slip on their end.
