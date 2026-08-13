@@ -1,46 +1,65 @@
 {
-  "updated_at": "2026-08-13T16:27:02.589Z",
+  "updated_at": "2026-08-13T17:05:51.480Z",
   "constraints": {
-    "LDWP_IPP_NORTH": {
-      "constraint_name": "LDWP_IPP_NORTH",
+    "DOSMGO-PNOCHE_230_2_1": {
+      "constraint_name": "DOSMGO-PNOCHE_230_2_1",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-13T16:00:00-00:00",
-          "interval_end": "2026-08-13T16:15:00-00:00",
-          "constraint_id": "LDWP_IPP_NORTH",
-          "constraint_name": "LDWP_IPP_NORTH",
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T17:15:00-00:00",
+          "constraint_id": "DOSMGO-PNOCHE_230_2_1",
+          "constraint_name": "DOSMGO-PNOCHE_230_2_1",
           "market": "RTM",
-          "shadow_price": -0.11061,
-          "shadow_price_abs": 0.11061,
+          "shadow_price": 161.2745,
+          "shadow_price_abs": 161.2745,
           "binding": true,
-          "contingency_id": "Base Case",
+          "contingency_id": "PG1 LOSBNS-PADRFL 230",
           "ti_direction": "I",
           "intervals_published": 3,
           "peak": {
-            "shadow_price": -0.11061,
-            "shadow_price_abs": 0.11061,
+            "shadow_price": 161.2745,
+            "shadow_price_abs": 161.2745,
             "binding": true,
-            "interval_start": "2026-08-13T16:00:00-00:00"
+            "interval_start": "2026-08-13T17:00:00-00:00"
+          }
+        },
+        "DAM": {
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T18:00:00-00:00",
+          "constraint_id": "DOSMGO-PNOCHE_230_2_1",
+          "constraint_name": "DOSMGO-PNOCHE_230_2_1",
+          "market": "DAM",
+          "shadow_price": 123.53359,
+          "shadow_price_abs": 123.53359,
+          "binding": true,
+          "contingency_id": "PG1 GATES 500-230 BK11",
+          "ti_direction": "I",
+          "intervals_published": 15,
+          "peak": {
+            "shadow_price": 265.95492,
+            "shadow_price_abs": 265.95492,
+            "binding": true,
+            "interval_start": "2026-08-13T23:00:00-00:00"
           }
         }
       },
       "worst": {
-        "interval_start": "2026-08-13T16:00:00-00:00",
-        "interval_end": "2026-08-13T16:15:00-00:00",
-        "constraint_id": "LDWP_IPP_NORTH",
-        "constraint_name": "LDWP_IPP_NORTH",
+        "interval_start": "2026-08-13T17:00:00-00:00",
+        "interval_end": "2026-08-13T17:15:00-00:00",
+        "constraint_id": "DOSMGO-PNOCHE_230_2_1",
+        "constraint_name": "DOSMGO-PNOCHE_230_2_1",
         "market": "RTM",
-        "shadow_price": -0.11061,
-        "shadow_price_abs": 0.11061,
+        "shadow_price": 161.2745,
+        "shadow_price_abs": 161.2745,
         "binding": true,
-        "contingency_id": "Base Case",
+        "contingency_id": "PG1 LOSBNS-PADRFL 230",
         "ti_direction": "I",
         "intervals_published": 3,
         "peak": {
-          "shadow_price": -0.11061,
-          "shadow_price_abs": 0.11061,
+          "shadow_price": 161.2745,
+          "shadow_price_abs": 161.2745,
           "binding": true,
-          "interval_start": "2026-08-13T16:00:00-00:00"
+          "interval_start": "2026-08-13T17:00:00-00:00"
         }
       }
     },
@@ -48,22 +67,22 @@
       "constraint_name": "SUNZIA_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-13T16:15:00-00:00",
-          "interval_end": "2026-08-13T16:30:00-00:00",
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T17:15:00-00:00",
           "constraint_id": "SUNZIA_ITC",
           "constraint_name": "SUNZIA_ITC",
           "market": "RTM",
-          "shadow_price": -46.87178,
-          "shadow_price_abs": 46.87178,
+          "shadow_price": -43.79817,
+          "shadow_price_abs": 43.79817,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E",
           "intervals_published": 4,
           "peak": {
-            "shadow_price": -47.62193,
-            "shadow_price_abs": 47.62193,
+            "shadow_price": -48.70762,
+            "shadow_price_abs": 48.70762,
             "binding": true,
-            "interval_start": "2026-08-13T15:30:00-00:00"
+            "interval_start": "2026-08-13T16:30:00-00:00"
           }
         },
         "DAM": {
@@ -87,22 +106,22 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-13T16:15:00-00:00",
-        "interval_end": "2026-08-13T16:30:00-00:00",
+        "interval_start": "2026-08-13T17:00:00-00:00",
+        "interval_end": "2026-08-13T17:15:00-00:00",
         "constraint_id": "SUNZIA_ITC",
         "constraint_name": "SUNZIA_ITC",
         "market": "RTM",
-        "shadow_price": -46.87178,
-        "shadow_price_abs": 46.87178,
+        "shadow_price": -43.79817,
+        "shadow_price_abs": 43.79817,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E",
         "intervals_published": 4,
         "peak": {
-          "shadow_price": -47.62193,
-          "shadow_price_abs": 47.62193,
+          "shadow_price": -48.70762,
+          "shadow_price_abs": 48.70762,
           "binding": true,
-          "interval_start": "2026-08-13T15:30:00-00:00"
+          "interval_start": "2026-08-13T16:30:00-00:00"
         }
       }
     },
@@ -110,14 +129,14 @@
       "constraint_name": "CASCADE_ITC",
       "markets": {
         "DAM": {
-          "interval_start": "2026-08-13T16:00:00-00:00",
-          "interval_end": "2026-08-13T17:00:00-00:00",
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T18:00:00-00:00",
           "constraint_id": "CASCADE_ITC",
           "constraint_name": "CASCADE_ITC",
           "market": "DAM",
-          "shadow_price": -1.59036,
-          "shadow_price_abs": 1.59036,
-          "binding": true,
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
           "contingency_id": "Base Case",
           "ti_direction": "E",
           "intervals_published": 23,
@@ -130,14 +149,14 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-13T16:00:00-00:00",
-        "interval_end": "2026-08-13T17:00:00-00:00",
+        "interval_start": "2026-08-13T17:00:00-00:00",
+        "interval_end": "2026-08-13T18:00:00-00:00",
         "constraint_id": "CASCADE_ITC",
         "constraint_name": "CASCADE_ITC",
         "market": "DAM",
-        "shadow_price": -1.59036,
-        "shadow_price_abs": 1.59036,
-        "binding": true,
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
         "contingency_id": "Base Case",
         "ti_direction": "E",
         "intervals_published": 23,
@@ -149,60 +168,17 @@
         }
       }
     },
-    "DOSMGO-PNOCHE_230_2_1": {
-      "constraint_name": "DOSMGO-PNOCHE_230_2_1",
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-13T16:00:00-00:00",
-          "interval_end": "2026-08-13T17:00:00-00:00",
-          "constraint_id": "DOSMGO-PNOCHE_230_2_1",
-          "constraint_name": "DOSMGO-PNOCHE_230_2_1",
-          "market": "DAM",
-          "shadow_price": 112.53205,
-          "shadow_price_abs": 112.53205,
-          "binding": true,
-          "contingency_id": "PG1 GATES 500-230 BK11",
-          "ti_direction": "I",
-          "intervals_published": 15,
-          "peak": {
-            "shadow_price": 265.95492,
-            "shadow_price_abs": 265.95492,
-            "binding": true,
-            "interval_start": "2026-08-13T23:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-13T16:00:00-00:00",
-        "interval_end": "2026-08-13T17:00:00-00:00",
-        "constraint_id": "DOSMGO-PNOCHE_230_2_1",
-        "constraint_name": "DOSMGO-PNOCHE_230_2_1",
-        "market": "DAM",
-        "shadow_price": 112.53205,
-        "shadow_price_abs": 112.53205,
-        "binding": true,
-        "contingency_id": "PG1 GATES 500-230 BK11",
-        "ti_direction": "I",
-        "intervals_published": 15,
-        "peak": {
-          "shadow_price": 265.95492,
-          "shadow_price_abs": 265.95492,
-          "binding": true,
-          "interval_start": "2026-08-13T23:00:00-00:00"
-        }
-      }
-    },
     "IPPUTAH_ITC": {
       "constraint_name": "IPPUTAH_ITC",
       "markets": {
         "DAM": {
-          "interval_start": "2026-08-13T14:00:00-00:00",
-          "interval_end": "2026-08-13T15:00:00-00:00",
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T18:00:00-00:00",
           "constraint_id": "IPPUTAH_ITC",
           "constraint_name": "IPPUTAH_ITC",
           "market": "DAM",
-          "shadow_price": -0.5492,
-          "shadow_price_abs": 0.5492,
+          "shadow_price": -0.5992,
+          "shadow_price_abs": 0.5992,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
@@ -216,13 +192,13 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-13T14:00:00-00:00",
-        "interval_end": "2026-08-13T15:00:00-00:00",
+        "interval_start": "2026-08-13T17:00:00-00:00",
+        "interval_end": "2026-08-13T18:00:00-00:00",
         "constraint_id": "IPPUTAH_ITC",
         "constraint_name": "IPPUTAH_ITC",
         "market": "DAM",
-        "shadow_price": -0.5492,
-        "shadow_price_abs": 0.5492,
+        "shadow_price": -0.5992,
+        "shadow_price_abs": 0.5992,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
@@ -239,13 +215,13 @@
       "constraint_name": "MONAIPPDC_ITC",
       "markets": {
         "DAM": {
-          "interval_start": "2026-08-13T16:00:00-00:00",
-          "interval_end": "2026-08-13T17:00:00-00:00",
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T18:00:00-00:00",
           "constraint_id": "MONAIPPDC_ITC",
           "constraint_name": "MONAIPPDC_ITC",
           "market": "DAM",
-          "shadow_price": -2.93443,
-          "shadow_price_abs": 2.93443,
+          "shadow_price": -3.32041,
+          "shadow_price_abs": 3.32041,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E",
@@ -259,13 +235,13 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-13T16:00:00-00:00",
-        "interval_end": "2026-08-13T17:00:00-00:00",
+        "interval_start": "2026-08-13T17:00:00-00:00",
+        "interval_end": "2026-08-13T18:00:00-00:00",
         "constraint_id": "MONAIPPDC_ITC",
         "constraint_name": "MONAIPPDC_ITC",
         "market": "DAM",
-        "shadow_price": -2.93443,
-        "shadow_price_abs": 2.93443,
+        "shadow_price": -3.32041,
+        "shadow_price_abs": 3.32041,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E",
@@ -325,14 +301,14 @@
       "constraint_name": "PACW_COI_IMPORT_ITC",
       "markets": {
         "DAM": {
-          "interval_start": "2026-08-13T16:00:00-00:00",
-          "interval_end": "2026-08-13T17:00:00-00:00",
+          "interval_start": "2026-08-13T17:00:00-00:00",
+          "interval_end": "2026-08-13T18:00:00-00:00",
           "constraint_id": "PACW_COI_IMPORT_ITC",
           "constraint_name": "PACW_COI_IMPORT_ITC",
           "market": "DAM",
-          "shadow_price": -0.0004,
-          "shadow_price_abs": 0.0004,
-          "binding": false,
+          "shadow_price": -3.92101,
+          "shadow_price_abs": 3.92101,
+          "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E",
           "intervals_published": 26,
@@ -345,14 +321,14 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-13T16:00:00-00:00",
-        "interval_end": "2026-08-13T17:00:00-00:00",
+        "interval_start": "2026-08-13T17:00:00-00:00",
+        "interval_end": "2026-08-13T18:00:00-00:00",
         "constraint_id": "PACW_COI_IMPORT_ITC",
         "constraint_name": "PACW_COI_IMPORT_ITC",
         "market": "DAM",
-        "shadow_price": -0.0004,
-        "shadow_price_abs": 0.0004,
-        "binding": false,
+        "shadow_price": -3.92101,
+        "shadow_price_abs": 3.92101,
+        "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E",
         "intervals_published": 26,
