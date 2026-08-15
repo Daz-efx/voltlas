@@ -1,6 +1,49 @@
 {
-  "updated_at": "2026-08-15T06:02:36.680Z",
+  "updated_at": "2026-08-15T06:52:12.849Z",
   "constraints": {
+    "MERCHANT_ITC": {
+      "constraint_name": "MERCHANT_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-15T06:45:00-00:00",
+          "interval_end": "2026-08-15T07:00:00-00:00",
+          "constraint_id": "MERCHANT_ITC",
+          "constraint_name": "MERCHANT_ITC",
+          "market": "RTM",
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "I",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": -0.0012,
+            "shadow_price_abs": 0.0012,
+            "binding": false,
+            "interval_start": "2026-08-15T06:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-15T06:45:00-00:00",
+        "interval_end": "2026-08-15T07:00:00-00:00",
+        "constraint_id": "MERCHANT_ITC",
+        "constraint_name": "MERCHANT_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "interval_start": "2026-08-15T06:30:00-00:00"
+        }
+      }
+    },
     "SUNZIA_ITC": {
       "constraint_name": "SUNZIA_ITC",
       "markets": {
@@ -15,12 +58,12 @@
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E",
-          "intervals_published": 3,
+          "intervals_published": 1,
           "peak": {
-            "shadow_price": -55.09136,
-            "shadow_price_abs": 55.09136,
+            "shadow_price": -55.00257,
+            "shadow_price_abs": 55.00257,
             "binding": true,
-            "interval_start": "2026-08-15T05:15:00-00:00"
+            "interval_start": "2026-08-15T06:00:00-00:00"
           }
         }
       },
@@ -35,12 +78,12 @@
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E",
-        "intervals_published": 3,
+        "intervals_published": 1,
         "peak": {
-          "shadow_price": -55.09136,
-          "shadow_price_abs": 55.09136,
+          "shadow_price": -55.00257,
+          "shadow_price_abs": 55.00257,
           "binding": true,
-          "interval_start": "2026-08-15T05:15:00-00:00"
+          "interval_start": "2026-08-15T06:00:00-00:00"
         }
       }
     },
