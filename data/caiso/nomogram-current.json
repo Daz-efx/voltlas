@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-16T14:01:36.135Z",
+  "updated_at": "2026-08-16T14:32:38.320Z",
   "constraints": {
     "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1": {
       "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
@@ -7,6 +7,27 @@
       "kv": 69,
       "oms_ref": null,
       "markets": {
+        "RTM": {
+          "interval_start": "2026-08-16T14:30:00-00:00",
+          "interval_end": "2026-08-16T14:45:00-00:00",
+          "constraint_id": "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1",
+          "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 69,
+          "oms_ref": null,
+          "market": "RTM",
+          "shadow_price": 18.52923,
+          "shadow_price_abs": 18.52923,
+          "binding": true,
+          "contingency_id": "SD1 LCOCHS-GR-MIGUEL 69",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": 18.52923,
+            "shadow_price_abs": 18.52923,
+            "binding": true,
+            "interval_start": "2026-08-16T14:30:00-00:00"
+          }
+        },
         "DAM": {
           "interval_start": "2026-08-16T06:00:00-00:00",
           "interval_end": "2026-08-16T07:00:00-00:00",
@@ -48,6 +69,56 @@
           "shadow_price_abs": 102.52046,
           "binding": true,
           "interval_start": "2026-08-16T01:00:00-00:00"
+        }
+      }
+    },
+    "7820_TL 230S_OVERLOAD_NG": {
+      "constraint_name": "TL 230S OVERLOAD nomogram",
+      "constraint_class": "nomogram",
+      "kv": null,
+      "oms_ref": null,
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-16T14:30:00-00:00",
+          "interval_end": "2026-08-16T14:45:00-00:00",
+          "constraint_id": "7820_TL 230S_OVERLOAD_NG",
+          "constraint_name": "TL 230S OVERLOAD nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "RTM",
+          "shadow_price": -12.75133,
+          "shadow_price_abs": 12.75133,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": -12.75133,
+            "shadow_price_abs": 12.75133,
+            "binding": true,
+            "interval_start": "2026-08-16T14:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-16T14:30:00-00:00",
+        "interval_end": "2026-08-16T14:45:00-00:00",
+        "constraint_id": "7820_TL 230S_OVERLOAD_NG",
+        "constraint_name": "TL 230S OVERLOAD nomogram",
+        "constraint_class": "nomogram",
+        "kv": null,
+        "oms_ref": null,
+        "market": "RTM",
+        "shadow_price": -12.75133,
+        "shadow_price_abs": 12.75133,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": -12.75133,
+          "shadow_price_abs": 12.75133,
+          "binding": true,
+          "interval_start": "2026-08-16T14:30:00-00:00"
         }
       }
     },
