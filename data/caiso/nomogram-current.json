@@ -1,127 +1,6 @@
 {
-  "updated_at": "2026-08-16T12:55:58.726Z",
+  "updated_at": "2026-08-16T13:37:42.608Z",
   "constraints": {
-    "7690-CONTRL-INYOKN_EXP_NG": {
-      "constraint_name": "INYOKN nomogram",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-08-16T12:00:00-00:00",
-          "interval_end": "2026-08-16T12:15:00-00:00",
-          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
-          "constraint_name": "INYOKN nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": -43.80628,
-          "shadow_price_abs": 43.80628,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": -43.80628,
-            "shadow_price_abs": 43.80628,
-            "binding": true,
-            "interval_start": "2026-08-16T12:00:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-08-16T12:00:00-00:00",
-          "interval_end": "2026-08-16T13:00:00-00:00",
-          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
-          "constraint_name": "INYOKN nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 0,
-          "shadow_price_abs": 0,
-          "binding": false,
-          "contingency_id": "Base Case",
-          "intervals_published": 24,
-          "peak": {
-            "shadow_price": -63.94258,
-            "shadow_price_abs": 63.94258,
-            "binding": true,
-            "interval_start": "2026-08-16T13:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-16T12:00:00-00:00",
-        "interval_end": "2026-08-16T12:15:00-00:00",
-        "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
-        "constraint_name": "INYOKN nomogram",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": -43.80628,
-        "shadow_price_abs": 43.80628,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 1,
-        "peak": {
-          "shadow_price": -43.80628,
-          "shadow_price_abs": 43.80628,
-          "binding": true,
-          "interval_start": "2026-08-16T12:00:00-00:00"
-        }
-      }
-    },
-    "7820_TL 230S_OVERLOAD_NG": {
-      "constraint_name": "TL 230S OVERLOAD nomogram",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-08-16T12:30:00-00:00",
-          "interval_end": "2026-08-16T12:45:00-00:00",
-          "constraint_id": "7820_TL 230S_OVERLOAD_NG",
-          "constraint_name": "TL 230S OVERLOAD nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": -0.62609,
-          "shadow_price_abs": 0.62609,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 3,
-          "peak": {
-            "shadow_price": -13.22949,
-            "shadow_price_abs": 13.22949,
-            "binding": true,
-            "interval_start": "2026-08-16T12:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-16T12:30:00-00:00",
-        "interval_end": "2026-08-16T12:45:00-00:00",
-        "constraint_id": "7820_TL 230S_OVERLOAD_NG",
-        "constraint_name": "TL 230S OVERLOAD nomogram",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": -0.62609,
-        "shadow_price_abs": 0.62609,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 3,
-        "peak": {
-          "shadow_price": -13.22949,
-          "shadow_price_abs": 13.22949,
-          "binding": true,
-          "interval_start": "2026-08-16T12:00:00-00:00"
-        }
-      }
-    },
     "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1": {
       "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
       "constraint_class": "branch",
@@ -919,6 +798,56 @@
           "shadow_price_abs": 71.72933,
           "binding": true,
           "interval_start": "2026-08-16T23:00:00-00:00"
+        }
+      }
+    },
+    "7690-CONTRL-INYOKN_EXP_NG": {
+      "constraint_name": "INYOKN nomogram",
+      "constraint_class": "nomogram",
+      "kv": null,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-08-16T13:00:00-00:00",
+          "interval_end": "2026-08-16T14:00:00-00:00",
+          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
+          "constraint_name": "INYOKN nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": -63.94258,
+          "shadow_price_abs": 63.94258,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 24,
+          "peak": {
+            "shadow_price": -63.94258,
+            "shadow_price_abs": 63.94258,
+            "binding": true,
+            "interval_start": "2026-08-16T13:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-16T13:00:00-00:00",
+        "interval_end": "2026-08-16T14:00:00-00:00",
+        "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
+        "constraint_name": "INYOKN nomogram",
+        "constraint_class": "nomogram",
+        "kv": null,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": -63.94258,
+        "shadow_price_abs": 63.94258,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 24,
+        "peak": {
+          "shadow_price": -63.94258,
+          "shadow_price_abs": 63.94258,
+          "binding": true,
+          "interval_start": "2026-08-16T13:00:00-00:00"
         }
       }
     },
