@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-17T07:11:16.444Z",
+  "updated_at": "2026-08-17T07:34:29.608Z",
   "constraints": {
     "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1": {
       "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
@@ -8,19 +8,19 @@
       "oms_ref": null,
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-17T06:45:00-00:00",
-          "interval_end": "2026-08-17T07:00:00-00:00",
+          "interval_start": "2026-08-17T07:30:00-00:00",
+          "interval_end": "2026-08-17T07:45:00-00:00",
           "constraint_id": "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1",
           "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 60,
           "oms_ref": null,
           "market": "RTM",
-          "shadow_price": 276.36201,
-          "shadow_price_abs": 276.36201,
+          "shadow_price": 197.40681,
+          "shadow_price_abs": 197.40681,
           "binding": true,
           "contingency_id": "PG1 EGLRK-SLVR-FLTN 115_M",
-          "intervals_published": 1,
+          "intervals_published": 2,
           "peak": {
             "shadow_price": 276.36201,
             "shadow_price_abs": 276.36201,
@@ -51,19 +51,19 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-17T06:45:00-00:00",
-        "interval_end": "2026-08-17T07:00:00-00:00",
+        "interval_start": "2026-08-17T07:30:00-00:00",
+        "interval_end": "2026-08-17T07:45:00-00:00",
         "constraint_id": "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1",
         "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 60,
         "oms_ref": null,
         "market": "RTM",
-        "shadow_price": 276.36201,
-        "shadow_price_abs": 276.36201,
+        "shadow_price": 197.40681,
+        "shadow_price_abs": 197.40681,
         "binding": true,
         "contingency_id": "PG1 EGLRK-SLVR-FLTN 115_M",
-        "intervals_published": 1,
+        "intervals_published": 2,
         "peak": {
           "shadow_price": 276.36201,
           "shadow_price_abs": 276.36201,
@@ -91,12 +91,12 @@
           "shadow_price_abs": 4.2858,
           "binding": true,
           "contingency_id": "PG1 SCHLTE-LAMMRS 115",
-          "intervals_published": 3,
+          "intervals_published": 1,
           "peak": {
-            "shadow_price": 13.27185,
-            "shadow_price_abs": 13.27185,
+            "shadow_price": 4.2858,
+            "shadow_price_abs": 4.2858,
             "binding": true,
-            "interval_start": "2026-08-17T06:15:00-00:00"
+            "interval_start": "2026-08-17T06:45:00-00:00"
           }
         },
         "DAM": {
@@ -190,6 +190,148 @@
           "shadow_price_abs": 59.35049,
           "binding": true,
           "interval_start": "2026-08-17T06:45:00-00:00"
+        }
+      }
+    },
+    "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2": {
+      "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 500,
+      "oms_ref": null,
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-17T07:30:00-00:00",
+          "interval_end": "2026-08-17T07:45:00-00:00",
+          "constraint_id": "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2",
+          "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 500,
+          "oms_ref": null,
+          "market": "RTM",
+          "shadow_price": 48.51002,
+          "shadow_price_abs": 48.51002,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": 48.51002,
+            "shadow_price_abs": 48.51002,
+            "binding": true,
+            "interval_start": "2026-08-17T07:30:00-00:00"
+          }
+        },
+        "DAM": {
+          "interval_start": "2026-08-17T06:00:00-00:00",
+          "interval_end": "2026-08-17T07:00:00-00:00",
+          "constraint_id": "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2",
+          "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 500,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 1.53412,
+          "shadow_price_abs": 1.53412,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": 1.53412,
+            "shadow_price_abs": 1.53412,
+            "binding": true,
+            "interval_start": "2026-08-17T06:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-17T07:30:00-00:00",
+        "interval_end": "2026-08-17T07:45:00-00:00",
+        "constraint_id": "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2",
+        "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 500,
+        "oms_ref": null,
+        "market": "RTM",
+        "shadow_price": 48.51002,
+        "shadow_price_abs": 48.51002,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": 48.51002,
+          "shadow_price_abs": 48.51002,
+          "binding": true,
+          "interval_start": "2026-08-17T07:30:00-00:00"
+        }
+      }
+    },
+    "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1": {
+      "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 60,
+      "oms_ref": null,
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-17T07:30:00-00:00",
+          "interval_end": "2026-08-17T07:45:00-00:00",
+          "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
+          "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 60,
+          "oms_ref": null,
+          "market": "RTM",
+          "shadow_price": 35.78976,
+          "shadow_price_abs": 35.78976,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": 41.96183,
+            "shadow_price_abs": 41.96183,
+            "binding": true,
+            "interval_start": "2026-08-17T07:15:00-00:00"
+          }
+        },
+        "DAM": {
+          "interval_start": "2026-08-17T07:00:00-00:00",
+          "interval_end": "2026-08-17T08:00:00-00:00",
+          "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
+          "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 60,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 54.56195,
+          "shadow_price_abs": 54.56195,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 14,
+          "peak": {
+            "shadow_price": 57.20719,
+            "shadow_price_abs": 57.20719,
+            "binding": true,
+            "interval_start": "2026-08-17T13:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-17T07:00:00-00:00",
+        "interval_end": "2026-08-17T08:00:00-00:00",
+        "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
+        "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 60,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 54.56195,
+        "shadow_price_abs": 54.56195,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 14,
+        "peak": {
+          "shadow_price": 57.20719,
+          "shadow_price_abs": 57.20719,
+          "binding": true,
+          "interval_start": "2026-08-17T13:00:00-00:00"
         }
       }
     },
@@ -340,56 +482,6 @@
           "shadow_price_abs": 109.27993,
           "binding": true,
           "interval_start": "2026-08-17T23:00:00-00:00"
-        }
-      }
-    },
-    "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2": {
-      "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 500,
-      "oms_ref": null,
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-17T06:00:00-00:00",
-          "interval_end": "2026-08-17T07:00:00-00:00",
-          "constraint_id": "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2",
-          "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 500,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 1.53412,
-          "shadow_price_abs": 1.53412,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": 1.53412,
-            "shadow_price_abs": 1.53412,
-            "binding": true,
-            "interval_start": "2026-08-17T06:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-17T06:00:00-00:00",
-        "interval_end": "2026-08-17T07:00:00-00:00",
-        "constraint_id": "30060_MIDWAY  _500_29402_WIRLWIND_500_BR_1 _2",
-        "constraint_name": "MIDWAY – WIRLWIND 500 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 500,
-        "oms_ref": null,
-        "market": "DAM",
-        "shadow_price": 1.53412,
-        "shadow_price_abs": 1.53412,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 1,
-        "peak": {
-          "shadow_price": 1.53412,
-          "shadow_price_abs": 1.53412,
-          "binding": true,
-          "interval_start": "2026-08-17T06:00:00-00:00"
         }
       }
     },
@@ -690,56 +782,6 @@
           "shadow_price_abs": 25.0335,
           "binding": true,
           "interval_start": "2026-08-17T01:00:00-00:00"
-        }
-      }
-    },
-    "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1": {
-      "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 60,
-      "oms_ref": null,
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-17T07:00:00-00:00",
-          "interval_end": "2026-08-17T08:00:00-00:00",
-          "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
-          "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 60,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 54.56195,
-          "shadow_price_abs": 54.56195,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 14,
-          "peak": {
-            "shadow_price": 57.20719,
-            "shadow_price_abs": 57.20719,
-            "binding": true,
-            "interval_start": "2026-08-17T13:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-17T07:00:00-00:00",
-        "interval_end": "2026-08-17T08:00:00-00:00",
-        "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
-        "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 60,
-        "oms_ref": null,
-        "market": "DAM",
-        "shadow_price": 54.56195,
-        "shadow_price_abs": 54.56195,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 14,
-        "peak": {
-          "shadow_price": 57.20719,
-          "shadow_price_abs": 57.20719,
-          "binding": true,
-          "interval_start": "2026-08-17T13:00:00-00:00"
         }
       }
     },

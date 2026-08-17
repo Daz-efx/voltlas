@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-08-17T07:10:45.183Z",
+  "updated_at": "2026-08-17T07:33:59.152Z",
   "constraints": {
     "TEPC_BA_EXP_ITC": {
       "constraint_name": "TEPC_BA_EXP_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-17T07:00:00-00:00",
-          "interval_end": "2026-08-17T07:15:00-00:00",
+          "interval_start": "2026-08-17T07:30:00-00:00",
+          "interval_end": "2026-08-17T07:45:00-00:00",
           "constraint_id": "TEPC_BA_EXP_ITC",
           "constraint_name": "TEPC_BA_EXP_ITC",
           "market": "RTM",
-          "shadow_price": -23.38004,
-          "shadow_price_abs": 23.38004,
+          "shadow_price": -22.93478,
+          "shadow_price_abs": 22.93478,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "E",
@@ -25,13 +25,13 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-17T07:00:00-00:00",
-        "interval_end": "2026-08-17T07:15:00-00:00",
+        "interval_start": "2026-08-17T07:30:00-00:00",
+        "interval_end": "2026-08-17T07:45:00-00:00",
         "constraint_id": "TEPC_BA_EXP_ITC",
         "constraint_name": "TEPC_BA_EXP_ITC",
         "market": "RTM",
-        "shadow_price": -23.38004,
-        "shadow_price_abs": 23.38004,
+        "shadow_price": -22.93478,
+        "shadow_price_abs": 22.93478,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E",
@@ -41,6 +41,49 @@
           "shadow_price_abs": 23.38004,
           "binding": true,
           "interval_start": "2026-08-17T07:00:00-00:00"
+        }
+      }
+    },
+    "LDWP_IPP_NORTH": {
+      "constraint_name": "LDWP_IPP_NORTH",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-17T07:30:00-00:00",
+          "interval_end": "2026-08-17T07:45:00-00:00",
+          "constraint_id": "LDWP_IPP_NORTH",
+          "constraint_name": "LDWP_IPP_NORTH",
+          "market": "RTM",
+          "shadow_price": -9.02046,
+          "shadow_price_abs": 9.02046,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "I",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": -9.02046,
+            "shadow_price_abs": 9.02046,
+            "binding": true,
+            "interval_start": "2026-08-17T07:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-17T07:30:00-00:00",
+        "interval_end": "2026-08-17T07:45:00-00:00",
+        "constraint_id": "LDWP_IPP_NORTH",
+        "constraint_name": "LDWP_IPP_NORTH",
+        "market": "RTM",
+        "shadow_price": -9.02046,
+        "shadow_price_abs": 9.02046,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": -9.02046,
+          "shadow_price_abs": 9.02046,
+          "binding": true,
+          "interval_start": "2026-08-17T07:30:00-00:00"
         }
       }
     },
