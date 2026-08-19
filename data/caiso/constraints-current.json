@@ -1,14 +1,143 @@
 {
-  "updated_at": "2026-08-19T14:00:32.028Z",
+  "updated_at": "2026-08-19T14:44:32.101Z",
   "constraints": {
-    "LDWP_IPP_NORTH": {
-      "constraint_name": "LDWP_IPP_NORTH",
+    "AMR XF#1": {
+      "constraint_name": "AMR XF#1",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-19T13:00:00-00:00",
-          "interval_end": "2026-08-19T13:15:00-00:00",
-          "constraint_id": "LDWP_IPP_NORTH",
-          "constraint_name": "LDWP_IPP_NORTH",
+          "interval_start": "2026-08-19T14:30:00-00:00",
+          "interval_end": "2026-08-19T14:45:00-00:00",
+          "constraint_id": "AMR XF#1",
+          "constraint_name": "AMR XF#1",
+          "market": "RTM",
+          "shadow_price": 59.40353,
+          "shadow_price_abs": 59.40353,
+          "binding": true,
+          "contingency_id": "VE1 PAHRUM-INOVTN 230",
+          "ti_direction": "I",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": 59.40353,
+            "shadow_price_abs": 59.40353,
+            "binding": true,
+            "interval_start": "2026-08-19T14:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-19T14:30:00-00:00",
+        "interval_end": "2026-08-19T14:45:00-00:00",
+        "constraint_id": "AMR XF#1",
+        "constraint_name": "AMR XF#1",
+        "market": "RTM",
+        "shadow_price": 59.40353,
+        "shadow_price_abs": 59.40353,
+        "binding": true,
+        "contingency_id": "VE1 PAHRUM-INOVTN 230",
+        "ti_direction": "I",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": 59.40353,
+          "shadow_price_abs": 59.40353,
+          "binding": true,
+          "interval_start": "2026-08-19T14:30:00-00:00"
+        }
+      }
+    },
+    "EPE_NET_ITC": {
+      "constraint_name": "EPE_NET_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-19T14:00:00-00:00",
+          "interval_end": "2026-08-19T14:15:00-00:00",
+          "constraint_id": "EPE_NET_ITC",
+          "constraint_name": "EPE_NET_ITC",
+          "market": "RTM",
+          "shadow_price": -12.57466,
+          "shadow_price_abs": 12.57466,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": -12.57466,
+            "shadow_price_abs": 12.57466,
+            "binding": true,
+            "interval_start": "2026-08-19T14:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-19T14:00:00-00:00",
+        "interval_end": "2026-08-19T14:15:00-00:00",
+        "constraint_id": "EPE_NET_ITC",
+        "constraint_name": "EPE_NET_ITC",
+        "market": "RTM",
+        "shadow_price": -12.57466,
+        "shadow_price_abs": 12.57466,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": -12.57466,
+          "shadow_price_abs": 12.57466,
+          "binding": true,
+          "interval_start": "2026-08-19T14:00:00-00:00"
+        }
+      }
+    },
+    "MERCHANT_ITC": {
+      "constraint_name": "MERCHANT_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-19T14:30:00-00:00",
+          "interval_end": "2026-08-19T14:45:00-00:00",
+          "constraint_id": "MERCHANT_ITC",
+          "constraint_name": "MERCHANT_ITC",
+          "market": "RTM",
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "I",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": -0.0012,
+            "shadow_price_abs": 0.0012,
+            "binding": false,
+            "interval_start": "2026-08-19T14:15:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-19T14:30:00-00:00",
+        "interval_end": "2026-08-19T14:45:00-00:00",
+        "constraint_id": "MERCHANT_ITC",
+        "constraint_name": "MERCHANT_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "interval_start": "2026-08-19T14:15:00-00:00"
+        }
+      }
+    },
+    "TEPC_BA_EXP_ITC": {
+      "constraint_name": "TEPC_BA_EXP_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-19T14:00:00-00:00",
+          "interval_end": "2026-08-19T14:15:00-00:00",
+          "constraint_id": "TEPC_BA_EXP_ITC",
+          "constraint_name": "TEPC_BA_EXP_ITC",
           "market": "RTM",
           "shadow_price": -0.0012,
           "shadow_price_abs": 0.0012,
@@ -20,15 +149,15 @@
             "shadow_price": -0.0012,
             "shadow_price_abs": 0.0012,
             "binding": false,
-            "interval_start": "2026-08-19T13:00:00-00:00"
+            "interval_start": "2026-08-19T14:00:00-00:00"
           }
         }
       },
       "worst": {
-        "interval_start": "2026-08-19T13:00:00-00:00",
-        "interval_end": "2026-08-19T13:15:00-00:00",
-        "constraint_id": "LDWP_IPP_NORTH",
-        "constraint_name": "LDWP_IPP_NORTH",
+        "interval_start": "2026-08-19T14:00:00-00:00",
+        "interval_end": "2026-08-19T14:15:00-00:00",
+        "constraint_id": "TEPC_BA_EXP_ITC",
+        "constraint_name": "TEPC_BA_EXP_ITC",
         "market": "RTM",
         "shadow_price": -0.0012,
         "shadow_price_abs": 0.0012,
@@ -40,7 +169,7 @@
           "shadow_price": -0.0012,
           "shadow_price_abs": 0.0012,
           "binding": false,
-          "interval_start": "2026-08-19T13:00:00-00:00"
+          "interval_start": "2026-08-19T14:00:00-00:00"
         }
       }
     },
