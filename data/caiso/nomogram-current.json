@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-19T10:00:12.490Z",
+  "updated_at": "2026-08-19T10:38:43.588Z",
   "constraints": {
     "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1": {
       "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
@@ -72,74 +72,74 @@
         }
       }
     },
-    "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1": {
-      "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 115,
+    "7820_TL23040_IV_SPS_NG": {
+      "constraint_name": "TL23040 IV SPS nomogram",
+      "constraint_class": "nomogram",
+      "kv": null,
       "oms_ref": null,
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-19T09:30:00-00:00",
-          "interval_end": "2026-08-19T09:45:00-00:00",
-          "constraint_id": "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1",
-          "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
+          "interval_start": "2026-08-19T10:30:00-00:00",
+          "interval_end": "2026-08-19T10:45:00-00:00",
+          "constraint_id": "7820_TL23040_IV_SPS_NG",
+          "constraint_name": "TL23040 IV SPS nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
           "oms_ref": null,
           "market": "RTM",
-          "shadow_price": 62.98622,
-          "shadow_price_abs": 62.98622,
+          "shadow_price": -24.20912,
+          "shadow_price_abs": 24.20912,
           "binding": true,
-          "contingency_id": "PG1 VIERRA-SMPRIP 115_M",
-          "intervals_published": 3,
+          "contingency_id": "Base Case",
+          "intervals_published": 2,
           "peak": {
-            "shadow_price": 65.76848,
-            "shadow_price_abs": 65.76848,
+            "shadow_price": -24.20912,
+            "shadow_price_abs": 24.20912,
             "binding": true,
-            "interval_start": "2026-08-19T09:00:00-00:00"
+            "interval_start": "2026-08-19T10:30:00-00:00"
           }
         },
         "DAM": {
-          "interval_start": "2026-08-19T05:00:00-00:00",
-          "interval_end": "2026-08-19T06:00:00-00:00",
-          "constraint_id": "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1",
-          "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
+          "interval_start": "2026-08-19T22:00:00-00:00",
+          "interval_end": "2026-08-19T23:00:00-00:00",
+          "constraint_id": "7820_TL23040_IV_SPS_NG",
+          "constraint_name": "TL23040 IV SPS nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 9.5611,
-          "shadow_price_abs": 9.5611,
+          "shadow_price": -3.72808,
+          "shadow_price_abs": 3.72808,
           "binding": true,
-          "contingency_id": "PG1 SCHLTE-LAMMRS 115",
-          "intervals_published": 2,
+          "contingency_id": "Base Case",
+          "intervals_published": 5,
           "peak": {
-            "shadow_price": 13.90579,
-            "shadow_price_abs": 13.90579,
+            "shadow_price": -36.79746,
+            "shadow_price_abs": 36.79746,
             "binding": true,
-            "interval_start": "2026-08-19T04:00:00-00:00"
+            "interval_start": "2026-08-19T15:00:00-00:00"
           }
         }
       },
       "worst": {
-        "interval_start": "2026-08-19T09:30:00-00:00",
-        "interval_end": "2026-08-19T09:45:00-00:00",
-        "constraint_id": "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1",
-        "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 115,
+        "interval_start": "2026-08-19T10:30:00-00:00",
+        "interval_end": "2026-08-19T10:45:00-00:00",
+        "constraint_id": "7820_TL23040_IV_SPS_NG",
+        "constraint_name": "TL23040 IV SPS nomogram",
+        "constraint_class": "nomogram",
+        "kv": null,
         "oms_ref": null,
         "market": "RTM",
-        "shadow_price": 62.98622,
-        "shadow_price_abs": 62.98622,
+        "shadow_price": -24.20912,
+        "shadow_price_abs": 24.20912,
         "binding": true,
-        "contingency_id": "PG1 VIERRA-SMPRIP 115_M",
-        "intervals_published": 3,
+        "contingency_id": "Base Case",
+        "intervals_published": 2,
         "peak": {
-          "shadow_price": 65.76848,
-          "shadow_price_abs": 65.76848,
+          "shadow_price": -24.20912,
+          "shadow_price_abs": 24.20912,
           "binding": true,
-          "interval_start": "2026-08-19T09:00:00-00:00"
+          "interval_start": "2026-08-19T10:30:00-00:00"
         }
       }
     },
@@ -162,12 +162,12 @@
           "shadow_price_abs": 2.68148,
           "binding": true,
           "contingency_id": "Base Case",
-          "intervals_published": 4,
+          "intervals_published": 1,
           "peak": {
-            "shadow_price": -3.00218,
-            "shadow_price_abs": 3.00218,
+            "shadow_price": -2.68148,
+            "shadow_price_abs": 2.68148,
             "binding": true,
-            "interval_start": "2026-08-19T09:30:00-00:00"
+            "interval_start": "2026-08-19T09:45:00-00:00"
           }
         }
       },
@@ -184,12 +184,12 @@
         "shadow_price_abs": 2.68148,
         "binding": true,
         "contingency_id": "Base Case",
-        "intervals_published": 4,
+        "intervals_published": 1,
         "peak": {
-          "shadow_price": -3.00218,
-          "shadow_price_abs": 3.00218,
+          "shadow_price": -2.68148,
+          "shadow_price_abs": 2.68148,
           "binding": true,
-          "interval_start": "2026-08-19T09:30:00-00:00"
+          "interval_start": "2026-08-19T09:45:00-00:00"
         }
       }
     },
@@ -590,6 +590,56 @@
           "shadow_price_abs": 133.57121,
           "binding": true,
           "interval_start": "2026-08-19T00:00:00-00:00"
+        }
+      }
+    },
+    "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1": {
+      "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 115,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-08-19T05:00:00-00:00",
+          "interval_end": "2026-08-19T06:00:00-00:00",
+          "constraint_id": "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1",
+          "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 115,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 9.5611,
+          "shadow_price_abs": 9.5611,
+          "binding": true,
+          "contingency_id": "PG1 SCHLTE-LAMMRS 115",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": 13.90579,
+            "shadow_price_abs": 13.90579,
+            "binding": true,
+            "interval_start": "2026-08-19T04:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-19T05:00:00-00:00",
+        "interval_end": "2026-08-19T06:00:00-00:00",
+        "constraint_id": "33541_AEC_TP1 _115_33540_TESLA   _115_BR_1 _1",
+        "constraint_name": "AEC_TP1 – TESLA 115 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 115,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 9.5611,
+        "shadow_price_abs": 9.5611,
+        "binding": true,
+        "contingency_id": "PG1 SCHLTE-LAMMRS 115",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": 13.90579,
+          "shadow_price_abs": 13.90579,
+          "binding": true,
+          "interval_start": "2026-08-19T04:00:00-00:00"
         }
       }
     },
@@ -2040,56 +2090,6 @@
           "shadow_price_abs": 6.06083,
           "binding": true,
           "interval_start": "2026-08-19T11:00:00-00:00"
-        }
-      }
-    },
-    "7820_TL23040_IV_SPS_NG": {
-      "constraint_name": "TL23040 IV SPS nomogram",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-19T22:00:00-00:00",
-          "interval_end": "2026-08-19T23:00:00-00:00",
-          "constraint_id": "7820_TL23040_IV_SPS_NG",
-          "constraint_name": "TL23040 IV SPS nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": -3.72808,
-          "shadow_price_abs": 3.72808,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 5,
-          "peak": {
-            "shadow_price": -36.79746,
-            "shadow_price_abs": 36.79746,
-            "binding": true,
-            "interval_start": "2026-08-19T15:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-19T22:00:00-00:00",
-        "interval_end": "2026-08-19T23:00:00-00:00",
-        "constraint_id": "7820_TL23040_IV_SPS_NG",
-        "constraint_name": "TL23040 IV SPS nomogram",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "DAM",
-        "shadow_price": -3.72808,
-        "shadow_price_abs": 3.72808,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 5,
-        "peak": {
-          "shadow_price": -36.79746,
-          "shadow_price_abs": 36.79746,
-          "binding": true,
-          "interval_start": "2026-08-19T15:00:00-00:00"
         }
       }
     },
