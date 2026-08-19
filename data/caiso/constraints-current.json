@@ -1,26 +1,26 @@
 {
-  "updated_at": "2026-08-19T22:02:00.195Z",
+  "updated_at": "2026-08-19T22:34:23.005Z",
   "constraints": {
     "AMR-SND 138": {
       "constraint_name": "AMR-SND 138",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-19T22:00:00-00:00",
-          "interval_end": "2026-08-19T22:15:00-00:00",
+          "interval_start": "2026-08-19T22:30:00-00:00",
+          "interval_end": "2026-08-19T22:45:00-00:00",
           "constraint_id": "AMR-SND 138",
           "constraint_name": "AMR-SND 138",
           "market": "RTM",
-          "shadow_price": 172.58066,
-          "shadow_price_abs": 172.58066,
+          "shadow_price": 180.89607,
+          "shadow_price_abs": 180.89607,
           "binding": true,
           "contingency_id": "VE1 PAHRUM-INOVTN 230",
           "ti_direction": "I",
           "intervals_published": 4,
           "peak": {
-            "shadow_price": 194.87388,
-            "shadow_price_abs": 194.87388,
+            "shadow_price": 185.93958,
+            "shadow_price_abs": 185.93958,
             "binding": true,
-            "interval_start": "2026-08-19T21:30:00-00:00"
+            "interval_start": "2026-08-19T21:45:00-00:00"
           }
         },
         "DAM": {
@@ -44,22 +44,65 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-19T22:00:00-00:00",
-        "interval_end": "2026-08-19T22:15:00-00:00",
+        "interval_start": "2026-08-19T22:30:00-00:00",
+        "interval_end": "2026-08-19T22:45:00-00:00",
         "constraint_id": "AMR-SND 138",
         "constraint_name": "AMR-SND 138",
         "market": "RTM",
-        "shadow_price": 172.58066,
-        "shadow_price_abs": 172.58066,
+        "shadow_price": 180.89607,
+        "shadow_price_abs": 180.89607,
         "binding": true,
         "contingency_id": "VE1 PAHRUM-INOVTN 230",
         "ti_direction": "I",
         "intervals_published": 4,
         "peak": {
-          "shadow_price": 194.87388,
-          "shadow_price_abs": 194.87388,
+          "shadow_price": 185.93958,
+          "shadow_price_abs": 185.93958,
           "binding": true,
-          "interval_start": "2026-08-19T21:30:00-00:00"
+          "interval_start": "2026-08-19T21:45:00-00:00"
+        }
+      }
+    },
+    "EPE_NET_ITC": {
+      "constraint_name": "EPE_NET_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-19T22:30:00-00:00",
+          "interval_end": "2026-08-19T22:45:00-00:00",
+          "constraint_id": "EPE_NET_ITC",
+          "constraint_name": "EPE_NET_ITC",
+          "market": "RTM",
+          "shadow_price": -31.1859,
+          "shadow_price_abs": 31.1859,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": -31.1859,
+            "shadow_price_abs": 31.1859,
+            "binding": true,
+            "interval_start": "2026-08-19T22:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-19T22:30:00-00:00",
+        "interval_end": "2026-08-19T22:45:00-00:00",
+        "constraint_id": "EPE_NET_ITC",
+        "constraint_name": "EPE_NET_ITC",
+        "market": "RTM",
+        "shadow_price": -31.1859,
+        "shadow_price_abs": 31.1859,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": -31.1859,
+          "shadow_price_abs": 31.1859,
+          "binding": true,
+          "interval_start": "2026-08-19T22:30:00-00:00"
         }
       }
     },
@@ -77,12 +120,12 @@
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
-          "intervals_published": 2,
+          "intervals_published": 1,
           "peak": {
-            "shadow_price": -20.77047,
-            "shadow_price_abs": 20.77047,
+            "shadow_price": -16.70971,
+            "shadow_price_abs": 16.70971,
             "binding": true,
-            "interval_start": "2026-08-19T21:15:00-00:00"
+            "interval_start": "2026-08-19T21:45:00-00:00"
           }
         }
       },
@@ -97,55 +140,12 @@
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
-        "intervals_published": 2,
-        "peak": {
-          "shadow_price": -20.77047,
-          "shadow_price_abs": 20.77047,
-          "binding": true,
-          "interval_start": "2026-08-19T21:15:00-00:00"
-        }
-      }
-    },
-    "LDWP_IPP_NORTH": {
-      "constraint_name": "LDWP_IPP_NORTH",
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-08-19T21:15:00-00:00",
-          "interval_end": "2026-08-19T21:30:00-00:00",
-          "constraint_id": "LDWP_IPP_NORTH",
-          "constraint_name": "LDWP_IPP_NORTH",
-          "market": "RTM",
-          "shadow_price": -0.05714,
-          "shadow_price_abs": 0.05714,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "ti_direction": "I",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": -0.05714,
-            "shadow_price_abs": 0.05714,
-            "binding": true,
-            "interval_start": "2026-08-19T21:15:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-19T21:15:00-00:00",
-        "interval_end": "2026-08-19T21:30:00-00:00",
-        "constraint_id": "LDWP_IPP_NORTH",
-        "constraint_name": "LDWP_IPP_NORTH",
-        "market": "RTM",
-        "shadow_price": -0.05714,
-        "shadow_price_abs": 0.05714,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "ti_direction": "I",
         "intervals_published": 1,
         "peak": {
-          "shadow_price": -0.05714,
-          "shadow_price_abs": 0.05714,
+          "shadow_price": -16.70971,
+          "shadow_price_abs": 16.70971,
           "binding": true,
-          "interval_start": "2026-08-19T21:15:00-00:00"
+          "interval_start": "2026-08-19T21:45:00-00:00"
         }
       }
     },
