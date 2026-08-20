@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-20T10:12:49.188Z",
+  "updated_at": "2026-08-20T10:40:01.131Z",
   "constraints": {
     "IPPUTAH_ITC": {
       "constraint_name": "IPPUTAH_ITC",
@@ -63,46 +63,89 @@
         }
       }
     },
-    "TEPC_BA_EXP_ITC": {
-      "constraint_name": "TEPC_BA_EXP_ITC",
+    "PACE_FOURCORNE345_ITC": {
+      "constraint_name": "PACE_FOURCORNE345_ITC",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-20T10:00:00-00:00",
-          "interval_end": "2026-08-20T10:15:00-00:00",
-          "constraint_id": "TEPC_BA_EXP_ITC",
-          "constraint_name": "TEPC_BA_EXP_ITC",
+          "interval_start": "2026-08-20T10:15:00-00:00",
+          "interval_end": "2026-08-20T10:30:00-00:00",
+          "constraint_id": "PACE_FOURCORNE345_ITC",
+          "constraint_name": "PACE_FOURCORNE345_ITC",
           "market": "RTM",
-          "shadow_price": -12.278,
-          "shadow_price_abs": 12.278,
-          "binding": true,
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
           "contingency_id": "Base Case",
-          "ti_direction": "E",
-          "intervals_published": 2,
+          "ti_direction": "I",
+          "intervals_published": 1,
           "peak": {
-            "shadow_price": -12.278,
-            "shadow_price_abs": 12.278,
-            "binding": true,
-            "interval_start": "2026-08-20T10:00:00-00:00"
+            "shadow_price": -0.0012,
+            "shadow_price_abs": 0.0012,
+            "binding": false,
+            "interval_start": "2026-08-20T10:15:00-00:00"
           }
         }
       },
       "worst": {
-        "interval_start": "2026-08-20T10:00:00-00:00",
-        "interval_end": "2026-08-20T10:15:00-00:00",
+        "interval_start": "2026-08-20T10:15:00-00:00",
+        "interval_end": "2026-08-20T10:30:00-00:00",
+        "constraint_id": "PACE_FOURCORNE345_ITC",
+        "constraint_name": "PACE_FOURCORNE345_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "interval_start": "2026-08-20T10:15:00-00:00"
+        }
+      }
+    },
+    "TEPC_BA_EXP_ITC": {
+      "constraint_name": "TEPC_BA_EXP_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-20T10:30:00-00:00",
+          "interval_end": "2026-08-20T10:45:00-00:00",
+          "constraint_id": "TEPC_BA_EXP_ITC",
+          "constraint_name": "TEPC_BA_EXP_ITC",
+          "market": "RTM",
+          "shadow_price": -3.95455,
+          "shadow_price_abs": 3.95455,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 4,
+          "peak": {
+            "shadow_price": -13.50358,
+            "shadow_price_abs": 13.50358,
+            "binding": true,
+            "interval_start": "2026-08-20T10:15:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-20T10:30:00-00:00",
+        "interval_end": "2026-08-20T10:45:00-00:00",
         "constraint_id": "TEPC_BA_EXP_ITC",
         "constraint_name": "TEPC_BA_EXP_ITC",
         "market": "RTM",
-        "shadow_price": -12.278,
-        "shadow_price_abs": 12.278,
+        "shadow_price": -3.95455,
+        "shadow_price_abs": 3.95455,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "E",
-        "intervals_published": 2,
+        "intervals_published": 4,
         "peak": {
-          "shadow_price": -12.278,
-          "shadow_price_abs": 12.278,
+          "shadow_price": -13.50358,
+          "shadow_price_abs": 13.50358,
           "binding": true,
-          "interval_start": "2026-08-20T10:00:00-00:00"
+          "interval_start": "2026-08-20T10:15:00-00:00"
         }
       }
     },
