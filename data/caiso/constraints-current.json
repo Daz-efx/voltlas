@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-08-21T22:01:40.345Z",
+  "updated_at": "2026-08-21T22:34:22.061Z",
   "constraints": {
     "LDWP_IPP_NORTH": {
       "constraint_name": "LDWP_IPP_NORTH",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-21T22:00:00-00:00",
-          "interval_end": "2026-08-21T22:15:00-00:00",
+          "interval_start": "2026-08-21T22:30:00-00:00",
+          "interval_end": "2026-08-21T22:45:00-00:00",
           "constraint_id": "LDWP_IPP_NORTH",
           "constraint_name": "LDWP_IPP_NORTH",
           "market": "RTM",
-          "shadow_price": -13.90701,
-          "shadow_price_abs": 13.90701,
+          "shadow_price": -12.01933,
+          "shadow_price_abs": 12.01933,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
@@ -25,13 +25,13 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-21T22:00:00-00:00",
-        "interval_end": "2026-08-21T22:15:00-00:00",
+        "interval_start": "2026-08-21T22:30:00-00:00",
+        "interval_end": "2026-08-21T22:45:00-00:00",
         "constraint_id": "LDWP_IPP_NORTH",
         "constraint_name": "LDWP_IPP_NORTH",
         "market": "RTM",
-        "shadow_price": -13.90701,
-        "shadow_price_abs": 13.90701,
+        "shadow_price": -12.01933,
+        "shadow_price_abs": 12.01933,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
@@ -58,12 +58,12 @@
           "binding": false,
           "contingency_id": "Base Case",
           "ti_direction": "E",
-          "intervals_published": 2,
+          "intervals_published": 1,
           "peak": {
             "shadow_price": -0.0012,
             "shadow_price_abs": 0.0012,
             "binding": false,
-            "interval_start": "2026-08-21T21:30:00-00:00"
+            "interval_start": "2026-08-21T21:45:00-00:00"
           }
         },
         "DAM": {
@@ -146,6 +146,49 @@
           "shadow_price_abs": 0.0012,
           "binding": false,
           "interval_start": "2026-08-21T22:00:00-00:00"
+        }
+      }
+    },
+    "YU XFMR2 A  69KV": {
+      "constraint_name": "YU XFMR2 A  69KV",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-21T22:30:00-00:00",
+          "interval_end": "2026-08-21T22:45:00-00:00",
+          "constraint_id": "YU XFMR2 A  69KV",
+          "constraint_name": "YU XFMR2 A  69KV",
+          "market": "RTM",
+          "shadow_price": 114.01427,
+          "shadow_price_abs": 114.01427,
+          "binding": true,
+          "contingency_id": "SD1 NGILA-IVALLY 500",
+          "ti_direction": "I",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": 114.01427,
+            "shadow_price_abs": 114.01427,
+            "binding": true,
+            "interval_start": "2026-08-21T22:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-21T22:30:00-00:00",
+        "interval_end": "2026-08-21T22:45:00-00:00",
+        "constraint_id": "YU XFMR2 A  69KV",
+        "constraint_name": "YU XFMR2 A  69KV",
+        "market": "RTM",
+        "shadow_price": 114.01427,
+        "shadow_price_abs": 114.01427,
+        "binding": true,
+        "contingency_id": "SD1 NGILA-IVALLY 500",
+        "ti_direction": "I",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": 114.01427,
+          "shadow_price_abs": 114.01427,
+          "binding": true,
+          "interval_start": "2026-08-21T22:30:00-00:00"
         }
       }
     },
