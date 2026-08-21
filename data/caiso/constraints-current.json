@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-08-21T19:32:12.200Z",
+  "updated_at": "2026-08-21T19:59:25.268Z",
   "constraints": {
     "LDWP_IPP_NORTH": {
       "constraint_name": "LDWP_IPP_NORTH",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-21T19:30:00-00:00",
-          "interval_end": "2026-08-21T19:45:00-00:00",
+          "interval_start": "2026-08-21T19:45:00-00:00",
+          "interval_end": "2026-08-21T20:00:00-00:00",
           "constraint_id": "LDWP_IPP_NORTH",
           "constraint_name": "LDWP_IPP_NORTH",
           "market": "RTM",
-          "shadow_price": -0.59107,
-          "shadow_price_abs": 0.59107,
+          "shadow_price": -0.04387,
+          "shadow_price_abs": 0.04387,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
@@ -25,13 +25,13 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-21T19:30:00-00:00",
-        "interval_end": "2026-08-21T19:45:00-00:00",
+        "interval_start": "2026-08-21T19:45:00-00:00",
+        "interval_end": "2026-08-21T20:00:00-00:00",
         "constraint_id": "LDWP_IPP_NORTH",
         "constraint_name": "LDWP_IPP_NORTH",
         "market": "RTM",
-        "shadow_price": -0.59107,
-        "shadow_price_abs": 0.59107,
+        "shadow_price": -0.04387,
+        "shadow_price_abs": 0.04387,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
@@ -44,46 +44,65 @@
         }
       }
     },
-    "SRP_NET_ITC": {
-      "constraint_name": "SRP_NET_ITC",
+    "MALIN500_ISL": {
+      "constraint_name": "MALIN500_ISL",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-21T18:45:00-00:00",
-          "interval_end": "2026-08-21T19:00:00-00:00",
-          "constraint_id": "SRP_NET_ITC",
-          "constraint_name": "SRP_NET_ITC",
+          "interval_start": "2026-08-21T19:45:00-00:00",
+          "interval_end": "2026-08-21T20:00:00-00:00",
+          "constraint_id": "MALIN500_ISL",
+          "constraint_name": "MALIN500_ISL",
           "market": "RTM",
-          "shadow_price": -6.23454,
-          "shadow_price_abs": 6.23454,
-          "binding": true,
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
           "contingency_id": "Base Case",
-          "ti_direction": "I",
+          "ti_direction": "E",
           "intervals_published": 1,
           "peak": {
-            "shadow_price": -6.23454,
-            "shadow_price_abs": 6.23454,
+            "shadow_price": -0.0012,
+            "shadow_price_abs": 0.0012,
+            "binding": false,
+            "interval_start": "2026-08-21T19:45:00-00:00"
+          }
+        },
+        "DAM": {
+          "interval_start": "2026-08-21T19:00:00-00:00",
+          "interval_end": "2026-08-21T20:00:00-00:00",
+          "constraint_id": "MALIN500_ISL",
+          "constraint_name": "MALIN500_ISL",
+          "market": "DAM",
+          "shadow_price": -3.16238,
+          "shadow_price_abs": 3.16238,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": -7.21732,
+            "shadow_price_abs": 7.21732,
             "binding": true,
-            "interval_start": "2026-08-21T18:45:00-00:00"
+            "interval_start": "2026-08-21T20:00:00-00:00"
           }
         }
       },
       "worst": {
-        "interval_start": "2026-08-21T18:45:00-00:00",
-        "interval_end": "2026-08-21T19:00:00-00:00",
-        "constraint_id": "SRP_NET_ITC",
-        "constraint_name": "SRP_NET_ITC",
-        "market": "RTM",
-        "shadow_price": -6.23454,
-        "shadow_price_abs": 6.23454,
+        "interval_start": "2026-08-21T19:00:00-00:00",
+        "interval_end": "2026-08-21T20:00:00-00:00",
+        "constraint_id": "MALIN500_ISL",
+        "constraint_name": "MALIN500_ISL",
+        "market": "DAM",
+        "shadow_price": -3.16238,
+        "shadow_price_abs": 3.16238,
         "binding": true,
         "contingency_id": "Base Case",
-        "ti_direction": "I",
-        "intervals_published": 1,
+        "ti_direction": "E",
+        "intervals_published": 2,
         "peak": {
-          "shadow_price": -6.23454,
-          "shadow_price_abs": 6.23454,
+          "shadow_price": -7.21732,
+          "shadow_price_abs": 7.21732,
           "binding": true,
-          "interval_start": "2026-08-21T18:45:00-00:00"
+          "interval_start": "2026-08-21T20:00:00-00:00"
         }
       }
     },
@@ -342,49 +361,6 @@
           "shadow_price_abs": 8.64307,
           "binding": true,
           "interval_start": "2026-08-21T16:00:00-00:00"
-        }
-      }
-    },
-    "MALIN500_ISL": {
-      "constraint_name": "MALIN500_ISL",
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-21T19:00:00-00:00",
-          "interval_end": "2026-08-21T20:00:00-00:00",
-          "constraint_id": "MALIN500_ISL",
-          "constraint_name": "MALIN500_ISL",
-          "market": "DAM",
-          "shadow_price": -3.16238,
-          "shadow_price_abs": 3.16238,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "ti_direction": "E",
-          "intervals_published": 2,
-          "peak": {
-            "shadow_price": -7.21732,
-            "shadow_price_abs": 7.21732,
-            "binding": true,
-            "interval_start": "2026-08-21T20:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-21T19:00:00-00:00",
-        "interval_end": "2026-08-21T20:00:00-00:00",
-        "constraint_id": "MALIN500_ISL",
-        "constraint_name": "MALIN500_ISL",
-        "market": "DAM",
-        "shadow_price": -3.16238,
-        "shadow_price_abs": 3.16238,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "ti_direction": "E",
-        "intervals_published": 2,
-        "peak": {
-          "shadow_price": -7.21732,
-          "shadow_price_abs": 7.21732,
-          "binding": true,
-          "interval_start": "2026-08-21T20:00:00-00:00"
         }
       }
     },
