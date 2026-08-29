@@ -1,57 +1,186 @@
 {
-  "updated_at": "2026-08-29T21:39:57.900Z",
+  "updated_at": "2026-08-29T23:33:06.048Z",
   "constraints": {
     "LDWP_IPP_NORTH": {
       "constraint_name": "LDWP_IPP_NORTH",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-29T21:30:00-00:00",
-          "interval_end": "2026-08-29T21:45:00-00:00",
+          "interval_start": "2026-08-29T23:30:00-00:00",
+          "interval_end": "2026-08-29T23:45:00-00:00",
           "constraint_id": "LDWP_IPP_NORTH",
           "constraint_name": "LDWP_IPP_NORTH",
           "market": "RTM",
-          "shadow_price": -27.02736,
-          "shadow_price_abs": 27.02736,
+          "shadow_price": -7.59879,
+          "shadow_price_abs": 7.59879,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
           "intervals_published": 4,
           "peak": {
-            "shadow_price": -28.68322,
-            "shadow_price_abs": 28.68322,
+            "shadow_price": -12.78612,
+            "shadow_price_abs": 12.78612,
             "binding": true,
-            "interval_start": "2026-08-29T21:15:00-00:00"
+            "interval_start": "2026-08-29T23:00:00-00:00"
           }
         }
       },
       "worst": {
-        "interval_start": "2026-08-29T21:30:00-00:00",
-        "interval_end": "2026-08-29T21:45:00-00:00",
+        "interval_start": "2026-08-29T23:30:00-00:00",
+        "interval_end": "2026-08-29T23:45:00-00:00",
         "constraint_id": "LDWP_IPP_NORTH",
         "constraint_name": "LDWP_IPP_NORTH",
         "market": "RTM",
-        "shadow_price": -27.02736,
-        "shadow_price_abs": 27.02736,
+        "shadow_price": -7.59879,
+        "shadow_price_abs": 7.59879,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
         "intervals_published": 4,
         "peak": {
-          "shadow_price": -28.68322,
-          "shadow_price_abs": 28.68322,
+          "shadow_price": -12.78612,
+          "shadow_price_abs": 12.78612,
           "binding": true,
-          "interval_start": "2026-08-29T21:15:00-00:00"
+          "interval_start": "2026-08-29T23:00:00-00:00"
         }
       }
     },
-    "NOB_ITC": {
-      "constraint_name": "NOB_ITC",
+    "Line_WAL-TH_69KV": {
+      "constraint_name": "Line_WAL-TH_69KV",
       "markets": {
         "RTM": {
-          "interval_start": "2026-08-29T21:30:00-00:00",
-          "interval_end": "2026-08-29T21:45:00-00:00",
-          "constraint_id": "NOB_ITC",
-          "constraint_name": "NOB_ITC",
+          "interval_start": "2026-08-29T23:30:00-00:00",
+          "interval_end": "2026-08-29T23:45:00-00:00",
+          "constraint_id": "Line_WAL-TH_69KV",
+          "constraint_name": "Line_WAL-TH_69KV",
+          "market": "RTM",
+          "shadow_price": 519.51105,
+          "shadow_price_abs": 519.51105,
+          "binding": true,
+          "contingency_id": "SD1 NGILA-IVALLY 500",
+          "ti_direction": "I",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": 519.51105,
+            "shadow_price_abs": 519.51105,
+            "binding": true,
+            "interval_start": "2026-08-29T23:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:30:00-00:00",
+        "interval_end": "2026-08-29T23:45:00-00:00",
+        "constraint_id": "Line_WAL-TH_69KV",
+        "constraint_name": "Line_WAL-TH_69KV",
+        "market": "RTM",
+        "shadow_price": 519.51105,
+        "shadow_price_abs": 519.51105,
+        "binding": true,
+        "contingency_id": "SD1 NGILA-IVALLY 500",
+        "ti_direction": "I",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": 519.51105,
+          "shadow_price_abs": 519.51105,
+          "binding": true,
+          "interval_start": "2026-08-29T23:30:00-00:00"
+        }
+      }
+    },
+    "MERCHANT_ITC": {
+      "constraint_name": "MERCHANT_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-29T23:15:00-00:00",
+          "interval_end": "2026-08-29T23:30:00-00:00",
+          "constraint_id": "MERCHANT_ITC",
+          "constraint_name": "MERCHANT_ITC",
+          "market": "RTM",
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "I",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": -0.0012,
+            "shadow_price_abs": 0.0012,
+            "binding": false,
+            "interval_start": "2026-08-29T23:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:15:00-00:00",
+        "interval_end": "2026-08-29T23:30:00-00:00",
+        "constraint_id": "MERCHANT_ITC",
+        "constraint_name": "MERCHANT_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "interval_start": "2026-08-29T23:00:00-00:00"
+        }
+      }
+    },
+    "NEVP_NET_ITC": {
+      "constraint_name": "NEVP_NET_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-29T23:30:00-00:00",
+          "interval_end": "2026-08-29T23:45:00-00:00",
+          "constraint_id": "NEVP_NET_ITC",
+          "constraint_name": "NEVP_NET_ITC",
+          "market": "RTM",
+          "shadow_price": -14.76275,
+          "shadow_price_abs": 14.76275,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 3,
+          "peak": {
+            "shadow_price": -63.89659,
+            "shadow_price_abs": 63.89659,
+            "binding": true,
+            "interval_start": "2026-08-29T23:15:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:30:00-00:00",
+        "interval_end": "2026-08-29T23:45:00-00:00",
+        "constraint_id": "NEVP_NET_ITC",
+        "constraint_name": "NEVP_NET_ITC",
+        "market": "RTM",
+        "shadow_price": -14.76275,
+        "shadow_price_abs": 14.76275,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 3,
+        "peak": {
+          "shadow_price": -63.89659,
+          "shadow_price_abs": 63.89659,
+          "binding": true,
+          "interval_start": "2026-08-29T23:15:00-00:00"
+        }
+      }
+    },
+    "PACE_FOURCORNE345_ITC": {
+      "constraint_name": "PACE_FOURCORNE345_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-29T23:15:00-00:00",
+          "interval_end": "2026-08-29T23:30:00-00:00",
+          "constraint_id": "PACE_FOURCORNE345_ITC",
+          "constraint_name": "PACE_FOURCORNE345_ITC",
           "market": "RTM",
           "shadow_price": -0.0012,
           "shadow_price_abs": 0.0012,
@@ -60,12 +189,294 @@
           "ti_direction": "E",
           "intervals_published": 3,
           "peak": {
-            "shadow_price": -14.57591,
-            "shadow_price_abs": 14.57591,
+            "shadow_price": -5.84875,
+            "shadow_price_abs": 5.84875,
             "binding": true,
-            "interval_start": "2026-08-29T20:45:00-00:00"
+            "interval_start": "2026-08-29T22:45:00-00:00"
           }
-        },
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:15:00-00:00",
+        "interval_end": "2026-08-29T23:30:00-00:00",
+        "constraint_id": "PACE_FOURCORNE345_ITC",
+        "constraint_name": "PACE_FOURCORNE345_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 3,
+        "peak": {
+          "shadow_price": -5.84875,
+          "shadow_price_abs": 5.84875,
+          "binding": true,
+          "interval_start": "2026-08-29T22:45:00-00:00"
+        }
+      }
+    },
+    "SUMMIT_ITC": {
+      "constraint_name": "SUMMIT_ITC",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-29T23:15:00-00:00",
+          "interval_end": "2026-08-29T23:30:00-00:00",
+          "constraint_id": "SUMMIT_ITC",
+          "constraint_name": "SUMMIT_ITC",
+          "market": "RTM",
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "ti_direction": "I",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": -0.0012,
+            "shadow_price_abs": 0.0012,
+            "binding": false,
+            "interval_start": "2026-08-29T23:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:15:00-00:00",
+        "interval_end": "2026-08-29T23:30:00-00:00",
+        "constraint_id": "SUMMIT_ITC",
+        "constraint_name": "SUMMIT_ITC",
+        "market": "RTM",
+        "shadow_price": -0.0012,
+        "shadow_price_abs": 0.0012,
+        "binding": false,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": -0.0012,
+          "shadow_price_abs": 0.0012,
+          "binding": false,
+          "interval_start": "2026-08-29T23:00:00-00:00"
+        }
+      }
+    },
+    "TOTAL_WYOMING_EXPORT": {
+      "constraint_name": "TOTAL_WYOMING_EXPORT",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-29T23:30:00-00:00",
+          "interval_end": "2026-08-29T23:45:00-00:00",
+          "constraint_id": "TOTAL_WYOMING_EXPORT",
+          "constraint_name": "TOTAL_WYOMING_EXPORT",
+          "market": "RTM",
+          "shadow_price": 7.63806,
+          "shadow_price_abs": 7.63806,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 3,
+          "peak": {
+            "shadow_price": 9.04274,
+            "shadow_price_abs": 9.04274,
+            "binding": true,
+            "interval_start": "2026-08-29T23:15:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:30:00-00:00",
+        "interval_end": "2026-08-29T23:45:00-00:00",
+        "constraint_id": "TOTAL_WYOMING_EXPORT",
+        "constraint_name": "TOTAL_WYOMING_EXPORT",
+        "market": "RTM",
+        "shadow_price": 7.63806,
+        "shadow_price_abs": 7.63806,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 3,
+        "peak": {
+          "shadow_price": 9.04274,
+          "shadow_price_abs": 9.04274,
+          "binding": true,
+          "interval_start": "2026-08-29T23:15:00-00:00"
+        }
+      }
+    },
+    "YU XFMR2 A  69KV": {
+      "constraint_name": "YU XFMR2 A  69KV",
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-08-29T23:00:00-00:00",
+          "interval_end": "2026-08-29T23:15:00-00:00",
+          "constraint_id": "YU XFMR2 A  69KV",
+          "constraint_name": "YU XFMR2 A  69KV",
+          "market": "RTM",
+          "shadow_price": 90.63139,
+          "shadow_price_abs": 90.63139,
+          "binding": true,
+          "contingency_id": "SD1 NGILA-IVALLY 500",
+          "ti_direction": "I",
+          "intervals_published": 2,
+          "peak": {
+            "shadow_price": 97.66949,
+            "shadow_price_abs": 97.66949,
+            "binding": true,
+            "interval_start": "2026-08-29T22:45:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:00:00-00:00",
+        "interval_end": "2026-08-29T23:15:00-00:00",
+        "constraint_id": "YU XFMR2 A  69KV",
+        "constraint_name": "YU XFMR2 A  69KV",
+        "market": "RTM",
+        "shadow_price": 90.63139,
+        "shadow_price_abs": 90.63139,
+        "binding": true,
+        "contingency_id": "SD1 NGILA-IVALLY 500",
+        "ti_direction": "I",
+        "intervals_published": 2,
+        "peak": {
+          "shadow_price": 97.66949,
+          "shadow_price_abs": 97.66949,
+          "binding": true,
+          "interval_start": "2026-08-29T22:45:00-00:00"
+        }
+      }
+    },
+    "CASCADE_ITC": {
+      "constraint_name": "CASCADE_ITC",
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-08-29T23:00:00-00:00",
+          "interval_end": "2026-08-30T00:00:00-00:00",
+          "constraint_id": "CASCADE_ITC",
+          "constraint_name": "CASCADE_ITC",
+          "market": "DAM",
+          "shadow_price": -0.0689,
+          "shadow_price_abs": 0.0689,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 22,
+          "peak": {
+            "shadow_price": -1.8001,
+            "shadow_price_abs": 1.8001,
+            "binding": true,
+            "interval_start": "2026-08-29T15:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:00:00-00:00",
+        "interval_end": "2026-08-30T00:00:00-00:00",
+        "constraint_id": "CASCADE_ITC",
+        "constraint_name": "CASCADE_ITC",
+        "market": "DAM",
+        "shadow_price": -0.0689,
+        "shadow_price_abs": 0.0689,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 22,
+        "peak": {
+          "shadow_price": -1.8001,
+          "shadow_price_abs": 1.8001,
+          "binding": true,
+          "interval_start": "2026-08-29T15:00:00-00:00"
+        }
+      }
+    },
+    "IPPDCADLN_ITC": {
+      "constraint_name": "IPPDCADLN_ITC",
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-08-29T23:00:00-00:00",
+          "interval_end": "2026-08-30T00:00:00-00:00",
+          "constraint_id": "IPPDCADLN_ITC",
+          "constraint_name": "IPPDCADLN_ITC",
+          "market": "DAM",
+          "shadow_price": -0.139,
+          "shadow_price_abs": 0.139,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "E",
+          "intervals_published": 8,
+          "peak": {
+            "shadow_price": -0.2496,
+            "shadow_price_abs": 0.2496,
+            "binding": true,
+            "interval_start": "2026-08-29T17:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:00:00-00:00",
+        "interval_end": "2026-08-30T00:00:00-00:00",
+        "constraint_id": "IPPDCADLN_ITC",
+        "constraint_name": "IPPDCADLN_ITC",
+        "market": "DAM",
+        "shadow_price": -0.139,
+        "shadow_price_abs": 0.139,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "E",
+        "intervals_published": 8,
+        "peak": {
+          "shadow_price": -0.2496,
+          "shadow_price_abs": 0.2496,
+          "binding": true,
+          "interval_start": "2026-08-29T17:00:00-00:00"
+        }
+      }
+    },
+    "IPPUTAH_ITC": {
+      "constraint_name": "IPPUTAH_ITC",
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-08-29T23:00:00-00:00",
+          "interval_end": "2026-08-30T00:00:00-00:00",
+          "constraint_id": "IPPUTAH_ITC",
+          "constraint_name": "IPPUTAH_ITC",
+          "market": "DAM",
+          "shadow_price": -18.37377,
+          "shadow_price_abs": 18.37377,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "ti_direction": "I",
+          "intervals_published": 24,
+          "peak": {
+            "shadow_price": -22.46503,
+            "shadow_price_abs": 22.46503,
+            "binding": true,
+            "interval_start": "2026-08-29T02:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-08-29T23:00:00-00:00",
+        "interval_end": "2026-08-30T00:00:00-00:00",
+        "constraint_id": "IPPUTAH_ITC",
+        "constraint_name": "IPPUTAH_ITC",
+        "market": "DAM",
+        "shadow_price": -18.37377,
+        "shadow_price_abs": 18.37377,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "ti_direction": "I",
+        "intervals_published": 24,
+        "peak": {
+          "shadow_price": -22.46503,
+          "shadow_price_abs": 22.46503,
+          "binding": true,
+          "interval_start": "2026-08-29T02:00:00-00:00"
+        }
+      }
+    },
+    "NOB_ITC": {
+      "constraint_name": "NOB_ITC",
+      "markets": {
         "DAM": {
           "interval_start": "2026-08-29T04:00:00-00:00",
           "interval_end": "2026-08-29T05:00:00-00:00",
@@ -106,147 +517,18 @@
         }
       }
     },
-    "CASCADE_ITC": {
-      "constraint_name": "CASCADE_ITC",
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-29T21:00:00-00:00",
-          "interval_end": "2026-08-29T22:00:00-00:00",
-          "constraint_id": "CASCADE_ITC",
-          "constraint_name": "CASCADE_ITC",
-          "market": "DAM",
-          "shadow_price": -0.0012,
-          "shadow_price_abs": 0.0012,
-          "binding": false,
-          "contingency_id": "Base Case",
-          "ti_direction": "E",
-          "intervals_published": 22,
-          "peak": {
-            "shadow_price": -1.8001,
-            "shadow_price_abs": 1.8001,
-            "binding": true,
-            "interval_start": "2026-08-29T15:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-29T21:00:00-00:00",
-        "interval_end": "2026-08-29T22:00:00-00:00",
-        "constraint_id": "CASCADE_ITC",
-        "constraint_name": "CASCADE_ITC",
-        "market": "DAM",
-        "shadow_price": -0.0012,
-        "shadow_price_abs": 0.0012,
-        "binding": false,
-        "contingency_id": "Base Case",
-        "ti_direction": "E",
-        "intervals_published": 22,
-        "peak": {
-          "shadow_price": -1.8001,
-          "shadow_price_abs": 1.8001,
-          "binding": true,
-          "interval_start": "2026-08-29T15:00:00-00:00"
-        }
-      }
-    },
-    "IPPDCADLN_ITC": {
-      "constraint_name": "IPPDCADLN_ITC",
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-29T17:00:00-00:00",
-          "interval_end": "2026-08-29T18:00:00-00:00",
-          "constraint_id": "IPPDCADLN_ITC",
-          "constraint_name": "IPPDCADLN_ITC",
-          "market": "DAM",
-          "shadow_price": -0.2496,
-          "shadow_price_abs": 0.2496,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "ti_direction": "E",
-          "intervals_published": 8,
-          "peak": {
-            "shadow_price": -0.2496,
-            "shadow_price_abs": 0.2496,
-            "binding": true,
-            "interval_start": "2026-08-29T17:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-29T17:00:00-00:00",
-        "interval_end": "2026-08-29T18:00:00-00:00",
-        "constraint_id": "IPPDCADLN_ITC",
-        "constraint_name": "IPPDCADLN_ITC",
-        "market": "DAM",
-        "shadow_price": -0.2496,
-        "shadow_price_abs": 0.2496,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "ti_direction": "E",
-        "intervals_published": 8,
-        "peak": {
-          "shadow_price": -0.2496,
-          "shadow_price_abs": 0.2496,
-          "binding": true,
-          "interval_start": "2026-08-29T17:00:00-00:00"
-        }
-      }
-    },
-    "IPPUTAH_ITC": {
-      "constraint_name": "IPPUTAH_ITC",
-      "markets": {
-        "DAM": {
-          "interval_start": "2026-08-29T21:00:00-00:00",
-          "interval_end": "2026-08-29T22:00:00-00:00",
-          "constraint_id": "IPPUTAH_ITC",
-          "constraint_name": "IPPUTAH_ITC",
-          "market": "DAM",
-          "shadow_price": -20.75348,
-          "shadow_price_abs": 20.75348,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "ti_direction": "I",
-          "intervals_published": 24,
-          "peak": {
-            "shadow_price": -22.46503,
-            "shadow_price_abs": 22.46503,
-            "binding": true,
-            "interval_start": "2026-08-29T02:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-08-29T21:00:00-00:00",
-        "interval_end": "2026-08-29T22:00:00-00:00",
-        "constraint_id": "IPPUTAH_ITC",
-        "constraint_name": "IPPUTAH_ITC",
-        "market": "DAM",
-        "shadow_price": -20.75348,
-        "shadow_price_abs": 20.75348,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "ti_direction": "I",
-        "intervals_published": 24,
-        "peak": {
-          "shadow_price": -22.46503,
-          "shadow_price_abs": 22.46503,
-          "binding": true,
-          "interval_start": "2026-08-29T02:00:00-00:00"
-        }
-      }
-    },
     "PACW_COI_EXPORT_ITC": {
       "constraint_name": "PACW_COI_EXPORT_ITC",
       "markets": {
         "DAM": {
-          "interval_start": "2026-08-29T16:00:00-00:00",
-          "interval_end": "2026-08-29T17:00:00-00:00",
+          "interval_start": "2026-08-29T23:00:00-00:00",
+          "interval_end": "2026-08-30T00:00:00-00:00",
           "constraint_id": "PACW_COI_EXPORT_ITC",
           "constraint_name": "PACW_COI_EXPORT_ITC",
           "market": "DAM",
-          "shadow_price": -0.0007,
-          "shadow_price_abs": 0.0007,
-          "binding": false,
+          "shadow_price": -0.1394,
+          "shadow_price_abs": 0.1394,
+          "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
           "intervals_published": 8,
@@ -259,14 +541,14 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-29T16:00:00-00:00",
-        "interval_end": "2026-08-29T17:00:00-00:00",
+        "interval_start": "2026-08-29T23:00:00-00:00",
+        "interval_end": "2026-08-30T00:00:00-00:00",
         "constraint_id": "PACW_COI_EXPORT_ITC",
         "constraint_name": "PACW_COI_EXPORT_ITC",
         "market": "DAM",
-        "shadow_price": -0.0007,
-        "shadow_price_abs": 0.0007,
-        "binding": false,
+        "shadow_price": -0.1394,
+        "shadow_price_abs": 0.1394,
+        "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
         "intervals_published": 8,
@@ -325,13 +607,13 @@
       "constraint_name": "PACW_CRAG_ITC",
       "markets": {
         "DAM": {
-          "interval_start": "2026-08-29T15:00:00-00:00",
-          "interval_end": "2026-08-29T16:00:00-00:00",
+          "interval_start": "2026-08-29T23:00:00-00:00",
+          "interval_end": "2026-08-30T00:00:00-00:00",
           "constraint_id": "PACW_CRAG_ITC",
           "constraint_name": "PACW_CRAG_ITC",
           "market": "DAM",
-          "shadow_price": -1.8001,
-          "shadow_price_abs": 1.8001,
+          "shadow_price": -0.0689,
+          "shadow_price_abs": 0.0689,
           "binding": true,
           "contingency_id": "Base Case",
           "ti_direction": "I",
@@ -345,13 +627,13 @@
         }
       },
       "worst": {
-        "interval_start": "2026-08-29T15:00:00-00:00",
-        "interval_end": "2026-08-29T16:00:00-00:00",
+        "interval_start": "2026-08-29T23:00:00-00:00",
+        "interval_end": "2026-08-30T00:00:00-00:00",
         "constraint_id": "PACW_CRAG_ITC",
         "constraint_name": "PACW_CRAG_ITC",
         "market": "DAM",
-        "shadow_price": -1.8001,
-        "shadow_price_abs": 1.8001,
+        "shadow_price": -0.0689,
+        "shadow_price_abs": 0.0689,
         "binding": true,
         "contingency_id": "Base Case",
         "ti_direction": "I",
