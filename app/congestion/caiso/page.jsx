@@ -12,7 +12,7 @@
 // Prices: raw signed value as CAISO reports it; ranked by |magnitude|.
 // DAM shows the CURRENT hour's interval, with the day's PEAK alongside.
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Explainer from './Explainer';
 
@@ -20,17 +20,22 @@ const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/c
 
 // Approximate display coordinates for known interties. Internal constraints
 // (branches/transformers) are not mapped — no public coordinate source.
-const COORDS = {
-  COTPISO_ITC:      { lat: 40.6,  lng: -122.4, label: 'COTP (California–Oregon Transmission Project)' },
-  MALIN500_ISL:     { lat: 42.0,  lng: -121.7, label: 'Malin 500 (COI)' },
-  SUMMIT_ITC:       { lat: 39.3,  lng: -120.6, label: 'Summit (Drum–Summit)' },
-  SILVERPK_ITC:     { lat: 37.75, lng: -118.1, label: 'Silver Peak' },
-  CASCADE_ITC:      { lat: 41.2,  lng: -121.4, label: 'Cascade' },
-  'ADLANTO-SP_ITC': { lat: 34.58, lng: -117.4, label: 'Adelanto–SP (Lugo–Victorville)' },
-  ELDORADO_ITC:     { lat: 35.0,  lng: -114.9, label: 'Eldorado' },
-  NOB_ITC:          { lat: 34.05, lng: -118.2, label: 'NOB (Nevada–Oregon Border DC)' },
-  EPE_NET_ITC:      { lat: 32.8,  lng: -115.5, label: 'EPE net' },
-  AZPS_NET_ITC:     { lat: 33.4,  lng: -114.6, label: 'APS net' },
+// Intertie display positions for the schematic panel below.
+// x/y are percentages within the SVG viewport — approximate geographic
+// placement, NOT survey coordinates. Replaced the Leaflet/CARTO basemap on
+// 2026-09-05 after CARTO began requiring an API key for its free tiles; a
+// self-contained SVG has no external dependency that can break unannounced.
+const INTERTIES = {
+  COTPISO_ITC:      { x: 30, y: 12, label: 'COTP (California–Oregon)' },
+  MALIN500_ISL:     { x: 34, y: 5,  label: 'Malin 500 (COI)' },
+  SUMMIT_ITC:       { x: 40, y: 26, label: 'Summit (Drum–Summit)' },
+  SILVERPK_ITC:     { x: 58, y: 45, label: 'Silver Peak' },
+  CASCADE_ITC:      { x: 26, y: 9,  label: 'Cascade' },
+  'ADLANTO-SP_ITC': { x: 66, y: 68, label: 'Adelanto–SP (Lugo–Victorville)' },
+  ELDORADO_ITC:     { x: 78, y: 62, label: 'Eldorado' },
+  NOB_ITC:          { x: 60, y: 76, label: 'NOB (Nevada–Oregon Border DC)' },
+  EPE_NET_ITC:      { x: 88, y: 82, label: 'EPE net' },
+  AZPS_NET_ITC:     { x: 84, y: 74, label: 'APS net' },
 };
 
 const C = {
@@ -109,6 +114,58 @@ function TabRow({ tabs, active, onSelect, accent = C.teal }) {
   );
 }
 
+
+// ---------- self-contained intertie schematic (replaces the CARTO basemap) ----------
+// Simplified California + Southwest outline. Deliberately schematic: the pins
+// were always labelled "approximate", and a hand-drawn outline can't silently
+// break the way a third-party tile service can.
+const CA_OUTLINE =
+  "M 22,2 L 30,3 L 33,8 L 31,14 L 34,20 L 38,26 L 41,33 L 45,39 L 49,44 " +
+  "L 53,50 L 58,56 L 62,62 L 66,68 L 70,74 L 74,80 L 72,88 L 64,92 L 56,90 " +
+  "L 48,84 L 42,76 L 36,68 L 31,59 L 26,50 L 22,40 L 18,30 L 15,20 L 16,10 Z";
+const SW_OUTLINE =
+  "M 74,80 L 82,72 L 90,68 L 96,72 L 97,84 L 90,92 L 80,94 L 72,88 Z";
+
+function IntertieSchematic({ interties, constraints, activeOutages, onSelect, selectedId }) {
+  return (
+    <svg viewBox="0 0 100 100" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 4, border: `1px solid ${C.line}`, background: '#0D1216' }}>
+      <path d={CA_OUTLINE} fill="#141B21" stroke={C.line} strokeWidth="0.4" />
+      <path d={SW_OUTLINE} fill="#11171C" stroke={C.line} strokeWidth="0.4" />
+      <text x="24" y="30" fill={C.muted} fontSize="2.2" style={{ letterSpacing: '0.15em' }}>CALIFORNIA</text>
+      <text x="82" y="82" fill={C.muted} fontSize="1.8" style={{ letterSpacing: '0.15em' }}>SW</text>
+
+      {Object.entries(interties).map(([id, pos]) => {
+        const c = constraints?.[id];
+        const price = c?.worst?.shadow_price;
+        const binding = !!c?.worst?.binding;
+        const hasOutage = activeOutages.has(id);
+        const known = !!c;
+        const r = known ? 1.2 + Math.min(2.2, sev(price) / 12) : 1.0;
+        const fill = known ? priceColor(price, binding) : C.line;
+        return (
+          <g key={id} onClick={() => known && onSelect(id)} style={{ cursor: known ? 'pointer' : 'default' }}>
+            {hasOutage && (
+              <circle cx={pos.x} cy={pos.y} r={r + 1.3} fill="none" stroke={C.amber} strokeWidth="0.45" />
+            )}
+            <circle
+              cx={pos.x} cy={pos.y} r={r}
+              fill={fill}
+              fillOpacity={known ? 0.95 : 0.35}
+              stroke={selectedId === id ? C.text : C.ink}
+              strokeWidth={selectedId === id ? 0.5 : 0.3}
+            />
+            <title>
+              {pos.label}
+              {known ? ` — $${(price ?? 0).toFixed(2)}/MWh · ${binding ? 'binding' : 'not binding'}` : ' — no current data'}
+              {hasOutage ? ' · active outage' : ''}
+            </title>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export default function CongestionPage() {
   const [internal, setInternal] = useState(null);
   const [intertie, setIntertie] = useState(null);
@@ -123,10 +180,6 @@ export default function CongestionPage() {
   const [outageTab, setOutageTab] = useState('active');
   const [selectedId, setSelectedId] = useState(null);
 
-  const mapRef = useRef(null);
-  const leafletMap = useRef(null);
-  const markersRef = useRef({});
-  const resizeObs = useRef(null);
 
   // ---------- data load ----------
   useEffect(() => {
@@ -163,6 +216,15 @@ export default function CongestionPage() {
     for (const c of Object.values(registry?.constraints ?? {})) m[c.constraint_id] = c.slug;
     return m;
   }, [registry]);
+
+  // Interfaces with an active outage — drives the ring markers on the schematic.
+  const activeOutageIfaces = useMemo(() => {
+    const s = new Set();
+    for (const o of Object.values(outageData?.outages ?? {})) {
+      if (o.category === 'outage' && o.display_status === 'active' && o.ti_id) s.add(o.ti_id);
+    }
+    return s;
+  }, [outageData]);
 
   const activeData = feed === 'internal' ? internal : intertie;
   const activeHistory = feed === 'internal' ? internalHistory : intertieHistory;
@@ -230,103 +292,6 @@ export default function CongestionPage() {
     return [];
   }, [selected, feed, discreteOutages, standingLimits]);
 
-  // ---------- Leaflet ----------
-  useEffect(() => {
-    if (!mapRef.current || leafletMap.current) return;
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link');
-      link.id = 'leaflet-css'; link.rel = 'stylesheet';
-      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
-      document.head.appendChild(link);
-    }
-
-    function init() {
-      const L = window.L;
-      if (!L || leafletMap.current || !mapRef.current) return;
-      const map = L.map(mapRef.current, { zoomControl: true, attributionControl: false })
-        .setView([37.5, -119.8], 5.4);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 10, minZoom: 5,
-      }).addTo(map);
-      leafletMap.current = map;
-
-      // Leaflet measures its container ONCE at init. Inside a CSS grid whose
-      // layout is still settling (fonts, panel sizing, stylesheet load), that
-      // measurement is stale — Leaflet then requests tiles for the wrong
-      // rectangle and leaves grey gaps that zooming only partly repairs.
-      // Re-measure after paint, again once fonts/CSS have landed, and on any
-      // later container resize.
-      const bump = () => { try { map.invalidateSize(false); } catch {} };
-      requestAnimationFrame(bump);
-      setTimeout(bump, 250);
-      setTimeout(bump, 1000);
-
-      if (typeof ResizeObserver !== 'undefined') {
-        const ro = new ResizeObserver(bump);
-        ro.observe(mapRef.current);
-        resizeObs.current = ro;
-      }
-      window.addEventListener('resize', bump);
-      // Stylesheet may land after init; recheck when it does.
-      const css = document.getElementById('leaflet-css');
-      if (css) css.addEventListener('load', bump, { once: true });
-      map._voltlasBump = bump;
-    }
-
-    if (window.L) init();
-    else if (!document.getElementById('leaflet-js')) {
-      const s = document.createElement('script');
-      s.id = 'leaflet-js';
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-      s.onload = init;
-      document.body.appendChild(s);
-    } else {
-      // Script tag exists but Leaflet hasn't finished parsing yet.
-      const s = document.getElementById('leaflet-js');
-      s.addEventListener('load', init, { once: true });
-    }
-
-    return () => {
-      const map = leafletMap.current;
-      if (resizeObs.current) { resizeObs.current.disconnect(); resizeObs.current = null; }
-      if (map?._voltlasBump) window.removeEventListener('resize', map._voltlasBump);
-    };
-  }, []);
-
-  // Map always shows interties + active outages (internal constraints aren't geocoded)
-  useEffect(() => {
-    const L = window.L;
-    const map = leafletMap.current;
-    if (!L || !map || !intertie?.constraints) return;
-    Object.values(markersRef.current).forEach((m) => map.removeLayer(m));
-    markersRef.current = {};
-
-    for (const [id, c] of Object.entries(intertie.constraints)) {
-      const coord = COORDS[id];
-      if (!coord || !c.worst) continue;
-      const m = L.circleMarker([coord.lat, coord.lng], {
-        radius: 6 + Math.min(12, sev(c.worst.shadow_price) / 8),
-        color: C.ink, weight: 2,
-        fillColor: priceColor(c.worst.shadow_price, c.worst.binding), fillOpacity: 0.9,
-      }).addTo(map);
-      m.bindPopup(`<b>${c.constraint_name}</b><br/>$${(c.worst.shadow_price ?? 0).toFixed(2)}/MWh · ${c.worst.binding ? 'Binding' : 'Not binding'}`);
-      m.on('click', () => { setFeed('intertie'); setSelectedId(id); });
-      markersRef.current[`c-${id}`] = m;
-    }
-    for (const o of discreteOutages.filter((o) => o.display_status === 'active')) {
-      const coord = COORDS[o.ti_id];
-      if (!coord || markersRef.current[`c-${o.ti_id}`]) continue;
-      const m = L.circleMarker([coord.lat, coord.lng], {
-        radius: 8, color: C.amber, weight: 2, fillColor: 'transparent', fillOpacity: 0,
-      }).addTo(map);
-      m.bindPopup(`<b>${coord.label}</b><br/>${String(o.description).slice(0, 60)}<br/>${o.max_curtailed_mw ?? '?'} MW curtailed`);
-      markersRef.current[`o-${o.ti_id}-${o.oms_number}`] = m;
-    }
-
-    // Data arrival can resize sibling panels and therefore the map container.
-    try { map.invalidateSize(false); } catch {}
-  }, [intertie, discreteOutages]);
-
   // ---------- render ----------
   if (error) {
     return (
@@ -367,8 +332,14 @@ export default function CongestionPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.3fr) minmax(0,0.9fr)', gap: 16, alignItems: 'start' }}>
 
-          <Panel title="Intertie Map" right={<span style={{ ...mono, color: C.muted, fontSize: 10 }}>PIN POSITIONS APPROXIMATE</span>}>
-            <div ref={mapRef} style={{ width: '100%', height: 440, borderRadius: 4, border: `1px solid ${C.line}` }} />
+          <Panel title="Intertie Map" right={<span style={{ ...mono, color: C.muted, fontSize: 10 }}>SCHEMATIC · POSITIONS APPROXIMATE</span>}>
+            <IntertieSchematic
+              interties={INTERTIES}
+              constraints={intertie?.constraints}
+              activeOutages={activeOutageIfaces}
+              onSelect={(id) => { setFeed('intertie'); setSelectedId(id); }}
+              selectedId={selectedId}
+            />
             <div style={{ display: 'flex', gap: 18, marginTop: 10, fontSize: 11, color: C.muted, flexWrap: 'wrap' }}>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.teal, marginRight: 6 }} />Not binding</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.amber, marginRight: 6 }} />Binding</span>
@@ -376,8 +347,9 @@ export default function CongestionPage() {
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', border: `2px solid ${C.amber}`, marginRight: 6 }} />Active outage</span>
             </div>
             <div style={{ fontSize: 10.5, color: C.muted, marginTop: 6 }}>
-              Map shows intertie constraints and active outages only. Internal branch,
-              transformer, and nomogram constraints are listed but not geocoded.
+              Schematic shows intertie constraints and active outages only. Positions are
+              indicative, not surveyed. Internal branch, transformer, and nomogram
+              constraints are listed but not placed.
             </div>
           </Panel>
 
