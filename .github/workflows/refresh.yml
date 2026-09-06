@@ -40,7 +40,7 @@ jobs:
           node scripts/update-mexico.mjs || echo "mexico step failed; keeping prior data"
           node scripts/update-powermix.mjs || echo "powermix step failed; keeping prior data"
           node scripts/update-state-mix.mjs || echo "state-mix step failed; keeping prior data"
-            node scripts/update-sparklines.mjs || echo "sparklines step failed; keeping prior sparklines"
+          node scripts/update-sparklines.mjs || echo "sparklines step failed; keeping prior sparklines"
 
       - name: Commit and push if data changed
         run: |
