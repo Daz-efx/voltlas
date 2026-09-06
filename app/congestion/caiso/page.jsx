@@ -20,22 +20,23 @@ const DATA_BASE = 'https://raw.githubusercontent.com/Daz-efx/voltlas/main/data/c
 
 // Approximate display coordinates for known interties. Internal constraints
 // (branches/transformers) are not mapped — no public coordinate source.
-// Intertie display positions for the schematic panel below.
-// x/y are percentages within the SVG viewport — approximate geographic
-// placement, NOT survey coordinates. Replaced the Leaflet/CARTO basemap on
-// 2026-09-05 after CARTO began requiring an API key for its free tiles; a
-// self-contained SVG has no external dependency that can break unannounced.
-const INTERTIES = {
-  COTPISO_ITC:      { x: 30, y: 12, label: 'COTP (California–Oregon)' },
-  MALIN500_ISL:     { x: 34, y: 5,  label: 'Malin 500 (COI)' },
-  SUMMIT_ITC:       { x: 40, y: 26, label: 'Summit (Drum–Summit)' },
-  SILVERPK_ITC:     { x: 58, y: 45, label: 'Silver Peak' },
-  CASCADE_ITC:      { x: 26, y: 9,  label: 'Cascade' },
-  'ADLANTO-SP_ITC': { x: 66, y: 68, label: 'Adelanto–SP (Lugo–Victorville)' },
-  ELDORADO_ITC:     { x: 78, y: 62, label: 'Eldorado' },
-  NOB_ITC:          { x: 60, y: 76, label: 'NOB (Nevada–Oregon Border DC)' },
-  EPE_NET_ITC:      { x: 88, y: 82, label: 'EPE net' },
-  AZPS_NET_ITC:     { x: 84, y: 74, label: 'APS net' },
+// Display names for the intertie status board. Order here is the fallback
+// display order; the board itself sorts by severity at render time.
+// (Replaced the CARTO basemap 2026-09-05 when CARTO began requiring an API
+// key, then replaced the stand-in SVG outline 2026-09-05 — hand-drawn
+// geography looked worse than no geography. The interties carry ~10 rows;
+// a status board shows the same information without pretending to be a map.)
+const INTERTIE_LABELS = {
+  COTPISO_ITC:      'COTP · California–Oregon',
+  MALIN500_ISL:     'Malin 500 · COI',
+  SUMMIT_ITC:       'Summit · Drum–Summit',
+  SILVERPK_ITC:     'Silver Peak',
+  CASCADE_ITC:      'Cascade',
+  'ADLANTO-SP_ITC': 'Adelanto–SP · Lugo–Victorville',
+  ELDORADO_ITC:     'Eldorado',
+  NOB_ITC:          'NOB · Nevada–Oregon Border DC',
+  EPE_NET_ITC:      'EPE net',
+  AZPS_NET_ITC:     'APS net',
 };
 
 const C = {
@@ -115,54 +116,78 @@ function TabRow({ tabs, active, onSelect, accent = C.teal }) {
 }
 
 
-// ---------- self-contained intertie schematic (replaces the CARTO basemap) ----------
-// Simplified California + Southwest outline. Deliberately schematic: the pins
-// were always labelled "approximate", and a hand-drawn outline can't silently
-// break the way a third-party tile service can.
-const CA_OUTLINE =
-  "M 22,2 L 30,3 L 33,8 L 31,14 L 34,20 L 38,26 L 41,33 L 45,39 L 49,44 " +
-  "L 53,50 L 58,56 L 62,62 L 66,68 L 70,74 L 74,80 L 72,88 L 64,92 L 56,90 " +
-  "L 48,84 L 42,76 L 36,68 L 31,59 L 26,50 L 22,40 L 18,30 L 15,20 L 16,10 Z";
-const SW_OUTLINE =
-  "M 74,80 L 82,72 L 90,68 L 96,72 L 97,84 L 90,92 L 80,94 L 72,88 Z";
+// ---------- intertie status board (replaces the map panel) ----------
+// Every intertie CAISO is currently reporting, plus any known interface that
+// has dropped out of the current publication, sorted by severity.
+function IntertieBoard({ constraints, activeOutages, onSelect, selectedId }) {
+  const ids = new Set([
+    ...Object.keys(INTERTIE_LABELS),
+    ...Object.keys(constraints ?? {}),
+  ]);
 
-function IntertieSchematic({ interties, constraints, activeOutages, onSelect, selectedId }) {
+  const rows = [...ids].map((id) => {
+    const c = constraints?.[id];
+    return {
+      id,
+      label: INTERTIE_LABELS[id] ?? c?.constraint_name ?? id,
+      price: c?.worst?.shadow_price,
+      market: c?.worst?.market,
+      binding: !!c?.worst?.binding,
+      known: !!c,
+      outage: activeOutages.has(id),
+    };
+  }).sort((a, b) => {
+    if (a.known !== b.known) return a.known ? -1 : 1;
+    return sev(b.price) - sev(a.price);
+  });
+
   return (
-    <svg viewBox="0 0 100 100" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 4, border: `1px solid ${C.line}`, background: '#0D1216' }}>
-      <path d={CA_OUTLINE} fill="#141B21" stroke={C.line} strokeWidth="0.4" />
-      <path d={SW_OUTLINE} fill="#11171C" stroke={C.line} strokeWidth="0.4" />
-      <text x="24" y="30" fill={C.muted} fontSize="2.2" style={{ letterSpacing: '0.15em' }}>CALIFORNIA</text>
-      <text x="82" y="82" fill={C.muted} fontSize="1.8" style={{ letterSpacing: '0.15em' }}>SW</text>
-
-      {Object.entries(interties).map(([id, pos]) => {
-        const c = constraints?.[id];
-        const price = c?.worst?.shadow_price;
-        const binding = !!c?.worst?.binding;
-        const hasOutage = activeOutages.has(id);
-        const known = !!c;
-        const r = known ? 1.2 + Math.min(2.2, sev(price) / 12) : 1.0;
-        const fill = known ? priceColor(price, binding) : C.line;
-        return (
-          <g key={id} onClick={() => known && onSelect(id)} style={{ cursor: known ? 'pointer' : 'default' }}>
-            {hasOutage && (
-              <circle cx={pos.x} cy={pos.y} r={r + 1.3} fill="none" stroke={C.amber} strokeWidth="0.45" />
-            )}
-            <circle
-              cx={pos.x} cy={pos.y} r={r}
-              fill={fill}
-              fillOpacity={known ? 0.95 : 0.35}
-              stroke={selectedId === id ? C.text : C.ink}
-              strokeWidth={selectedId === id ? 0.5 : 0.3}
-            />
-            <title>
-              {pos.label}
-              {known ? ` — $${(price ?? 0).toFixed(2)}/MWh · ${binding ? 'binding' : 'not binding'}` : ' — no current data'}
-              {hasOutage ? ' · active outage' : ''}
-            </title>
-          </g>
-        );
-      })}
-    </svg>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      {rows.map((r) => (
+        <div
+          key={r.id}
+          onClick={() => r.known && onSelect(r.id)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 12px',
+            background: selectedId === r.id ? C.panel2 : 'transparent',
+            borderLeft: `2px solid ${selectedId === r.id ? C.teal : 'transparent'}`,
+            borderBottom: `1px solid ${C.line}`,
+            cursor: r.known ? 'pointer' : 'default',
+            opacity: r.known ? 1 : 0.45,
+          }}
+        >
+          <span style={{
+            width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+            background: r.known ? priceColor(r.price, r.binding) : C.muted,
+          }} />
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span style={{ display: 'block', fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {r.label}
+            </span>
+            <span style={{ fontSize: 10, color: C.muted }}>
+              {r.known
+                ? `${r.market}${r.binding ? ' · binding' : ' · not binding'}`
+                : 'not in current publication'}
+              {r.outage ? ' · outage' : ''}
+            </span>
+          </span>
+          {r.outage && (
+            <span style={{
+              fontSize: 9.5, padding: '2px 6px', borderRadius: 3, fontWeight: 600,
+              textTransform: 'uppercase', letterSpacing: '0.05em',
+              background: C.amberDim, color: C.amber, flexShrink: 0,
+            }}>outage</span>
+          )}
+          <span style={{
+            ...mono, fontSize: 12.5, fontWeight: 600, whiteSpace: 'nowrap',
+            color: r.known ? priceColor(r.price, r.binding) : C.muted,
+          }}>
+            {r.known ? `$${(r.price ?? 0).toFixed(2)}` : '—'}
+          </span>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -332,24 +357,23 @@ export default function CongestionPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.3fr) minmax(0,0.9fr)', gap: 16, alignItems: 'start' }}>
 
-          <Panel title="Intertie Map" right={<span style={{ ...mono, color: C.muted, fontSize: 10 }}>SCHEMATIC · POSITIONS APPROXIMATE</span>}>
-            <IntertieSchematic
-              interties={INTERTIES}
+          <Panel title="Intertie Status" right={<span style={{ ...mono, color: C.muted, fontSize: 10 }}>10 SCHEDULING INTERFACES</span>}>
+            <IntertieBoard
               constraints={intertie?.constraints}
               activeOutages={activeOutageIfaces}
               onSelect={(id) => { setFeed('intertie'); setSelectedId(id); }}
               selectedId={selectedId}
             />
-            <div style={{ display: 'flex', gap: 18, marginTop: 10, fontSize: 11, color: C.muted, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 18, marginTop: 12, fontSize: 11, color: C.muted, flexWrap: 'wrap' }}>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.teal, marginRight: 6 }} />Not binding</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.amber, marginRight: 6 }} />Binding</span>
               <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: C.red, marginRight: 6 }} />High shadow price</span>
-              <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', border: `2px solid ${C.amber}`, marginRight: 6 }} />Active outage</span>
             </div>
-            <div style={{ fontSize: 10.5, color: C.muted, marginTop: 6 }}>
-              Schematic shows intertie constraints and active outages only. Positions are
-              indicative, not surveyed. Internal branch, transformer, and nomogram
-              constraints are listed but not placed.
+            <div style={{ fontSize: 10.5, color: C.muted, marginTop: 8, lineHeight: 1.6 }}>
+              Scheduling constraints on the paths connecting CAISO to neighbouring
+              balancing authorities, with current shadow prices and any active outage.
+              Internal branch, transformer, and nomogram constraints appear in the list
+              opposite.
             </div>
           </Panel>
 
