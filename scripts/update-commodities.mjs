@@ -1,7 +1,7 @@
 // scripts/update-commodities.mjs
 // Energy commodity spot prices from the EIA API v2 -> public/data/latest.json.
 //
-// This script OWNS the COMMODITIES list and rebuilds it from the three EIA
+// This script owns ONLY the source="EIA" rows in COMMODITIES (the three EIA
 // energy benchmarks on every run, so no stale or sample rows can ever linger:
 //   • Crude oil — WTI         (RWTC)     petroleum/pri/spt     $/bbl
 //   • Crude oil — Brent       (RBRTE)    petroleum/pri/spt     $/bbl
@@ -127,7 +127,21 @@ async function main() {
     }
   }
 
-  data.COMMODITIES = rows; // owns the list — energy benchmarks only, all real
+  // FIX (2026-09-06 incident): this used to do `data.COMMODITIES = rows`,
+  // which DISCARDED every row from other sources (38 World Bank commodities).
+  // It only appeared to work because the workflow happened to run this script
+  // BEFORE update-worldbank.mjs, which then re-added its rows. Running this
+  // script alone — as during a manual refresh — silently wiped the commodities
+  // section twice. Now it owns only its own source, like update-worldbank.mjs.
+  const MY_SOURCE = "EIA";
+  if (rows.length === 0) {
+    throw new Error(
+      `refusing to write: 0 ${MY_SOURCE} energy rows built (expected ${SPECS.length}). ` +
+      `Existing data left untouched.`
+    );
+  }
+  const others = (data.COMMODITIES || []).filter((c) => c.source !== MY_SOURCE);
+  data.COMMODITIES = others.concat(rows);
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n");
   console.log(`\u2713 Commodities (EIA energy) \u2014 ${rows.length} of ${SPECS.length} written.`);
 

@@ -164,6 +164,16 @@ export function extract(grid) {
 }
 
 export function upsert(data, rows) {
+  // GUARD (2026-09-04 incident): this replaces ALL World Bank rows. If `rows`
+  // is empty or implausibly short, replacing would wipe the commodities
+  // section. Refuse to write rather than destroy good data.
+  const existing = (data.COMMODITIES || []).filter((c) => c.source === SOURCE);
+  if (!Array.isArray(rows) || rows.length < 10) {
+    throw new Error(
+      `upsert refused: only ${rows ? rows.length : 0} ${SOURCE} rows parsed ` +
+      `(need >=10). Keeping ${existing.length} existing rows untouched.`
+    );
+  }
   const others = (data.COMMODITIES || []).filter((c) => c.source !== SOURCE);
   data.COMMODITIES = others.concat(rows);
   return data;
