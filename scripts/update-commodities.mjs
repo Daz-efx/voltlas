@@ -1,8 +1,8 @@
 // scripts/update-commodities.mjs
 // Energy commodity spot prices from the EIA API v2 -> public/data/latest.json.
 //
-// This script owns ONLY the source="EIA" rows in COMMODITIES (the three EIA
-// energy benchmarks on every run, so no stale or sample rows can ever linger:
+// This script owns ONLY the source="EIA" rows in COMMODITIES. It rebuilds those
+// three energy benchmarks on every run and leaves all other sources untouched:
 //   • Crude oil — WTI         (RWTC)     petroleum/pri/spt     $/bbl
 //   • Crude oil — Brent       (RBRTE)    petroleum/pri/spt     $/bbl
 //   • Natural gas — Henry Hub (RNGWHHD)  natural-gas/pri/fut   $/MMBtu
