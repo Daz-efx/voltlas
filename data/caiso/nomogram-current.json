@@ -1,44 +1,144 @@
 {
-  "updated_at": "2026-10-20T00:42:42.560Z",
+  "updated_at": "2026-10-20T05:24:52.014Z",
   "constraints": {
+    "7690-CONTRL-INYOKN_EXP_NG": {
+      "constraint_name": "INYOKN nomogram",
+      "constraint_class": "nomogram",
+      "kv": null,
+      "oms_ref": null,
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-10-20T05:15:00-00:00",
+          "interval_end": "2026-10-20T05:30:00-00:00",
+          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
+          "constraint_name": "INYOKN nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "RTM",
+          "shadow_price": -82.24601,
+          "shadow_price_abs": 82.24601,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 4,
+          "peak": {
+            "shadow_price": -279.94383,
+            "shadow_price_abs": 279.94383,
+            "binding": true,
+            "interval_start": "2026-10-20T04:30:00-00:00"
+          }
+        },
+        "DAM": {
+          "interval_start": "2026-10-20T05:00:00-00:00",
+          "interval_end": "2026-10-20T06:00:00-00:00",
+          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
+          "constraint_name": "INYOKN nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 0,
+          "shadow_price_abs": 0,
+          "binding": false,
+          "contingency_id": "Base Case",
+          "intervals_published": 14,
+          "peak": {
+            "shadow_price": -81.78213,
+            "shadow_price_abs": 81.78213,
+            "binding": true,
+            "interval_start": "2026-10-20T07:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T05:15:00-00:00",
+        "interval_end": "2026-10-20T05:30:00-00:00",
+        "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
+        "constraint_name": "INYOKN nomogram",
+        "constraint_class": "nomogram",
+        "kv": null,
+        "oms_ref": null,
+        "market": "RTM",
+        "shadow_price": -82.24601,
+        "shadow_price_abs": 82.24601,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 4,
+        "peak": {
+          "shadow_price": -279.94383,
+          "shadow_price_abs": 279.94383,
+          "binding": true,
+          "interval_start": "2026-10-20T04:30:00-00:00"
+        }
+      }
+    },
+    "VC_TL_681B_export_NG": {
+      "constraint_name": "VC_TL_681B_export_NG",
+      "constraint_class": "nomogram",
+      "kv": null,
+      "oms_ref": null,
+      "markets": {
+        "RTM": {
+          "interval_start": "2026-10-20T04:30:00-00:00",
+          "interval_end": "2026-10-20T04:45:00-00:00",
+          "constraint_id": "VC_TL_681B_export_NG",
+          "constraint_name": "VC_TL_681B_export_NG",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "RTM",
+          "shadow_price": -1.83811,
+          "shadow_price_abs": 1.83811,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": -1.83811,
+            "shadow_price_abs": 1.83811,
+            "binding": true,
+            "interval_start": "2026-10-20T04:30:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T04:30:00-00:00",
+        "interval_end": "2026-10-20T04:45:00-00:00",
+        "constraint_id": "VC_TL_681B_export_NG",
+        "constraint_name": "VC_TL_681B_export_NG",
+        "constraint_class": "nomogram",
+        "kv": null,
+        "oms_ref": null,
+        "market": "RTM",
+        "shadow_price": -1.83811,
+        "shadow_price_abs": 1.83811,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": -1.83811,
+          "shadow_price_abs": 1.83811,
+          "binding": true,
+          "interval_start": "2026-10-20T04:30:00-00:00"
+        }
+      }
+    },
     "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1": {
       "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
       "constraint_class": "branch",
       "kv": 69,
       "oms_ref": null,
       "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:30:00-00:00",
-          "interval_end": "2026-10-20T00:45:00-00:00",
-          "constraint_id": "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1",
-          "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 69,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": 129.99855,
-          "shadow_price_abs": 129.99855,
-          "binding": true,
-          "contingency_id": "SD1 LCOCHS-GR-MIGUEL 69",
-          "intervals_published": 4,
-          "peak": {
-            "shadow_price": 227.09871,
-            "shadow_price_abs": 227.09871,
-            "binding": true,
-            "interval_start": "2026-10-20T00:00:00-00:00"
-          }
-        },
         "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
+          "interval_start": "2026-10-20T05:00:00-00:00",
+          "interval_end": "2026-10-20T06:00:00-00:00",
           "constraint_id": "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1",
           "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 69,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 183.73799,
-          "shadow_price_abs": 183.73799,
+          "shadow_price": 118.01008,
+          "shadow_price_abs": 118.01008,
           "binding": true,
           "contingency_id": "SD1 LCOCHS-GR-MIGUEL 69",
           "intervals_published": 12,
@@ -51,16 +151,16 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T00:00:00-00:00",
-        "interval_end": "2026-10-20T01:00:00-00:00",
+        "interval_start": "2026-10-20T05:00:00-00:00",
+        "interval_end": "2026-10-20T06:00:00-00:00",
         "constraint_id": "22208_EL CAJON_69.0_22408_LOSCOCHS_69.0_BR_1 _1",
         "constraint_name": "EL CAJON – LOSCOCHS 69.0 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 69,
         "oms_ref": null,
         "market": "DAM",
-        "shadow_price": 183.73799,
-        "shadow_price_abs": 183.73799,
+        "shadow_price": 118.01008,
+        "shadow_price_abs": 118.01008,
         "binding": true,
         "contingency_id": "SD1 LCOCHS-GR-MIGUEL 69",
         "intervals_published": 12,
@@ -72,624 +172,6 @@
         }
       }
     },
-    "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1": {
-      "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 115,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-19T23:45:00-00:00",
-          "interval_end": "2026-10-20T00:00:00-00:00",
-          "constraint_id": "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1",
-          "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": 109.32848,
-          "shadow_price_abs": 109.32848,
-          "binding": true,
-          "contingency_id": "PG1 MNDOTA-PNOCHE 115",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": 109.32848,
-            "shadow_price_abs": 109.32848,
-            "binding": true,
-            "interval_start": "2026-10-19T23:45:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T23:00:00-00:00",
-          "interval_end": "2026-10-21T00:00:00-00:00",
-          "constraint_id": "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1",
-          "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 41.1352,
-          "shadow_price_abs": 41.1352,
-          "binding": true,
-          "contingency_id": "PG1 MNDOTA-PNOCHE 115",
-          "intervals_published": 8,
-          "peak": {
-            "shadow_price": 41.1352,
-            "shadow_price_abs": 41.1352,
-            "binding": true,
-            "interval_start": "2026-10-20T23:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-19T23:45:00-00:00",
-        "interval_end": "2026-10-20T00:00:00-00:00",
-        "constraint_id": "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1",
-        "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 115,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": 109.32848,
-        "shadow_price_abs": 109.32848,
-        "binding": true,
-        "contingency_id": "PG1 MNDOTA-PNOCHE 115",
-        "intervals_published": 1,
-        "peak": {
-          "shadow_price": 109.32848,
-          "shadow_price_abs": 109.32848,
-          "binding": true,
-          "interval_start": "2026-10-19T23:45:00-00:00"
-        }
-      }
-    },
-    "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1": {
-      "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 115,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T00:15:00-00:00",
-          "constraint_id": "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1",
-          "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": 249.57893,
-          "shadow_price_abs": 249.57893,
-          "binding": true,
-          "contingency_id": "PG1 MCCALL-MSTANS 230",
-          "intervals_published": 2,
-          "peak": {
-            "shadow_price": 1930.32027,
-            "shadow_price_abs": 1930.32027,
-            "binding": true,
-            "interval_start": "2026-10-19T23:45:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T16:00:00-00:00",
-          "interval_end": "2026-10-20T17:00:00-00:00",
-          "constraint_id": "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1",
-          "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 20.10124,
-          "shadow_price_abs": 20.10124,
-          "binding": true,
-          "contingency_id": "PG1 MCCALL-MSTANS 230",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": 20.10124,
-            "shadow_price_abs": 20.10124,
-            "binding": true,
-            "interval_start": "2026-10-20T16:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-20T00:00:00-00:00",
-        "interval_end": "2026-10-20T00:15:00-00:00",
-        "constraint_id": "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1",
-        "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 115,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": 249.57893,
-        "shadow_price_abs": 249.57893,
-        "binding": true,
-        "contingency_id": "PG1 MCCALL-MSTANS 230",
-        "intervals_published": 2,
-        "peak": {
-          "shadow_price": 1930.32027,
-          "shadow_price_abs": 1930.32027,
-          "binding": true,
-          "interval_start": "2026-10-19T23:45:00-00:00"
-        }
-      }
-    },
-    "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1": {
-      "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 70,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-19T23:45:00-00:00",
-          "interval_end": "2026-10-20T00:00:00-00:00",
-          "constraint_id": "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1",
-          "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 70,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": 53.54357,
-          "shadow_price_abs": 53.54357,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": 53.54357,
-            "shadow_price_abs": 53.54357,
-            "binding": true,
-            "interval_start": "2026-10-19T23:45:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T23:00:00-00:00",
-          "interval_end": "2026-10-21T00:00:00-00:00",
-          "constraint_id": "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1",
-          "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 70,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 3.69464,
-          "shadow_price_abs": 3.69464,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 8,
-          "peak": {
-            "shadow_price": 29.50974,
-            "shadow_price_abs": 29.50974,
-            "binding": true,
-            "interval_start": "2026-10-20T18:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-19T23:45:00-00:00",
-        "interval_end": "2026-10-20T00:00:00-00:00",
-        "constraint_id": "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1",
-        "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 70,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": 53.54357,
-        "shadow_price_abs": 53.54357,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 1,
-        "peak": {
-          "shadow_price": 53.54357,
-          "shadow_price_abs": 53.54357,
-          "binding": true,
-          "interval_start": "2026-10-19T23:45:00-00:00"
-        }
-      }
-    },
-    "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1": {
-      "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 115,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:30:00-00:00",
-          "interval_end": "2026-10-20T00:45:00-00:00",
-          "constraint_id": "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1",
-          "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": 632.8635,
-          "shadow_price_abs": 632.8635,
-          "binding": true,
-          "contingency_id": "PG1 LOSEST-METCLF 230",
-          "intervals_published": 3,
-          "peak": {
-            "shadow_price": 809.76377,
-            "shadow_price_abs": 809.76377,
-            "binding": true,
-            "interval_start": "2026-10-19T23:45:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T14:00:00-00:00",
-          "interval_end": "2026-10-20T15:00:00-00:00",
-          "constraint_id": "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1",
-          "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 115,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 23.9099,
-          "shadow_price_abs": 23.9099,
-          "binding": true,
-          "contingency_id": "PG1 LOSEST-METCLF 230",
-          "intervals_published": 13,
-          "peak": {
-            "shadow_price": 91.64801,
-            "shadow_price_abs": 91.64801,
-            "binding": true,
-            "interval_start": "2026-10-20T03:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-20T00:30:00-00:00",
-        "interval_end": "2026-10-20T00:45:00-00:00",
-        "constraint_id": "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1",
-        "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 115,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": 632.8635,
-        "shadow_price_abs": 632.8635,
-        "binding": true,
-        "contingency_id": "PG1 LOSEST-METCLF 230",
-        "intervals_published": 3,
-        "peak": {
-          "shadow_price": 809.76377,
-          "shadow_price_abs": 809.76377,
-          "binding": true,
-          "interval_start": "2026-10-19T23:45:00-00:00"
-        }
-      }
-    },
-    "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1": {
-      "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-      "constraint_class": "branch",
-      "kv": 60,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:30:00-00:00",
-          "interval_end": "2026-10-20T00:45:00-00:00",
-          "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
-          "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 60,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": 62.59721,
-          "shadow_price_abs": 62.59721,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 4,
-          "peak": {
-            "shadow_price": 62.59721,
-            "shadow_price_abs": 62.59721,
-            "binding": true,
-            "interval_start": "2026-10-20T00:30:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
-          "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
-          "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-          "constraint_class": "branch",
-          "kv": 60,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": 55.49992,
-          "shadow_price_abs": 55.49992,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 4,
-          "peak": {
-            "shadow_price": 57.45471,
-            "shadow_price_abs": 57.45471,
-            "binding": true,
-            "interval_start": "2026-10-20T01:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-20T00:30:00-00:00",
-        "interval_end": "2026-10-20T00:45:00-00:00",
-        "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
-        "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
-        "constraint_class": "branch",
-        "kv": 60,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": 62.59721,
-        "shadow_price_abs": 62.59721,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 4,
-        "peak": {
-          "shadow_price": 62.59721,
-          "shadow_price_abs": 62.59721,
-          "binding": true,
-          "interval_start": "2026-10-20T00:30:00-00:00"
-        }
-      }
-    },
-    "7430_CP6_NG": {
-      "constraint_name": "CP6 nomogram",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:30:00-00:00",
-          "interval_end": "2026-10-20T00:45:00-00:00",
-          "constraint_id": "7430_CP6_NG",
-          "constraint_name": "CP6 nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": -41.89253,
-          "shadow_price_abs": 41.89253,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 4,
-          "peak": {
-            "shadow_price": -147.88626,
-            "shadow_price_abs": 147.88626,
-            "binding": true,
-            "interval_start": "2026-10-20T00:15:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T23:00:00-00:00",
-          "interval_end": "2026-10-21T00:00:00-00:00",
-          "constraint_id": "7430_CP6_NG",
-          "constraint_name": "CP6 nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": -14.40897,
-          "shadow_price_abs": 14.40897,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 9,
-          "peak": {
-            "shadow_price": -184.84997,
-            "shadow_price_abs": 184.84997,
-            "binding": true,
-            "interval_start": "2026-10-20T22:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-20T00:30:00-00:00",
-        "interval_end": "2026-10-20T00:45:00-00:00",
-        "constraint_id": "7430_CP6_NG",
-        "constraint_name": "CP6 nomogram",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": -41.89253,
-        "shadow_price_abs": 41.89253,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 4,
-        "peak": {
-          "shadow_price": -147.88626,
-          "shadow_price_abs": 147.88626,
-          "binding": true,
-          "interval_start": "2026-10-20T00:15:00-00:00"
-        }
-      }
-    },
-    "7690-CONTRL-INYOKN_EXP_NG": {
-      "constraint_name": "INYOKN nomogram",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-19T23:45:00-00:00",
-          "interval_end": "2026-10-20T00:00:00-00:00",
-          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
-          "constraint_name": "INYOKN nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": -82.54113,
-          "shadow_price_abs": 82.54113,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 1,
-          "peak": {
-            "shadow_price": -82.54113,
-            "shadow_price_abs": 82.54113,
-            "binding": true,
-            "interval_start": "2026-10-19T23:45:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
-          "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
-          "constraint_name": "INYOKN nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": -31.34594,
-          "shadow_price_abs": 31.34594,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 14,
-          "peak": {
-            "shadow_price": -81.78213,
-            "shadow_price_abs": 81.78213,
-            "binding": true,
-            "interval_start": "2026-10-20T07:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-19T23:45:00-00:00",
-        "interval_end": "2026-10-20T00:00:00-00:00",
-        "constraint_id": "7690-CONTRL-INYOKN_EXP_NG",
-        "constraint_name": "INYOKN nomogram",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": -82.54113,
-        "shadow_price_abs": 82.54113,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 1,
-        "peak": {
-          "shadow_price": -82.54113,
-          "shadow_price_abs": 82.54113,
-          "binding": true,
-          "interval_start": "2026-10-19T23:45:00-00:00"
-        }
-      }
-    },
-    "7760_DEV_RDB_ALIS": {
-      "constraint_name": "7760_DEV_RDB_ALIS",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:30:00-00:00",
-          "interval_end": "2026-10-20T00:45:00-00:00",
-          "constraint_id": "7760_DEV_RDB_ALIS",
-          "constraint_name": "7760_DEV_RDB_ALIS",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": -27.34493,
-          "shadow_price_abs": 27.34493,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 4,
-          "peak": {
-            "shadow_price": -42.96385,
-            "shadow_price_abs": 42.96385,
-            "binding": true,
-            "interval_start": "2026-10-19T23:45:00-00:00"
-          }
-        },
-        "DAM": {
-          "interval_start": "2026-10-20T20:00:00-00:00",
-          "interval_end": "2026-10-20T21:00:00-00:00",
-          "constraint_id": "7760_DEV_RDB_ALIS",
-          "constraint_name": "7760_DEV_RDB_ALIS",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "DAM",
-          "shadow_price": -2.13634,
-          "shadow_price_abs": 2.13634,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 3,
-          "peak": {
-            "shadow_price": -2.13634,
-            "shadow_price_abs": 2.13634,
-            "binding": true,
-            "interval_start": "2026-10-20T20:00:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-20T00:30:00-00:00",
-        "interval_end": "2026-10-20T00:45:00-00:00",
-        "constraint_id": "7760_DEV_RDB_ALIS",
-        "constraint_name": "7760_DEV_RDB_ALIS",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": -27.34493,
-        "shadow_price_abs": 27.34493,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 4,
-        "peak": {
-          "shadow_price": -42.96385,
-          "shadow_price_abs": 42.96385,
-          "binding": true,
-          "interval_start": "2026-10-19T23:45:00-00:00"
-        }
-      }
-    },
-    "7820_TL23040_IV_SPS_NG": {
-      "constraint_name": "TL23040 IV SPS nomogram",
-      "constraint_class": "nomogram",
-      "kv": null,
-      "oms_ref": null,
-      "markets": {
-        "RTM": {
-          "interval_start": "2026-10-20T00:30:00-00:00",
-          "interval_end": "2026-10-20T00:45:00-00:00",
-          "constraint_id": "7820_TL23040_IV_SPS_NG",
-          "constraint_name": "TL23040 IV SPS nomogram",
-          "constraint_class": "nomogram",
-          "kv": null,
-          "oms_ref": null,
-          "market": "RTM",
-          "shadow_price": -65.95712,
-          "shadow_price_abs": 65.95712,
-          "binding": true,
-          "contingency_id": "Base Case",
-          "intervals_published": 2,
-          "peak": {
-            "shadow_price": -177.42442,
-            "shadow_price_abs": 177.42442,
-            "binding": true,
-            "interval_start": "2026-10-20T00:15:00-00:00"
-          }
-        }
-      },
-      "worst": {
-        "interval_start": "2026-10-20T00:30:00-00:00",
-        "interval_end": "2026-10-20T00:45:00-00:00",
-        "constraint_id": "7820_TL23040_IV_SPS_NG",
-        "constraint_name": "TL23040 IV SPS nomogram",
-        "constraint_class": "nomogram",
-        "kv": null,
-        "oms_ref": null,
-        "market": "RTM",
-        "shadow_price": -65.95712,
-        "shadow_price_abs": 65.95712,
-        "binding": true,
-        "contingency_id": "Base Case",
-        "intervals_published": 2,
-        "peak": {
-          "shadow_price": -177.42442,
-          "shadow_price_abs": 177.42442,
-          "binding": true,
-          "interval_start": "2026-10-20T00:15:00-00:00"
-        }
-      }
-    },
     "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1": {
       "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
       "constraint_class": "branch",
@@ -697,16 +179,16 @@
       "oms_ref": null,
       "markets": {
         "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
+          "interval_start": "2026-10-20T05:00:00-00:00",
+          "interval_end": "2026-10-20T06:00:00-00:00",
           "constraint_id": "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1",
           "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 60,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 4.27928,
-          "shadow_price_abs": 4.27928,
+          "shadow_price": 135.16909,
+          "shadow_price_abs": 135.16909,
           "binding": true,
           "contingency_id": "PG1 EGLRK-SLVR-FLTN 115_M",
           "intervals_published": 19,
@@ -719,16 +201,16 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T00:00:00-00:00",
-        "interval_end": "2026-10-20T01:00:00-00:00",
+        "interval_start": "2026-10-20T05:00:00-00:00",
+        "interval_end": "2026-10-20T06:00:00-00:00",
         "constraint_id": "31336_HPLND JT_60.0_31370_CLVRDLJT_60.0_BR_1 _1",
         "constraint_name": "HPLND JT – CLVRDLJT 60.0 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 60,
         "oms_ref": null,
         "market": "DAM",
-        "shadow_price": 4.27928,
-        "shadow_price_abs": 4.27928,
+        "shadow_price": 135.16909,
+        "shadow_price_abs": 135.16909,
         "binding": true,
         "contingency_id": "PG1 EGLRK-SLVR-FLTN 115_M",
         "intervals_published": 19,
@@ -747,16 +229,16 @@
       "oms_ref": null,
       "markets": {
         "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
+          "interval_start": "2026-10-20T05:00:00-00:00",
+          "interval_end": "2026-10-20T06:00:00-00:00",
           "constraint_id": "32225_BRNSWKT1_115_32222_DTCH2TAP_115_BR_1 _1",
           "constraint_name": "BRNSWKT1 – DTCH2TAP 115 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 115,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 9.37043,
-          "shadow_price_abs": 9.37043,
+          "shadow_price": 10.77277,
+          "shadow_price_abs": 10.77277,
           "binding": true,
           "contingency_id": "PG1 BELL-HIGGNS 115",
           "intervals_published": 18,
@@ -769,16 +251,16 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T00:00:00-00:00",
-        "interval_end": "2026-10-20T01:00:00-00:00",
+        "interval_start": "2026-10-20T05:00:00-00:00",
+        "interval_end": "2026-10-20T06:00:00-00:00",
         "constraint_id": "32225_BRNSWKT1_115_32222_DTCH2TAP_115_BR_1 _1",
         "constraint_name": "BRNSWKT1 – DTCH2TAP 115 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 115,
         "oms_ref": null,
         "market": "DAM",
-        "shadow_price": 9.37043,
-        "shadow_price_abs": 9.37043,
+        "shadow_price": 10.77277,
+        "shadow_price_abs": 10.77277,
         "binding": true,
         "contingency_id": "PG1 BELL-HIGGNS 115",
         "intervals_published": 18,
@@ -797,16 +279,16 @@
       "oms_ref": null,
       "markets": {
         "DAM": {
-          "interval_start": "2026-10-20T06:00:00-00:00",
-          "interval_end": "2026-10-20T07:00:00-00:00",
+          "interval_start": "2026-10-20T04:00:00-00:00",
+          "interval_end": "2026-10-20T05:00:00-00:00",
           "constraint_id": "33500_MELNS JA_115_33509_AVENATP1_115_BR_1 _1",
           "constraint_name": "MELNS JA – AVENATP1 115 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 115,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 10.13903,
-          "shadow_price_abs": 10.13903,
+          "shadow_price": 49.9122,
+          "shadow_price_abs": 49.9122,
           "binding": true,
           "contingency_id": "PG1 STANIS-MELN-RIVR 115",
           "intervals_published": 2,
@@ -819,16 +301,16 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T06:00:00-00:00",
-        "interval_end": "2026-10-20T07:00:00-00:00",
+        "interval_start": "2026-10-20T04:00:00-00:00",
+        "interval_end": "2026-10-20T05:00:00-00:00",
         "constraint_id": "33500_MELNS JA_115_33509_AVENATP1_115_BR_1 _1",
         "constraint_name": "MELNS JA – AVENATP1 115 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 115,
         "oms_ref": null,
         "market": "DAM",
-        "shadow_price": 10.13903,
-        "shadow_price_abs": 10.13903,
+        "shadow_price": 49.9122,
+        "shadow_price_abs": 49.9122,
         "binding": true,
         "contingency_id": "PG1 STANIS-MELN-RIVR 115",
         "intervals_published": 2,
@@ -847,16 +329,16 @@
       "oms_ref": null,
       "markets": {
         "DAM": {
-          "interval_start": "2026-10-20T22:00:00-00:00",
-          "interval_end": "2026-10-20T23:00:00-00:00",
+          "interval_start": "2026-10-20T05:00:00-00:00",
+          "interval_end": "2026-10-20T06:00:00-00:00",
           "constraint_id": "33543_AEC_TP2 _115_33540_TESLA   _115_BR_1 _1",
           "constraint_name": "AEC_TP2 – TESLA 115 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 115,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 30.00835,
-          "shadow_price_abs": 30.00835,
+          "shadow_price": 9.97907,
+          "shadow_price_abs": 9.97907,
           "binding": true,
           "contingency_id": "PG1 TESLA-SCHLTE_1 115_M",
           "intervals_published": 15,
@@ -869,16 +351,16 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T22:00:00-00:00",
-        "interval_end": "2026-10-20T23:00:00-00:00",
+        "interval_start": "2026-10-20T05:00:00-00:00",
+        "interval_end": "2026-10-20T06:00:00-00:00",
         "constraint_id": "33543_AEC_TP2 _115_33540_TESLA   _115_BR_1 _1",
         "constraint_name": "AEC_TP2 – TESLA 115 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 115,
         "oms_ref": null,
         "market": "DAM",
-        "shadow_price": 30.00835,
-        "shadow_price_abs": 30.00835,
+        "shadow_price": 9.97907,
+        "shadow_price_abs": 9.97907,
         "binding": true,
         "contingency_id": "PG1 TESLA-SCHLTE_1 115_M",
         "intervals_published": 15,
@@ -887,6 +369,56 @@
           "shadow_price_abs": 61.97315,
           "binding": true,
           "interval_start": "2026-10-20T16:00:00-00:00"
+        }
+      }
+    },
+    "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1": {
+      "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 115,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T05:00:00-00:00",
+          "interval_end": "2026-10-20T06:00:00-00:00",
+          "constraint_id": "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1",
+          "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 115,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 37.56,
+          "shadow_price_abs": 37.56,
+          "binding": true,
+          "contingency_id": "PG1 LOSEST-METCLF 230",
+          "intervals_published": 13,
+          "peak": {
+            "shadow_price": 91.64801,
+            "shadow_price_abs": 91.64801,
+            "binding": true,
+            "interval_start": "2026-10-20T03:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T05:00:00-00:00",
+        "interval_end": "2026-10-20T06:00:00-00:00",
+        "constraint_id": "35120_NEWARK D_115_36851_NORTHERN_115_BR_1 _1",
+        "constraint_name": "NEWARK D – NORTHERN 115 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 115,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 37.56,
+        "shadow_price_abs": 37.56,
+        "binding": true,
+        "contingency_id": "PG1 LOSEST-METCLF 230",
+        "intervals_published": 13,
+        "peak": {
+          "shadow_price": 91.64801,
+          "shadow_price_abs": 91.64801,
+          "binding": true,
+          "interval_start": "2026-10-20T03:00:00-00:00"
         }
       }
     },
@@ -940,6 +472,56 @@
         }
       }
     },
+    "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1": {
+      "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 60,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T03:00:00-00:00",
+          "interval_end": "2026-10-20T04:00:00-00:00",
+          "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
+          "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 60,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 36.5687,
+          "shadow_price_abs": 36.5687,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 4,
+          "peak": {
+            "shadow_price": 57.45471,
+            "shadow_price_abs": 57.45471,
+            "binding": true,
+            "interval_start": "2026-10-20T01:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T03:00:00-00:00",
+        "interval_end": "2026-10-20T04:00:00-00:00",
+        "constraint_id": "35202_USWP-WKR_60.0_33777_SBTAP   _60.0_BR_1 _1",
+        "constraint_name": "USWP-WKR – SBTAP 60.0 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 60,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 36.5687,
+        "shadow_price_abs": 36.5687,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 4,
+        "peak": {
+          "shadow_price": 57.45471,
+          "shadow_price_abs": 57.45471,
+          "binding": true,
+          "interval_start": "2026-10-20T01:00:00-00:00"
+        }
+      }
+    },
     "35618_SN JSE A_115_35616_SNJOSEB _115_BR_1 _1": {
       "constraint_name": "SN JSE A – SNJOSEB 115 kV (ckt 1)",
       "constraint_class": "branch",
@@ -947,16 +529,16 @@
       "oms_ref": null,
       "markets": {
         "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
+          "interval_start": "2026-10-20T01:00:00-00:00",
+          "interval_end": "2026-10-20T02:00:00-00:00",
           "constraint_id": "35618_SN JSE A_115_35616_SNJOSEB _115_BR_1 _1",
           "constraint_name": "SN JSE A – SNJOSEB 115 kV (ckt 1)",
           "constraint_class": "branch",
           "kv": 115,
           "oms_ref": null,
           "market": "DAM",
-          "shadow_price": 11.33412,
-          "shadow_price_abs": 11.33412,
+          "shadow_price": 100.3984,
+          "shadow_price_abs": 100.3984,
           "binding": true,
           "contingency_id": "PG1 LOSEST-METCLF 230",
           "intervals_published": 11,
@@ -969,16 +551,16 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T00:00:00-00:00",
-        "interval_end": "2026-10-20T01:00:00-00:00",
+        "interval_start": "2026-10-20T01:00:00-00:00",
+        "interval_end": "2026-10-20T02:00:00-00:00",
         "constraint_id": "35618_SN JSE A_115_35616_SNJOSEB _115_BR_1 _1",
         "constraint_name": "SN JSE A – SNJOSEB 115 kV (ckt 1)",
         "constraint_class": "branch",
         "kv": 115,
         "oms_ref": null,
         "market": "DAM",
-        "shadow_price": 11.33412,
-        "shadow_price_abs": 11.33412,
+        "shadow_price": 100.3984,
+        "shadow_price_abs": 100.3984,
         "binding": true,
         "contingency_id": "PG1 LOSEST-METCLF 230",
         "intervals_published": 11,
@@ -987,6 +569,56 @@
           "shadow_price_abs": 182.8174,
           "binding": true,
           "interval_start": "2026-10-20T16:00:00-00:00"
+        }
+      }
+    },
+    "7760_DEV_RDB_ALIS": {
+      "constraint_name": "7760_DEV_RDB_ALIS",
+      "constraint_class": "nomogram",
+      "kv": null,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T01:00:00-00:00",
+          "interval_end": "2026-10-20T02:00:00-00:00",
+          "constraint_id": "7760_DEV_RDB_ALIS",
+          "constraint_name": "7760_DEV_RDB_ALIS",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": -0.64711,
+          "shadow_price_abs": 0.64711,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 3,
+          "peak": {
+            "shadow_price": -2.13634,
+            "shadow_price_abs": 2.13634,
+            "binding": true,
+            "interval_start": "2026-10-20T20:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T01:00:00-00:00",
+        "interval_end": "2026-10-20T02:00:00-00:00",
+        "constraint_id": "7760_DEV_RDB_ALIS",
+        "constraint_name": "7760_DEV_RDB_ALIS",
+        "constraint_class": "nomogram",
+        "kv": null,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": -0.64711,
+        "shadow_price_abs": 0.64711,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 3,
+        "peak": {
+          "shadow_price": -2.13634,
+          "shadow_price_abs": 2.13634,
+          "binding": true,
+          "interval_start": "2026-10-20T20:00:00-00:00"
         }
       }
     },
@@ -1097,8 +729,8 @@
       "oms_ref": null,
       "markets": {
         "DAM": {
-          "interval_start": "2026-10-20T00:00:00-00:00",
-          "interval_end": "2026-10-20T01:00:00-00:00",
+          "interval_start": "2026-10-20T03:00:00-00:00",
+          "interval_end": "2026-10-20T04:00:00-00:00",
           "constraint_id": "HUMBOLDT_IMP_NG",
           "constraint_name": "HUMBOLDT_IMP_NG",
           "constraint_class": "nomogram",
@@ -1119,8 +751,8 @@
         }
       },
       "worst": {
-        "interval_start": "2026-10-20T00:00:00-00:00",
-        "interval_end": "2026-10-20T01:00:00-00:00",
+        "interval_start": "2026-10-20T03:00:00-00:00",
+        "interval_end": "2026-10-20T04:00:00-00:00",
         "constraint_id": "HUMBOLDT_IMP_NG",
         "constraint_name": "HUMBOLDT_IMP_NG",
         "constraint_class": "nomogram",
@@ -1790,6 +1422,106 @@
         }
       }
     },
+    "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1": {
+      "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 115,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T23:00:00-00:00",
+          "interval_end": "2026-10-21T00:00:00-00:00",
+          "constraint_id": "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1",
+          "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 115,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 41.1352,
+          "shadow_price_abs": 41.1352,
+          "binding": true,
+          "contingency_id": "PG1 MNDOTA-PNOCHE 115",
+          "intervals_published": 8,
+          "peak": {
+            "shadow_price": 41.1352,
+            "shadow_price_abs": 41.1352,
+            "binding": true,
+            "interval_start": "2026-10-20T23:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T23:00:00-00:00",
+        "interval_end": "2026-10-21T00:00:00-00:00",
+        "constraint_id": "34116_LE GRAND_115_34115_ADRA TAP_115_BR_1 _1",
+        "constraint_name": "LE GRAND – ADRA TAP 115 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 115,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 41.1352,
+        "shadow_price_abs": 41.1352,
+        "binding": true,
+        "contingency_id": "PG1 MNDOTA-PNOCHE 115",
+        "intervals_published": 8,
+        "peak": {
+          "shadow_price": 41.1352,
+          "shadow_price_abs": 41.1352,
+          "binding": true,
+          "interval_start": "2026-10-20T23:00:00-00:00"
+        }
+      }
+    },
+    "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1": {
+      "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 115,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T16:00:00-00:00",
+          "interval_end": "2026-10-20T17:00:00-00:00",
+          "constraint_id": "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1",
+          "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 115,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 20.10124,
+          "shadow_price_abs": 20.10124,
+          "binding": true,
+          "contingency_id": "PG1 MCCALL-MSTANS 230",
+          "intervals_published": 1,
+          "peak": {
+            "shadow_price": 20.10124,
+            "shadow_price_abs": 20.10124,
+            "binding": true,
+            "interval_start": "2026-10-20T16:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T16:00:00-00:00",
+        "interval_end": "2026-10-20T17:00:00-00:00",
+        "constraint_id": "34418_KINGSBRG_115_34428_CONTADNA_115_BR_1 _1",
+        "constraint_name": "KINGSBRG – CONTADNA 115 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 115,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 20.10124,
+        "shadow_price_abs": 20.10124,
+        "binding": true,
+        "contingency_id": "PG1 MCCALL-MSTANS 230",
+        "intervals_published": 1,
+        "peak": {
+          "shadow_price": 20.10124,
+          "shadow_price_abs": 20.10124,
+          "binding": true,
+          "interval_start": "2026-10-20T16:00:00-00:00"
+        }
+      }
+    },
     "34548_KETTLEMN_70.0_34552_GATES   _70.0_BR_1 _1": {
       "constraint_name": "KETTLEMN – GATES 70.0 kV (ckt 1)",
       "constraint_class": "branch",
@@ -1837,6 +1569,56 @@
           "shadow_price_abs": 86.30275,
           "binding": true,
           "interval_start": "2026-10-20T20:00:00-00:00"
+        }
+      }
+    },
+    "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1": {
+      "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
+      "constraint_class": "branch",
+      "kv": 70,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T23:00:00-00:00",
+          "interval_end": "2026-10-21T00:00:00-00:00",
+          "constraint_id": "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1",
+          "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
+          "constraint_class": "branch",
+          "kv": 70,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": 3.69464,
+          "shadow_price_abs": 3.69464,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 8,
+          "peak": {
+            "shadow_price": 29.50974,
+            "shadow_price_abs": 29.50974,
+            "binding": true,
+            "interval_start": "2026-10-20T18:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T23:00:00-00:00",
+        "interval_end": "2026-10-21T00:00:00-00:00",
+        "constraint_id": "34860_TAFT    _70.0_34943_Q356TAP _70.0_BR_1 _1",
+        "constraint_name": "TAFT – Q356TAP 70.0 kV (ckt 1)",
+        "constraint_class": "branch",
+        "kv": 70,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": 3.69464,
+        "shadow_price_abs": 3.69464,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 8,
+        "peak": {
+          "shadow_price": 29.50974,
+          "shadow_price_abs": 29.50974,
+          "binding": true,
+          "interval_start": "2026-10-20T18:00:00-00:00"
         }
       }
     },
@@ -2037,6 +1819,56 @@
           "shadow_price_abs": 75.78643,
           "binding": true,
           "interval_start": "2026-10-20T21:00:00-00:00"
+        }
+      }
+    },
+    "7430_CP6_NG": {
+      "constraint_name": "CP6 nomogram",
+      "constraint_class": "nomogram",
+      "kv": null,
+      "oms_ref": null,
+      "markets": {
+        "DAM": {
+          "interval_start": "2026-10-20T23:00:00-00:00",
+          "interval_end": "2026-10-21T00:00:00-00:00",
+          "constraint_id": "7430_CP6_NG",
+          "constraint_name": "CP6 nomogram",
+          "constraint_class": "nomogram",
+          "kv": null,
+          "oms_ref": null,
+          "market": "DAM",
+          "shadow_price": -14.40897,
+          "shadow_price_abs": 14.40897,
+          "binding": true,
+          "contingency_id": "Base Case",
+          "intervals_published": 9,
+          "peak": {
+            "shadow_price": -184.84997,
+            "shadow_price_abs": 184.84997,
+            "binding": true,
+            "interval_start": "2026-10-20T22:00:00-00:00"
+          }
+        }
+      },
+      "worst": {
+        "interval_start": "2026-10-20T23:00:00-00:00",
+        "interval_end": "2026-10-21T00:00:00-00:00",
+        "constraint_id": "7430_CP6_NG",
+        "constraint_name": "CP6 nomogram",
+        "constraint_class": "nomogram",
+        "kv": null,
+        "oms_ref": null,
+        "market": "DAM",
+        "shadow_price": -14.40897,
+        "shadow_price_abs": 14.40897,
+        "binding": true,
+        "contingency_id": "Base Case",
+        "intervals_published": 9,
+        "peak": {
+          "shadow_price": -184.84997,
+          "shadow_price_abs": 184.84997,
+          "binding": true,
+          "interval_start": "2026-10-20T22:00:00-00:00"
         }
       }
     },
