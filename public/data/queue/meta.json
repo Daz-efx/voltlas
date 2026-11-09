@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-11-09T03:00:46+00:00",
+  "version": "1.1",
+  "sample_data": false,
+  "weights": {
+    "gen_pocket": 0.3,
+    "completion_rate": 0.25,
+    "speed": 0.2,
+    "firm_share": 0.15,
+    "momentum": 0.1
+  },
+  "prior_strength": 8,
+  "isos": {
+    "ercot": {
+      "ok": true,
+      "rows": 1900,
+      "active": 1099,
+      "completed": 588,
+      "withdrawn": 213,
+      "completed_with_actual_cod": 110,
+      "queue_date_coverage": 0.882,
+      "firm_share_of_rows": 0.546,
+      "multi_county_rows": 0
+    }
+  },
+  "source": "ISO public interconnection queues via gridstatus (open source)",
+  "caveat": "Generation-queue proxy for grid conditions; not a load-capacity determination."
+}
