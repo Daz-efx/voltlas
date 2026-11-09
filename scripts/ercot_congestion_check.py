@@ -155,7 +155,14 @@ def fetch_dam_prices(days: int) -> pd.DataFrame:
 # ------------------------------------------------------------------ CDR ---
 
 def read_cdr(path: Path) -> pd.DataFrame:
-    """Scan every sheet for a header row containing UNIT CODE and COUNTY."""
+    """CDR Unit Code -> County. Accepts the extracted CSV (unit_code,county) or a
+    CDR .xlsx, scanning every sheet for a header row with UNIT CODE and COUNTY."""
+    if path.suffix.lower() == ".csv":
+        cdr = pd.read_csv(path, dtype=str).dropna(subset=["unit_code", "county"])
+        cdr["unit_code"] = cdr["unit_code"].str.strip().str.upper()
+        cdr["county"] = norm_county(cdr["county"])
+        print(f"[cdr] {len(cdr):,} unit codes from {path}")
+        return cdr.drop_duplicates("unit_code")[["unit_code", "county"]]
     found = []
     for sheet, raw in pd.read_excel(path, sheet_name=None, header=None, dtype=str).items():
         norm = raw.apply(lambda c: c.astype(str).str.strip().str.upper()
@@ -255,7 +262,7 @@ def spearman(a: pd.Series, b: pd.Series) -> float:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cdr", type=Path, help="path to ERCOT CDR .xlsx (Unit Code -> County)")
+    ap.add_argument("--cdr", type=Path, help="CDR .xlsx or extracted unit_code,county .csv")
     ap.add_argument("--fuzzy", action="store_true", help="also fuzzy-match nodes not in CDR")
     ap.add_argument("--days", type=int, default=30)
     ap.add_argument("--archive", action="store_true",
