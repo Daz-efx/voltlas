@@ -2,7 +2,7 @@ name: ERCOT price archive
 
 on:
   schedule:
-    - cron: "41 14 * * 0"   # Sundays ~6-7am Pacific; MIS keeps ~30 days, so weekly has slack
+    - cron: "41 12 * * 0"   # Sundays 12:41 UTC: lands before weekly-deploy (14:00 UTC) so pages ship fresh data
   workflow_dispatch:
 
 permissions:

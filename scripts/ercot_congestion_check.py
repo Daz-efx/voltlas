@@ -397,12 +397,18 @@ def main() -> int:
             .merge(counties[["county", "score", "rank_in_iso"]], on="county", how="left")
             .round(2).to_string(index=False))
 
-    out = j[["county", "state", "score", "rank_in_iso", "county_basis", "county_median_hourly",
-             "county_p10_basis", "share_hours_below_neg5", "n_nodes"]]
+    # Publish EVERY county with observed prices (incl. counties with no queue
+    # projects, e.g. Floyd); queue score attached where available.
+    out = cb.merge(counties[["county", "state", "score", "rank_in_iso"]], on="county", how="left")
+    out["state"] = out["state"].fillna("TX")
+    out = out[["county", "state", "score", "rank_in_iso", "county_basis", "county_median_hourly",
+               "county_p10_basis", "share_hours_below_neg5", "n_nodes"]]
     (QUEUE_DIR / "ercot_county_basis.json").write_text(json.dumps({
         "price_window": [str(prices["date"].min()), str(prices["date"].max())],
         "reference": HUB_REF, "market": "DAM",
         "node_mapping": nodes["match"].value_counts().to_dict(),
+        "generation_nodes": len(gen_nodes),
+        "nodes_with_prices": int(nb["resource_node"].nunique()),
         "counties": json.loads(out.to_json(orient="records")),
     }))
     print(f"\n[ok] wrote {QUEUE_DIR / 'ercot_county_basis.json'} and {DIAG}")
