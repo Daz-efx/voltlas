@@ -187,13 +187,43 @@ def read_cdr(path: Path) -> pd.DataFrame:
 
 
 def cdr_node_counties(units: pd.DataFrame, cdr: pd.DataFrame) -> pd.DataFrame:
-    j = units.merge(cdr, on="unit_code", how="inner")
-    print(f"[cdr] {j['unit_code'].nunique():,}/{units['unit_code'].nunique():,} "
-          f"mapping units found in CDR")
-    g = j.groupby("RESOURCE_NODE")["county"]
-    out = pd.DataFrame({"county": g.agg(lambda s: s.mode().iloc[0]),
-                        "n_counties": g.nunique()}).reset_index()
-    out["match"] = np.where(out["n_counties"] > 1, "cdr_multi", "cdr")
+    """Node -> county via CDR. Pass 1: exact unit code. Pass 2 (substation
+    fallback): for units whose code isn't in the CDR (e.g. storage named
+    SUB_ESR1 in the mapping vs SUB_BESS1 in the CDR), use the county of any CDR
+    unit at the same substation, if that substation maps to exactly one county."""
+    sub_col = "UNIT_SUBSTATION" if "UNIT_SUBSTATION" in units else "SUBSTATION"
+    u = units.assign(sub=units[sub_col].str.strip().str.upper())
+
+    exact = u.merge(cdr, on="unit_code", how="inner").assign(how="cdr")
+
+    # substation -> county from CDR codes, using the mapping's substation list;
+    # longest matching prefix wins (substation names can contain underscores)
+    subs = sorted(set(u["sub"]), key=len, reverse=True)
+    rows = []
+    for code, county in zip(cdr["unit_code"], cdr["county"]):
+        for sname in subs:
+            if code.startswith(sname + "_"):
+                rows.append((sname, county))
+                break
+    sc = pd.DataFrame(rows, columns=["sub", "county"]).drop_duplicates()
+    nc = sc.groupby("sub")["county"].nunique()
+    sub_county = sc[sc["sub"].isin(nc[nc == 1].index)].drop_duplicates("sub")
+
+    rest = u[~u["unit_code"].isin(exact["unit_code"])]
+    by_sub = rest.merge(sub_county, on="sub", how="inner").assign(how="cdr_sub")
+    j = pd.concat([exact, by_sub], ignore_index=True)
+    print(f"[cdr] units matched: exact {exact['unit_code'].nunique():,}, "
+          f"by substation {by_sub['unit_code'].nunique():,}, of {u['unit_code'].nunique():,} "
+          f"({int((nc > 1).sum())} substations skipped: multi-county)")
+
+    g = j.groupby("RESOURCE_NODE")
+    out = pd.DataFrame({
+        "county": g["county"].agg(lambda s: s.mode().iloc[0]),
+        "n_counties": g["county"].nunique(),
+        "any_exact": g["how"].agg(lambda s: (s == "cdr").any()),
+    }).reset_index()
+    out["match"] = np.where(out["n_counties"] > 1, "cdr_multi",
+                            np.where(out["any_exact"], "cdr", "cdr_sub"))
     return out.rename(columns={"RESOURCE_NODE": "resource_node"})[["resource_node", "county", "match"]]
 
 
