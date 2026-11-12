@@ -54,6 +54,7 @@ const NAV_QUICK = [
   ["/compare/germany-vs-france", "Compare countries"],
   ["/electricity-bill-calculator", "Bill calculator"],
   ["/congestion/caiso", "CAISO congestion"],
+  ["/congestion/ercot", "ERCOT congestion"],
 ];
 const NAV_GROUPS = [
   ["Rankings", [
@@ -74,6 +75,8 @@ const NAV_GROUPS = [
     ["/congestion/caiso", "CAISO congestion monitor"],
     ["/congestion/caiso/most-congested", "Most congested constraints"],
     ["/congestion/caiso/constraint", "All tracked constraints"],
+    ["/congestion/ercot", "ERCOT congestion by county"],
+    ["/interconnection/ercot", "ERCOT interconnection queue"],
   ]],
   ["Compare & tools", [
     ["/compare/germany-vs-france", "Germany vs France"],

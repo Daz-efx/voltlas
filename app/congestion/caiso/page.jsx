@@ -339,6 +339,7 @@ export default function CongestionPage() {
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
             <h1 style={{ ...grotesk, fontWeight: 700, fontSize: 20, margin: 0 }}>Congestion Monitor</h1>
             <span style={{ fontSize: 11, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.12em', border: `1px solid ${C.line}`, padding: '3px 8px', borderRadius: 3 }}>CAISO</span>
+            <Link href="/congestion/ercot" style={{ fontSize: 11, color: C.muted, textDecoration: 'underline' }}>ERCOT by county →</Link>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, padding: '6px 10px', borderRadius: 4, background: C.panel, border: `1px solid ${C.line}` }}>
